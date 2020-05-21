@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -27,14 +28,13 @@ public class AdminController {
     private AdminFacade adminFacade;
     @Autowired
     private TeacherRepository teacherRepository;
-
-    private InternalController internalController;
-
-    private InternalContest internalContest;
+    @Autowired
+    private ApplicationContext applicationContext;
 
     // вывод текущих аккаунтов
     @GetMapping("/admin/accounts")
     public String showAccounts(Model model) {
+        InternalController internalController = (InternalController) applicationContext.getBean("getInternalController");
         model.addAttribute("accounts", internalController.getContest().getAccounts());
         return "student";
     }
@@ -42,6 +42,7 @@ public class AdminController {
     // добавление списка преподавателей
     @PostMapping("/admin/generateTeam")
     public String generateAccount(Model model) {
+        InternalController internalController = (InternalController) applicationContext.getBean("getInternalController");
         internalController.generateNewAccounts("TEAM", 1, 1, 1, true);
         return "redirect:/admin/accounts";
     }
@@ -51,11 +52,6 @@ public class AdminController {
     public String userList(Model model) {
         UserForm userForm = new UserForm();
         List<Teacher> teachers = teacherRepository.findAll();
-
-        String[] curStringMas = {};
-        internalContest = new InternalContest();
-        internalController = new InternalController (internalContest);
-        internalController.start(curStringMas);
 
         model.addAttribute("userForm", userForm);
         model.addAttribute("teachers", teachers);

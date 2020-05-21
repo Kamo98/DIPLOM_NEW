@@ -1,7 +1,10 @@
 package ru.vkr.vkr.components;
 
+import edu.csus.ecs.pc2.core.InternalController;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.DefaultRedirectStrategy;
@@ -23,6 +26,9 @@ public class MySimpleUrlAuthenticationSuccessHandler implements AuthenticationSu
     protected final Log logger = LogFactory.getLog(this.getClass());
 
     private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
+
+    @Autowired
+    private ApplicationContext applicationContext;
 
     public MySimpleUrlAuthenticationSuccessHandler() {
         super();
@@ -54,6 +60,11 @@ public class MySimpleUrlAuthenticationSuccessHandler implements AuthenticationSu
         roleTargetUrlMap.put("ROLE_ADMIN", "/admin/teachers");
         roleTargetUrlMap.put("ROLE_TEACHER", "/teacher");
         roleTargetUrlMap.put("ROLE_STUDENT", "/student");
+
+        String[] curStringMas = {};
+        InternalController internalController = (InternalController) applicationContext.getBean("getInternalController");
+        internalController.start(curStringMas);
+
 
         final Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
         for (final GrantedAuthority grantedAuthority : authorities) {
