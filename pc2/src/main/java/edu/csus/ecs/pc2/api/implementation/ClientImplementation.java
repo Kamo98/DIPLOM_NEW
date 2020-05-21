@@ -1,0 +1,118 @@
+package edu.csus.ecs.pc2.api.implementation;
+
+import edu.csus.ecs.pc2.api.IClient;
+import edu.csus.ecs.pc2.core.model.Account;
+import edu.csus.ecs.pc2.core.model.ClientId;
+import edu.csus.ecs.pc2.core.model.ElementId;
+import edu.csus.ecs.pc2.core.model.IInternalContest;
+import edu.csus.ecs.pc2.core.security.Permission.Type;
+
+/**
+ * API IClient implementation.  
+ * @author pc2@ecs.csus.edu
+ * @version $Id$
+ */
+
+// $HeadURL$
+public class ClientImplementation implements IClient {
+
+    private String shortName;
+
+    private String title;
+
+    private int number;
+
+    private int siteNumber;
+
+    private ClientType clientType;
+
+    private ElementId elementId;
+    
+    private ClientId clientId;
+
+    private boolean displayableOnScoreboard = false;
+    
+    public ClientImplementation(ClientId clientId, IInternalContest contest) {
+        this.clientId = clientId;
+        Account account = contest.getAccount(clientId);
+        if (account != null) {
+            shortName = clientId.getName();
+            title = account.getDisplayName();
+            elementId = account.getElementId();
+            displayableOnScoreboard = account.isAllowed(Type.DISPLAY_ON_SCOREBOARD);
+        } else {
+            elementId = new ElementId(clientId.getTripletKey());
+        }
+        number = clientId.getClientNumber();
+        siteNumber = clientId.getSiteNumber();
+        switch (clientId.getClientType()) {
+            case JUDGE:
+                clientType = ClientType.JUDGE_CLIENT;
+                break;
+            case SCOREBOARD:
+                clientType = ClientType.SCOREBOARD_CLIENT;
+                break;
+            case ADMINISTRATOR:
+                clientType = ClientType.ADMIN_CLIENT;
+                break;
+            case TEAM:
+                clientType = ClientType.TEAM_CLIENT;
+                break;
+            default:
+                clientType = ClientType.UNKNOWN_CLIENT;
+                break;
+        }
+    }
+
+    public String getLoginName() {
+        return shortName;
+    }
+
+    public String getDisplayName() {
+        return title;
+    }
+
+    public int getSiteNumber() {
+        return siteNumber;
+    }
+
+    public int getAccountNumber() {
+        return number;
+    }
+
+    public ClientType getType() {
+        return clientType;
+    }
+    
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+
+        if (obj instanceof ClientImplementation) {
+            ClientImplementation clientImplementation = (ClientImplementation) obj;
+            return (clientImplementation.elementId.equals(elementId));
+        } else {
+            return false;
+        }
+    }
+    
+    @Override
+    public int hashCode() {
+        return elementId.toString().hashCode();
+    }
+    
+    public boolean isDisplayableOnScoreboard() {
+        return displayableOnScoreboard;
+    }
+    
+    public ElementId getElementId() {
+        return elementId;
+    }
+    
+    public ClientId getClientId() {
+        return clientId;
+    }
+}

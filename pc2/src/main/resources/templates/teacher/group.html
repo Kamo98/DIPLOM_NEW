@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="base :: common_header(~{::title})">
+    <title>Группа</title>
+</head>
+
+<body>
+
+    <div th:replace="base :: navigation"></div>
+
+    <div class="container">
+        <div class="row row-margin-bottom">
+
+            <!--    Вставка боковой панели  -->
+            <div th:replace="base :: side-panels"></div>
+            <!-- *** -->
+
+
+            <div class="main-content col-9 border rounded-lg">
+                <h5 class="centered green-h" th:unless="${isCreate}">Группа "[[ ${group.name} ]]"</h5>
+                <h5 class="centered green-h" th:if="${isCreate}">Группа "Новая группа"</h5>
+
+
+                <ul class="nav nav-pills tabs-menu">
+                    <li th:unless="${isCreate}">
+                        <a class="nav-link active" href="#" id="linkGroupMembers"><i class="fa fa-users" aria-hidden="true"></i>&nbsp;Состав группы</a>
+                    </li>
+                    <li th:unless="${isCreate}">
+                        <a class="nav-link " href="#" id="linkGroupResults"><i class="fa fa-table" aria-hidden="true"></i>&nbsp;Результаты группы</a>
+                    </li>
+                    <li th:unless="${isCreate}">
+                        <a class="nav-link " href="#" id="linkGroupProblems"> <i class="fa fa-tasks" aria-hidden="true"></i>&nbsp;Задание группе</a>
+                    </li>
+                    <li>
+                        <a class="nav-link " href="#" id="linkGroupSettings"> <i class="fa fa-cogs" aria-hidden="true"></i>&nbsp;Параметры</a>
+                    </li>
+                </ul>
+
+
+
+                <div class="container" id="containerOfTabs">
+
+                    <div id="groupMembers" th:unless="${isCreate}">
+                        <div class="alert alert-warning" role="alert" th:if="${group.students.empty}">
+                            Группа пуста. Добавьте студентов.
+                        </div>
+
+                        <div class="row item-mylist" th:each="student : ${group.students}" th:id="'student_'+${student.id}">
+                            <div class="col col-align-center">
+                                <span class="textFIO"><i class="fa fa-user" aria-hidden="true"></i>&nbsp;[[ ${student.surname + " " + student.name + " " + student.middleName} ]]</span>
+                                <input type="text" class="form-control editInputFIO" style="display:none;" th:value="${student.surname + ' ' + student.name + ' ' + student.middleName}">
+                                <div class="invalid-tooltip"></div>
+                            </div>
+                            <div class="col col-align-center">
+                                <a href="#"><i class="fa fa-check" aria-hidden="true"></i>&nbsp;
+                                    Личные результаты
+                                </a>
+                            </div>
+                            <div class="col-1">
+                                <a class="btn btn-dark myButtonFio" href="#"><i class="fa fa-pencil fa-fw"></i></a>
+                            </div>
+                            <div class="col-1">
+                                <a class="btn btn-danger" th:href="@{'/teacher/group/' + ${group.id} + '/delete/' + ${student.id}}"><i class="fa fa-trash-o fa-lg"></i></a>
+                            </div>
+                        </div>
+
+
+
+                        <div class="row row-margin-top">
+                            <div class = "col">
+                                <button class="btn btn-primary">
+                                    <i class="fa fa-key" aria-hidden="true"></i>&nbsp;Скачать логины и пароли
+                                </button>
+                            </div>
+                            <div class = "col">
+
+                            </div>
+                            <div class = "col col-align-right">
+                                <a class="btn btn-danger" th:href="@{'/teacher/group-delete/' + ${group.id}}">
+                                    <i class="fa fa-trash-o fa-lg"></i>&nbsp;Удалить группу
+                                </a>
+                            </div>
+                        </div>
+
+                        <form th:action="@{'/teacher/group/'+ ${group.id} + '/addStudent'}" th:object="${userForm}" method="POST">
+                            <div class="row row-margin-top">
+                                <div class="col">
+                                    <h6 ><i class="fa fa-user-plus" aria-hidden="true"></i>&nbsp;Добавление новых членов группы</h6 >
+                                    <div class="form-group">
+                                        <label for="addPersonInGroup">Одна строка - ФИО одного члена группы</label>
+                                        <textarea class="form-control" th:field="*{fios}" id="addPersonInGroup" rows="8" cols="20"></textarea>
+                                    </div>
+                                    <button class="btn btn-success" type="submit"><i class="fa fa-plus" aria-hidden="true"></i>&nbsp; Добавить</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div >
+
+
+                    <div id="groupSettings" style="display: none;">
+                        <form th:action="${isCreate}? @{/teacher/group-create}: @{'/teacher/group/' + ${group.id}}" th:object="${group}" method="POST">
+                            <div class="row row-margin-top">
+                                <div class="col-3 col-align-center">
+                                    <label for="nameOfGroup">Наименование группы</label>
+                                </div>
+                                <div class="col">
+                                    <input type="text" id="nameOfGroup" class="form-control" th:field="*{name}" >
+                                    <div class="col my-invalid-tooltip" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Некорректное наименование</div>
+                                </div>
+                            </div>
+
+                            <div class="row row-margin-top">
+                                <div class = "col col-align-right">
+                                    <button class="btn btn-primary" type="submit" th:unless="${isCreate}">
+                                        <i class="fa fa-floppy-o" aria-hidden="true"></i>&nbsp;Сохранить
+                                    </button>
+
+                                    <button class="btn btn-primary" type="submit" th:if="${isCreate}">
+                                        <i class="fa fa-plus" aria-hidden="true"></i>&nbsp;Создать
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <footer th:replace="base :: footer"></footer>
+
+
+
+    <script th:if="${isCreate}">
+        //Чтобы при запуске страницы создания активировалась вкладка с настройками
+        $(document).ready(function() {
+            $("#linkGroupSettings").click();
+        });
+    </script>
+
+
+
+    <script>
+        //Клик по вкладке Состав группы
+        $('#linkGroupMembers').click(function(e){
+            $('#linkGroupMembers').addClass('active');
+            $('#groupMembers').show();
+        });
+
+        //Клик по вкладке Результаты группы
+        $('#linkGroupResults').click(function(e){
+            $('#linkGroupResults').addClass('active');
+        });
+
+        //Клик по вкладке Задание группе
+        $('#linkGroupProblems').click(function(e){
+            $('#linkGroupProblems').addClass('active');
+        });
+
+
+        //Клик по вкладке Параметры
+        $('#linkGroupSettings').click(function(e){
+            $('#linkGroupSettings').addClass('active');
+            $('#groupSettings').show();
+        });
+
+    </script>
+
+</body>
+</html>

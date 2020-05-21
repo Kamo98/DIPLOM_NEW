@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<!-- $Id$ -->
+<!-- $HeadURL$ -->
+<project name="pc2v9quickBuild" default="jaronly" basedir=".">
+    <!-- import build.xml instead of duplicating properties -->
+    <import file="build.xml"/>
+    <property name="repo.version" value="7xx" />
+
+    <!-- this is the jar target from build.xml with a defirrent name/depends -->
+    <target name="jaronly" depends="compile" description="creates a jar of our classes no testing">
+        <mkdir dir="${dist.dir}" />
+
+		<!-- include the images in the jar -->
+		<copy file="images/csus_logo.png" todir="${build.prod.dir}/images"/>
+		<copy file="images/icpc_banner.png" todir="${build.prod.dir}/images"/>
+
+		<!-- consider doing the manifest in a separate target
+             then the Version can be ommitted if not set -->
+        <jar jarfile="${jar.path}" basedir="${build.prod.dir}">
+            <manifest>
+                <attribute name="Specification-Version" value="${version}"/>
+                <attribute name="Implementation-Title" value="CSUS Programming Contest Control System"/>
+                <attribute name="Implementation-Version" value="${repo.version}"/>
+                <attribute name="Built-On" value="${timestamp.english}"/>
+                <attribute name="Built-On-Date" value="${date}"/>
+                <attribute name="Main-Class" value="edu.csus.ecs.pc2.Starter"/>
+            </manifest>
+        </jar>
+    </target>
+</project>

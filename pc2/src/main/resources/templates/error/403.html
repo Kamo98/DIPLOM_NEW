@@ -1,0 +1,20 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="base :: common_header(~{::title})">
+    <title>Access denied</title>
+</head>
+<body>
+
+<div class="container">
+    <div class="starter-template centered">
+        <h1>403 - Access is denied</h1>
+        <div th:inline="text">Hello '[[${#httpServletRequest.remoteUser}]]',
+            you do not have permission to access this page.</div>
+    </div>
+</div>
+<!-- /.container -->
+
+<footer th:replace="base :: footer"></footer>
+
+</body>
+</html>

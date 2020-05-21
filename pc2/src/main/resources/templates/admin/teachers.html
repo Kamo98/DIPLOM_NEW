@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="base :: common_header(~{::title})">
+    <title>Преподаватели</title>
+</head>
+
+<body>
+
+<div th:replace="base :: navigation"></div>
+
+<div class="container ">
+    <div class="row row-margin-bottom justify-content-center">
+
+        <div class="main-content col-9 border rounded-lg">
+            <h5 class="centered green-h">Преподаватели АлтГТУ</h5>
+
+            <ul class="nav nav-pills tabs-menu">
+                <li>
+                    <a class="nav-link active" href="#" id="linkTeachMembers"><i class="fa fa-users"
+                                                                                 aria-hidden="true"></i>&nbsp;Преподавательский
+                        состав</a>
+                </li>
+                <li>
+                    <a class="nav-link " href="#" id="linkTeachSettings"><i class="fa fa-cogs" aria-hidden="true"></i>&nbsp;Параметры</a>
+                </li>
+            </ul>
+
+
+            <div class="container" id="containerOfTabs">
+
+                <div id="teachMembers">
+                    <div th:if="${#lists.isEmpty(teachers)}" class="alert alert-warning" role="alert">
+                        Группа пуста. Добавьте студентов.
+                    </div>
+
+                    <div class="row item-mylist" th:each="teacher : ${teachers}" th:id="'teacher_'+${teacher.id}">
+                        <div class="col col-align-center" contenteditable="false">
+                            <span class="textFIO"><i class="fa fa-user" aria-hidden="true"></i>&nbsp;[[ ${teacher.surname + " " + teacher.name + " " + teacher.middleName} ]]</span>
+                            <input type="text" class="form-control editInputFIO" style="display:none;" th:value="${teacher.surname + ' ' + teacher.name + ' ' + teacher.middleName}">
+                            <div class="invalid-tooltip"></div>
+                        </div>
+                        <div class="col col-align-center">
+                            <a href="#"><i class="fa fa-check" aria-hidden="true"></i>&nbsp;
+                                Курсы
+                            </a>
+                        </div>
+                        <div class="col-1">
+                            <a class="btn btn-dark myButtonFio" href="#"><i class="fa fa-pencil fa-fw"></i></a>
+                        </div>
+                        <div class="col-1">
+                            <a class="btn btn-danger" th:href="@{'/admin/delTeacher/' + ${teacher.id}}"><i class="fa fa-trash-o fa-lg"></i></a>
+                        </div>
+                    </div>
+
+
+                    <div class="row row-margin-top">
+                        <div class="col">
+                            <button class="btn btn-primary" id="downloadLoginPassword">
+                                <i class="fa fa-key" aria-hidden="true"></i>&nbsp;Скачать логины и пароли
+                            </button>
+                        </div>
+                        <div class="col">
+
+                        </div>
+                        <div class="col col-align-right">
+                            <button class="btn btn-danger">
+                                <i class="fa fa-trash-o fa-lg"></i>&nbsp;Удалить группу
+                            </button>
+                        </div>
+                    </div>
+
+                    <form th:action="@{/admin/addTeachers}" th:object="${userForm}" method="POST">
+                        <div class="row row-margin-top">
+                            <div class="col">
+                                <h6><i class="fa fa-user-plus" aria-hidden="true"></i>&nbsp;Добавление новых преподавателей
+                                </h6>
+                                <div class="form-group">
+                                    <label for="addPersonInGroup">Одна строка - ФИО одного преподавателя</label>
+                                    <textarea class="form-control" th:field="*{fios}" id="addPersonInGroup" rows="8"
+                                              cols="20"></textarea>
+                                </div>
+                                <button class="btn btn-success" type="submit"><i class="fa fa-plus"
+                                                                                 aria-hidden="true"></i>&nbsp; Добавить
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+
+                <div id="teachSettings" style="display: none;">
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+<footer th:replace="base :: footer"></footer>
+
+
+<script>
+    //Клик по вкладке Преподавательский состав
+    $('#linkTeachMembers').click(function (e) {
+        $('#linkTeachMembers').addClass('active');
+        $('#teachMembers').show();
+    });
+
+
+    //Клик по вкладке Параметры
+    $('#linkTeachSettings').click(function (e) {
+        $('#linkTeachSettings').addClass('active');
+        $('#teachSettings').show();
+    });
+
+</script>
+
+</body>
+</html>

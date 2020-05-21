@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="base :: common_header(~{::title})">
+    <title>Тема</title>
+</head>
+
+<body>
+
+    <div th:replace="base :: navigation"></div>
+
+    <div class="container">
+        <div class="row row-margin-bottom">
+
+            <!--    Вставка боковой панели  -->
+            <div th:replace="base :: side-panels"></div>
+            <!-- *** -->
+
+
+            <div class="main-content col-9 border rounded-lg">
+                <h5 class="centered green-h">Тема "Без названия"</h5>
+
+                <ul class="nav nav-pills tabs-menu">
+                    <li>
+                        <a class="nav-link active" href="#"><i class="fa fa-book fa-fw" aria-hidden="true"></i>&nbsp;Материалы</a>
+                    </li>
+                </ul>
+
+
+
+
+                <div class="container">
+
+
+                    <div class="row">
+                        Тут страница с материалами темы и с возможностью добавления новых
+                    </div>
+
+
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <footer th:replace="base :: footer"></footer>
+</body>
+</html>

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="base :: common_header(~{::title})">
+    <title>Accounts</title>
+</head>
+
+<body>
+<div th:replace="base :: navigation"></div>
+
+<div class="row">
+
+    <div class="col-8 row item-mylist" th:each="account : ${accounts}">
+        <div class="col col-align-center" contenteditable="false">
+            <input type="text" th:value="${account.displayName}">
+            <div class="invalid-tooltip"></div>
+        </div>
+    </div>
+
+    <div class="col-4">
+        <form th:action="@{/admin/generateTeam}" method="POST">
+            <button class="btn btn-success" type="submit"><i class="fa fa-plus"
+                                                             aria-hidden="true"></i>&nbsp; Generate team
+            </button>
+        </form>
+    </div>
+
+</div>
+
+<footer th:replace="base :: footer"></footer>
+</body>
+</html>

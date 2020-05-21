@@ -1,0 +1,46 @@
+pc2/HELP.md
+pc2/target/
+!pc2/.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**
+!**/src/test/**
+
+### STS ###
+pc2/.apt_generated
+pc2/.classpath
+pc2/.factorypath
+pc2/.project
+pc2/.settings
+pc2/.springBeans
+pc2/.sts4-cache
+
+### IntelliJ IDEA ###
+pc2/.idea
+*.iws
+*.iml
+*.ipr
+
+/build/
+/dist/
+/logs/
+/profiles.properties
+/profiles/
+/testout/
+
+pc2/nbproject/private/
+pc2/nbbuild/
+pc2/dist/
+pc2/nbdist/
+pc2/.nb-gradle/
+pc2/build/
+
+### VS Code ###
+pc2/.vscode/
+
+/.classes
+/realm.properties
+/VERSION
+/pc2ws.properties
+bin/logs
+pc2/logs
+*.log
+bin/profiles/P438aa6f5-49a2-4c55-9355-13ef2b1c1f02/reports

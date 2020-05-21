@@ -1,0 +1,213 @@
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@700&display=swap');
+
+body {
+    font-family: 'Cuprum', sans-serif;
+    font-weight: normal;
+    font-size: 14px;
+    color: #222;
+
+    -webkit-font-smoothing: antialiased;
+    -webkit-overflow-scrolling: touch;
+
+}
+
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Oswald', sans-serif;
+
+}
+
+
+.green-h{
+    color: #2D9B27;
+}
+
+
+p {
+    line-height: 28px;
+    margin-bottom: 25px;
+}
+
+
+.centered {
+    text-align: center;
+}
+
+.row-margin-bottom {
+     margin-bottom: 2rem;
+}
+
+.row-margin-top {
+    margin-top: 2rem;
+}
+
+
+
+/**************
+***Ссылки*****/
+
+a:hover {
+	/*color: #7b7b7b;
+	text-decoration: none;
+	outline: 0;*/
+
+	color: #FF4100;
+}
+
+
+.link-new {
+    font-size: 1.1em;
+    font-weight: 600;
+    border-top: 2px #008500 dotted;
+    padding-top: 0.5rem;
+    margin: 1rem 0 1rem 0;
+}
+
+/**************/
+
+
+
+
+hr {
+	display: block;
+	height: 1px;
+	border: 0;
+	border-top: 2px solid #078600;
+	margin: 1em 0;
+	padding: 0;
+}
+
+
+.row {
+
+}
+
+.col-align-center {
+    align-self: center;
+}
+
+.col-align-right {
+    text-align: right;
+}
+
+
+
+
+/*Кнопки*/
+
+.btn{
+    font-size:1em;
+}
+
+.btn-primary {
+    color: #000;
+}
+
+.btn-danger {
+    color: #fff;
+    background-color: #AB2B52;
+    border-color: #AB2B52;
+}
+
+/*************/
+
+
+/*Навигация*/
+
+.navigation {
+    margin-bottom: 2em;
+    font-size: 18px;
+}
+
+.navbar .navbar-brand {
+    color: #BBB;
+    font-weight: bolder;
+	font-size: 1.3em;
+
+}
+
+
+.navbar  .navbar-nav {
+	margin: 0 auto;
+}
+
+.navbar .dropdown-menu {
+	background-color: rgba(f,f,f,3);
+}
+
+
+/***************/
+
+
+
+/*Панели быстрого доступа*/
+.quick-panel {
+    padding-top: 1em;
+}
+
+.quick-panel ul {
+    list-style-type: none;
+}
+/****************/
+
+
+
+
+/*Основной контент*/
+
+.main-content {
+    padding-top: 1rem;
+    padding-bottom: 2rem;
+}
+
+
+.item-mylist {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+
+}
+
+
+.editable-div-item {
+    border: 2px #008500 solid;
+    border-radius: 10px;
+    box-shadow: 5px 5px;
+}
+
+.tabs-menu {
+    border-top: 2px #078600 solid;
+    margin-bottom: 1.5rem;
+}
+
+.tabs-menu .nav-link {
+    border-radius: 0 0 .5rem .5rem;
+}
+
+.tabs-menu .nav-link.active {
+    background-color: #078600;
+}
+
+/****************/
+
+
+
+
+/*************
+****Формы****/
+
+.my-invalid-tooltip {
+  position: absolute;
+  top: 100%;
+  z-index: 5;
+  display: block;
+  max-width: 100%;
+  padding: 0.25rem 0.5rem;
+  margin-top: .1rem;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: #fff;
+  background-color: rgba(220, 53, 69, 0.9);
+  border-radius: 0.25rem;
+}

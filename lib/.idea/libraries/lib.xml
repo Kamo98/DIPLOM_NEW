@@ -1,0 +1,56 @@
+<component name="libraryTable">
+  <library name="lib">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/javax.ws.rs-api-2.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/el-api-2.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/hk2-api-2.5.0-b42.jar!/" />
+      <root url="jar://$PROJECT_DIR$/jetty-server-9.2.11.v20150529.jar!/" />
+      <root url="jar://$PROJECT_DIR$/mclb.jar!/" />
+      <root url="jar://$PROJECT_DIR$/javax.json-1.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/javax.json-api-1.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/jetty-http-9.2.11.v20150529.jar!/" />
+      <root url="jar://$PROJECT_DIR$/jetty-security-9.2.11.v20150529.jar!/" />
+      <root url="jar://$PROJECT_DIR$/javax.servlet-api-3.1.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/cdi-api-1.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/javax.json.bind-api-1.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/jackson-databind-2.5.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/jersey-container-servlet.jar!/" />
+      <root url="jar://$PROJECT_DIR$/osgi-resource-locator-1.0.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/hk2-utils-2.5.0-b42.jar!/" />
+      <root url="jar://$PROJECT_DIR$/org.osgi.core-4.2.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/validation-api-1.1.0.Final.jar!/" />
+      <root url="jar://$PROJECT_DIR$/persistence-api-1.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/yasson-1.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/jersey-container-servlet-core.jar!/" />
+      <root url="jar://$PROJECT_DIR$/smtp.jar!/" />
+      <root url="jar://$PROJECT_DIR$/hibernate-validator-5.1.3.Final.jar!/" />
+      <root url="jar://$PROJECT_DIR$/pc2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/javax.annotation-api-1.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/javassist-3.22.0-CR2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/jetty-io-9.2.11.v20150529.jar!/" />
+      <root url="jar://$PROJECT_DIR$/jetty-servlet-9.2.11.v20150529.jar!/" />
+      <root url="jar://$PROJECT_DIR$/jsr250-api-1.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/jersey-media-sse.jar!/" />
+      <root url="jar://$PROJECT_DIR$/jersey-server.jar!/" />
+      <root url="jar://$PROJECT_DIR$/jackson-core-2.5.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/snakeyaml-1.16.jar!/" />
+      <root url="jar://$PROJECT_DIR$/jersey-client.jar!/" />
+      <root url="jar://$PROJECT_DIR$/hk2-locator-2.5.0-b42.jar!/" />
+      <root url="jar://$PROJECT_DIR$/jetty-util-9.2.11.v20150529.jar!/" />
+      <root url="jar://$PROJECT_DIR$/activation.jar!/" />
+      <root url="jar://$PROJECT_DIR$/jackson-annotations-2.5.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/javax.inject-1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/jersey-common.jar!/" />
+      <root url="jar://$PROJECT_DIR$/jersey-media-json-binding.jar!/" />
+      <root url="jar://$PROJECT_DIR$/jersey-hk2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/jersey-media-jaxb.jar!/" />
+      <root url="jar://$PROJECT_DIR$/jaxb-api-2.2.7.jar!/" />
+      <root url="jar://$PROJECT_DIR$/aopalliance-repackaged-2.5.0-b42.jar!/" />
+      <root url="jar://$PROJECT_DIR$/javax.inject-2.5.0-b42.jar!/" />
+      <root url="jar://$PROJECT_DIR$/jboss-interceptors-api_1.1_spec-1.0.0.Beta1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/mailapi.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
