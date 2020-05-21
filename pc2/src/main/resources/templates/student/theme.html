@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="base :: common_header(~{::title})">
+    <title>Тема</title>
+</head>
+
+<body>
+
+    <div th:replace="base :: navigation"></div>
+
+    <div class="container">
+        <div class="row row-margin-bottom">
+
+            <!--    Вставка боковой панели  -->
+            <div th:replace="base :: side-panels"></div>
+            <!-- *** -->
+
+
+            <div class="main-content col-9 border rounded-lg">
+                <h5 class="centered green-h">Тема "Динамическое программирование"</h5>
+
+                <ul class="nav nav-pills tabs-menu">
+
+                </ul>
+
+
+
+
+                <div class="container" id="containerOfTabs">
+
+                    <div id="problemsOfTheme" >
+                        <!--<div class="alert alert-warning" role="alert">-->
+                            <!--К теме пока не прикреплена ни одна задача-->
+                        <!--</div>-->
+                        <!--<div class="alert alert-danger" role="alert">-->
+                            <!--Прикрепляемая вами задача уже прикреплена к теме-->
+                        <!--</div>-->
+
+                        <div class="col-align-centered">
+                            <div class="row row-table table-header">
+                                <div class="col">
+                                    <i class="fa fa-tasks" aria-hidden="true"></i>&nbsp; Задача
+                                </div>
+                                <div class="col">
+                                    <i class="fa fa-wrench" aria-hidden="true"></i>&nbsp; Сложность
+                                </div>
+                                <div class="col">
+                                    <i class="fa fa-tags" aria-hidden="true"></i>&nbsp; Теги
+                                </div>
+                            </div>
+
+                            <div class="row row-table">
+                                <div class="col">
+                                    <a th:href="@{'/student/problem'}">
+                                        Задача 1
+                                    </a>
+                                </div>
+                                <div class="col">
+                                    Высокая
+                                </div>
+                                <div class="col">
+                                    <a href="#">
+                                        <i class="fa fa-tag" aria-hidden="true"></i>&nbsp; Тег 1
+                                    </a>
+                                    &nbsp;
+                                    <a href="#">
+                                        <i class="fa fa-tag" aria-hidden="true"></i>&nbsp; Тег 2
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="row row-table dark-row">
+                                <div class="col">
+                                    <a th:href="@{'/student/problem'}">
+                                        Задача 2
+                                    </a>
+                                </div>
+                                <div class="col">
+                                    Средняя
+                                </div>
+                                <div class="col">
+                                    <a href="#">
+                                        <i class="fa fa-tag" aria-hidden="true"></i>&nbsp; Тег 4
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="row row-table">
+                                <div class="col">
+                                    <a th:href="@{'/student/problem'}">
+                                        Задача 3
+                                    </a>
+                                </div>
+                                <div class="col">
+                                    Средняя
+                                </div>
+                                <div class="col">
+                                    <a href="#">
+                                        <i class="fa fa-tag" aria-hidden="true"></i>&nbsp; Тег 5
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="row row-table dark-row">
+                                <div class="col">
+                                    <a th:href="@{'/student/problem'}">
+                                        Задача 4
+                                    </a>
+                                </div>
+                                <div class="col">
+                                    Средняя
+                                </div>
+                                <div class="col">
+                                    <a href="#">
+                                        <i class="fa fa-tag" aria-hidden="true"></i>&nbsp; Тег 5
+                                    </a>&nbsp;
+                                    <a href="#">
+                                        <i class="fa fa-tag" aria-hidden="true"></i>&nbsp; Тег 6
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <footer th:replace="base :: footer"></footer>
+
+
+    <script>
+        //Клик по вкладке Задачи темы
+        $('#linkThemeProblems').click(function(e){
+            $('#linkThemeProblems').addClass('active');
+            $('#problemsOfTheme').show();
+        });
+
+
+    </script>
+</body>
+</html>

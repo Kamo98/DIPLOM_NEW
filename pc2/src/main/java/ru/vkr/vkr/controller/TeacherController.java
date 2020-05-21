@@ -62,14 +62,12 @@ public class TeacherController {
 
 
 
-    // посмотреть данные преподавателя
     @GetMapping("/teacher")
     public String mainTeacher() {
-        //todo: нужно переделать главную страницу преподавателя
-        return "redirect:/teacher/group-create";
+        return "teacher/main";
     }
 
-    // посмотреть группу преподавателя
+
     @GetMapping("/teacher/group/{groupId}")
     public String groupGet(Model model, @PathVariable Long groupId) {
         //todo: нужен контроль доступа к группе (только владелец имеет доступ)
@@ -81,7 +79,6 @@ public class TeacherController {
         return "teacher/group";
     }
 
-    // внести изменения в группу преподавателя
     @PostMapping("/teacher/group/{groupId}")
     public String groupPost(@Valid Group groupForm, @PathVariable Long groupId) {
         //todo: тоже нужна валидация, как и в случае с курсом

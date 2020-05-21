@@ -43,36 +43,89 @@
 
                 <div class="container" id="containerOfTabs">
 
-                    <div id="themesOfCourse" th:unless="${isCreate}">
+                    <div id="themesOfCourse" th:unless="${isCreate}" class="col-align-centered">
                         <!--<div class="alert alert-warning" role="alert">-->
                             <!--Курс пока не содержит ни одной темы.-->
                         <!--</div>-->
 
-                        <div class="row item-mylist">
-                            <div class="col col-align-center">
+                        <div class="row row-table table-header">
+                            <div class="col">
+                                Наименование темы
+                            </div>
+                            <div class="col-2">
+                                Дата создания
+                            </div>
+                            <div class="col-2">
+                                Управление
+                            </div>
+                        </div>
+                        <div class="row row-table">
+                            <div class="col">
                                 <a href="/teacher/theme"><i class="fa fa-book fa-fw" aria-hidden="true"></i>&nbsp;
                                     Динамическое программирование
                                 </a>
                             </div>
-                            <div class="col-4">
+                            <div class="col-2">
                                 <i class="fa fa-calendar" aria-hidden="true"></i>&nbsp;
                                 06/11/2020
                             </div>
-                            <div class="col-1">
+                            <div class="col-2">
                                 <a class="btn btn-danger" href="#"><i class="fa fa-trash-o fa-lg"></i></a>
                             </div>
                         </div>
-                        <div class="row item-mylist">
-                            <div class="col col-align-center">
+                        <div class="row row-table dark-row">
+                            <div class="col">
                                 <a href="/teacher/theme"><i class="fa fa-book fa-fw" aria-hidden="true"></i>&nbsp;
-                                    Динамическое программирование
+                                    Обходы в графах
                                 </a>
                             </div>
-                            <div class="col-4">
+                            <div class="col-2">
                                 <i class="fa fa-calendar" aria-hidden="true"></i>&nbsp;
                                 15/11/2020
                             </div>
-                            <div class="col-1">
+                            <div class="col-2">
+                                <a class="btn btn-danger" href="#"><i class="fa fa-trash-o fa-lg"></i></a>
+                            </div>
+                        </div>
+                        <div class="row row-table">
+                            <div class="col">
+                                <a href="/teacher/theme"><i class="fa fa-book fa-fw" aria-hidden="true"></i>&nbsp;
+                                    Потоки
+                                </a>
+                            </div>
+                            <div class="col-2">
+                                <i class="fa fa-calendar" aria-hidden="true"></i>&nbsp;
+                                27/11/2020
+                            </div>
+                            <div class="col-2">
+                                <a class="btn btn-danger" href="#"><i class="fa fa-trash-o fa-lg"></i></a>
+                            </div>
+                        </div>
+                        <div class="row row-table dark-row">
+                            <div class="col">
+                                <a href="/teacher/theme"><i class="fa fa-book fa-fw" aria-hidden="true"></i>&nbsp;
+                                    Простая геометрия
+                                </a>
+                            </div>
+                            <div class="col-2">
+                                <i class="fa fa-calendar" aria-hidden="true"></i>&nbsp;
+                                19/11/2020
+                            </div>
+                            <div class="col-2">
+                                <a class="btn btn-danger" href="#"><i class="fa fa-trash-o fa-lg"></i></a>
+                            </div>
+                        </div>
+                        <div class="row row-table">
+                            <div class="col">
+                                <a href="/teacher/theme"><i class="fa fa-book fa-fw" aria-hidden="true"></i>&nbsp;
+                                    Тренировка от 21/11/2020
+                                </a>
+                            </div>
+                            <div class="col-2">
+                                <i class="fa fa-calendar" aria-hidden="true"></i>&nbsp;
+                                21/11/2020
+                            </div>
+                            <div class="col-2">
                                 <a class="btn btn-danger" href="#"><i class="fa fa-trash-o fa-lg"></i></a>
                             </div>
                         </div>
@@ -103,21 +156,27 @@
                             Добавляемая вами группы уже является подписчиком курса
                         </div>
 
+                        <div class="col-align-centered" th:unless="${courseSubscribers.empty}">
+                            <div class="row row-table table-header">
+                                <div class="col">
+                                    Группа
+                                </div>
+                                <div class="col-3">
+                                    Управление
+                                </div>
+                            </div>
 
-                        <div class="row item-mylist" th:each="subscribe : ${courseSubscribers}">
-                            <div class="col col-align-center">
-                                <i class="fa fa-users" aria-hidden="true"></i>&nbsp;
-                                [[ ${subscribe.name} ]]
-                            </div>
-                            <div class="col col-align-center">
-                                <a th:href="@{'/teacher/group/' + ${subscribe.id}}"><i class="fa fa-check" aria-hidden="true"></i>&nbsp;
-                                    Перейти к группе
-                                </a>
-                            </div>
-                            <div class="col-3">
-                                <a class="btn btn-danger" th:href="@{'/teacher/course/' + ${course.id} + '/signDown/' + ${subscribe.id} }"><i class="fa fa-trash-o fa-lg"></i>&nbsp;
-                                    Отписать от курса
-                                </a>
+                            <div th:class="'row row-table ' + ((${iState.index} % 2 == 1) ? 'dark-row' : '')" th:each="subscribe, iState : ${courseSubscribers}">
+                                <div class="col col-align-center">
+                                    <a th:href="@{'/teacher/group/' + ${subscribe.id}}"><i class="fa fa-users" aria-hidden="true"></i>&nbsp;
+                                    [[ ${subscribe.name} ]]
+                                    </a>
+                                </div>
+                                <div class="col-3">
+                                    <a class="btn btn-danger" th:href="@{'/teacher/course/' + ${course.id} + '/signDown/' + ${subscribe.id} }"><i class="fa fa-trash-o fa-lg"></i>&nbsp;
+                                        Отписать от курса
+                                    </a>
+                                </div>
                             </div>
                         </div>
 

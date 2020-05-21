@@ -91,8 +91,6 @@ hr {
 }
 
 
-
-
 /*Кнопки*/
 
 .btn{
@@ -211,3 +209,76 @@ hr {
   background-color: rgba(220, 53, 69, 0.9);
   border-radius: 0.25rem;
 }
+
+/***************/
+
+
+
+/***************
+****Таблица****/
+
+.table-header{
+    font-weight: 700;
+    border-top: 1px #CCC solid;
+}
+
+.dark-row {
+    background-color: #eee;
+}
+
+.row-table {
+    border-bottom: 1px #CCC solid;
+    height: 3.5rem;
+}
+
+
+
+.col-align-centered .col, .col-align-centered .col-1, .col-align-centered .col-2, .col-align-centered .col-3, .col-align-centered .col-4{
+    align-self: center;
+    text-align: center;
+}
+
+.col-border-right {
+     border-right: 1px #ccc solid;
+ }
+
+ .col-border-left {
+     border-left: 1px #ccc solid;
+ }
+
+/***************/
+
+
+
+/***************
+****Монитор****/
+
+
+.cell-task-plus {
+    color: #00CC00;
+    font-weight: 700;
+}
+
+.cell-task-minus {
+    color: #980023;
+    font-weight: 700;
+}
+
+
+
+/***************/
+
+
+
+
+
+/***************
+****Монитор****/
+
+
+.hash-tag-remove {
+    color: red;
+}
+
+
+/***************/

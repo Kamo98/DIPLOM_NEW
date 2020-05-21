@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="base :: common_header(~{::title})">
+    <title>Задача</title>
+
+</head>
+
+<body>
+
+    <div th:replace="base :: navigation"></div>
+
+    <div class="container">
+        <div class="row row-margin-bottom">
+
+            <!--    Вставка боковой панели  -->
+            <div th:replace="base :: side-panels"></div>
+            <!-- *** -->
+
+
+            <div class="main-content col-9 border rounded-lg">
+                <h5 class="centered green-h" th:unless="${isCreate}">Задача "Название задачи"</h5>
+                <h5 class="centered green-h" th:if="${isCreate}">Задача "Без названия"</h5>
+
+
+                <ul class="nav nav-pills tabs-menu">
+                    <li th:unless="${isCreate}">
+                        <a class="nav-link active" href="" id="linkStatementProblem">Условие</a>
+                    </li>
+                    <li th:unless="${isCreate}">
+                        <a class="nav-link" href="" id="linkSendProblem">Сдать</a>
+                    </li>
+                </ul>
+
+
+
+
+                <div class="container" id="containerOfTabs">
+
+
+                    <div id="statementProblem" >
+                        <!--<div class="alert alert-warning" role="alert">-->
+                            <!--Курс пока не содержит ни одной темы.-->
+                        <!--</div>-->
+
+                        <embed th:src="@{'/problems/sample problem.pdf'}" width="800px" height="1000px" />
+
+
+                    </div>
+
+                    <div id="sendProblem" style="display:none;">
+                        <form>
+                            <div class="row row-margin-top">
+                                <div class="col-3 col-align-center">
+                                   <label for="compilerSend">Компилятор:</label>
+                                </div>
+                                <div class="col">
+                                    <select class="form-control" id="compilerSend">
+                                        <option>Visual C++ 2019</option>
+                                        <option>GNU C++</option>
+                                        <option>Java</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row row-margin-top">
+                                <div class="col-3 col-align-center">
+                                    <label for="fileSolutionSend">Выберите файл:</label>
+                                </div>
+                                <div class="col">
+                                    <input type="file" class="form-control" id="fileSolutionSend">
+                                </div>
+                            </div>
+                            <div class="row row-margin-top">
+                                <div class="col-3 col-align-center">
+                                    <label for="codeSolutionSend">Или вставье код:</label>
+                                </div>
+                                <div class="col">
+                                    <textarea rows="15" class="form-control" id="codeSolutionSend"></textarea>
+                                </div>
+                            </div>
+                            <div class="row row-margin-top">
+                                <div class="col">
+                                    <button type="submit" class="btn btn-success">Отправить решение</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+
+    <footer th:replace="base :: footer"></footer>
+
+
+    <script>
+        $('#linkStatementProblem').click(function(e){
+            $('#linkStatementProblem').addClass('active');
+            $('#statementProblem').show();
+        });
+
+
+        $('#linkSendProblem').click(function(e){
+            $('#linkSendProblem').addClass('active');
+            $('#sendProblem').show();
+        });
+
+    </script>
+</body>
+</html>

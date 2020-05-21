@@ -65,22 +65,7 @@
 
         <div th:fragment="side-panels" class="col">
             <div class="container">
-                <!--<div class="row row-margin-bottom">-->
-                    <!--<div class = "col border rounded-lg quick-panel">-->
-                        <!--<h5><i class="fa fa-tasks" aria-hidden="true"></i>&nbsp;Мои отправки</h5>-->
-                        <!--<hr />-->
-                        <!--<ul>-->
-                            <!--<li><a href="#">Задача 1</a></li>-->
-                            <!--<li><a href="#">Задача 2</a></li>-->
-                            <!--<li><a href="#">Задача 3</a></li>-->
-                            <!--<li><a href="#">Задача 5</a></li>-->
-                            <!--<li><a href="#">Задача 6</a></li>-->
-                            <!--<li><a href="#">Задача 7</a></li>-->
-                            <!--<li><a href="#">Задача 8</a></li>-->
-                            <!--<li><a href="#"><i class="fa fa-shield fa-rotate-270"></i>&nbsp;Ещё...</a></li>-->
-                        <!--</ul>-->
-                    <!--</div>-->
-                <!--</div>-->
+
 
                 <div class="row row-margin-bottom" th:if="${teacherCourses}">
                     <div class = "col border rounded-lg quick-panel">
@@ -105,6 +90,73 @@
                             </li>
                         </ul>
                         <div class="link-new"><a th:href="@{/teacher/group-create}"><i class="fa fa-plus" aria-hidden="true"></i>&nbsp;Создать группу</a></div>
+                    </div>
+                </div>
+
+                <div class="row row-margin-bottom" th:if="${teacherGroups}">
+                    <div class = "col border rounded-lg quick-panel">
+                        <h5><i class="fa fa-tasks" aria-hidden="true"></i>&nbsp;Мои задачи</h5>
+                        <hr />
+                        <ul>
+                            <li><a th:href="@{'/teacher/problem'}">Задача 1</a></li>
+                            <li><a th:href="@{'/teacher/problem'}">Задача 2</a></li>
+                            <li><a th:href="@{'/teacher/problem'}">Задача 3</a></li>
+                            <li><a th:href="@{'/teacher/problem'}">Задача 5</a></li>
+                            <li><a th:href="@{'/teacher/problem'}">Задача 6</a></li>
+                            <li><a th:href="@{'/teacher/problem'}"><i class="fa fa-shield fa-rotate-270"></i>&nbsp;Ещё...</a></li>
+                        </ul>
+                        <div class="link-new"><a href="#"><i class="fa fa-plus" aria-hidden="true"></i>&nbsp;Создать задачу</a></div>
+
+                    </div>
+                </div>
+
+
+
+
+
+
+
+
+
+                <div class="row row-margin-bottom" th:if="${studentCourses}">
+                    <div class = "col border rounded-lg quick-panel">
+                        <h5><i class="fa fa-graduation-cap" aria-hidden="true"></i>&nbsp;Курсы</h5>
+                        <hr />
+                        <ul>
+                            <li>
+                                <a th:href="@{'/student/course/'}">Курс 1</a>
+                            </li>
+                            <li>
+                                <a th:href="@{'/student/course/'}">Курс 2</a>
+                            </li>
+                            <li>
+                                <a th:href="@{'/student/course/'}">Курс 3</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="row row-margin-bottom" th:if="${studentCourses}">
+                    <div class = "col border rounded-lg quick-panel">
+                        <h5><i class="fa fa-graduation-cap" aria-hidden="true"></i>&nbsp;Недавние задачи</h5>
+                        <hr />
+                        <ul>
+                            <li>
+                                <a th:href="@{'/student/problem/'}">Задача 1</a>
+                            </li>
+                            <li>
+                                <a th:href="@{'/student/problem/'}">Задача 2</a>
+                            </li>
+                            <li>
+                                <a th:href="@{'/student/problem/'}">Задача 3</a>
+                            </li>
+                            <li>
+                                <a th:href="@{'/student/problem/'}">Задача 4</a>
+                            </li>
+                            <li>
+                                <a th:href="@{'/student/problem/'}">Задача 5</a>
+                            </li>
+                        </ul>
                     </div>
                 </div>
 

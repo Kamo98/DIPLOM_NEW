@@ -18,25 +18,209 @@
 
 
             <div class="main-content col-9 border rounded-lg">
-                <h5 class="centered green-h">Тема "Без названия"</h5>
+                <h5 class="centered green-h">Тема "Динамическое программирование"</h5>
 
                 <ul class="nav nav-pills tabs-menu">
                     <li>
-                        <a class="nav-link active" href="#"><i class="fa fa-book fa-fw" aria-hidden="true"></i>&nbsp;Материалы</a>
+                        <a class="nav-link active" href="#" id="linkThemeProblems"><i class="fa fa-tasks" aria-hidden="true"></i>&nbsp;Задачи</a>
+                    </li>
+                    <li>
+                        <a class="nav-link " href="#" id="linkThemeSettings"><i class="fa fa-cogs" aria-hidden="true"></i>&nbsp;Параметры</a>
                     </li>
                 </ul>
 
 
 
 
-                <div class="container">
+                <div class="container" id="containerOfTabs">
+
+                    <div id="problemsOfTheme" >
+                        <!--<div class="alert alert-warning" role="alert">-->
+                            <!--К теме пока не прикреплена ни одна задача-->
+                        <!--</div>-->
+                        <!--<div class="alert alert-danger" role="alert">-->
+                            <!--Прикрепляемая вами задача уже прикреплена к теме-->
+                        <!--</div>-->
+
+                        <div class="col-align-centered">
+                            <div class="row row-table table-header">
+                                <div class="col">
+                                    <i class="fa fa-tasks" aria-hidden="true"></i>&nbsp; Задача
+                                </div>
+                                <div class="col">
+                                    <i class="fa fa-wrench" aria-hidden="true"></i>&nbsp; Сложность
+                                </div>
+                                <div class="col">
+                                    <i class="fa fa-tags" aria-hidden="true"></i>&nbsp; Теги
+                                </div>
+                                <div class="col-3">
+                                    Управление
+                                </div>
+                            </div>
+
+                            <div class="row row-table">
+                                <div class="col">
+                                    <a th:href="@{'/teacher/problem'}">
+                                        Задача 1
+                                    </a>
+                                </div>
+                                <div class="col">
+                                    Высокая
+                                </div>
+                                <div class="col">
+                                    <a href="#">
+                                        <i class="fa fa-tag" aria-hidden="true"></i>&nbsp; Тег 1
+                                    </a>
+                                    &nbsp;
+                                    <a href="#">
+                                        <i class="fa fa-tag" aria-hidden="true"></i>&nbsp; Тег 2
+                                    </a>
+                                </div>
+                                <div class="col-3">
+                                    <a class="btn btn-danger" href="#"><i class="fa fa-trash-o fa-lg"></i>&nbsp;
+                                        Открепить от темы
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="row row-table dark-row">
+                                <div class="col">
+                                    <a th:href="@{'/teacher/problem'}">
+                                        Задача 2
+                                    </a>
+                                </div>
+                                <div class="col">
+                                    Средняя
+                                </div>
+                                <div class="col">
+                                    <a href="#">
+                                        <i class="fa fa-tag" aria-hidden="true"></i>&nbsp; Тег 4
+                                    </a>
+                                </div>
+                                <div class="col-3">
+                                    <a class="btn btn-danger" href="#"><i class="fa fa-trash-o fa-lg"></i>&nbsp;
+                                        Открепить от темы
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="row row-table">
+                                <div class="col">
+                                    <a th:href="@{'/teacher/problem'}">
+                                        Задача 3
+                                    </a>
+                                </div>
+                                <div class="col">
+                                    Средняя
+                                </div>
+                                <div class="col">
+                                    <a href="#">
+                                        <i class="fa fa-tag" aria-hidden="true"></i>&nbsp; Тег 5
+                                    </a>
+                                </div>
+                                <div class="col-3">
+                                    <a class="btn btn-danger" href="#"><i class="fa fa-trash-o fa-lg"></i>&nbsp;
+                                        Открепить от темы
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="row row-table dark-row">
+                                <div class="col">
+                                    <a th:href="@{'/teacher/problem'}">
+                                        Задача 4
+                                    </a>
+                                </div>
+                                <div class="col">
+                                    Средняя
+                                </div>
+                                <div class="col">
+                                    <a href="#">
+                                        <i class="fa fa-tag" aria-hidden="true"></i>&nbsp; Тег 5
+                                    </a>&nbsp;
+                                    <a href="#">
+                                        <i class="fa fa-tag" aria-hidden="true"></i>&nbsp; Тег 6
+                                    </a>
+                                </div>
+                                <div class="col-3">
+                                    <a class="btn btn-danger" href="#"><i class="fa fa-trash-o fa-lg"></i>&nbsp;
+                                        Открепить от темы
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
 
 
-                    <div class="row">
-                        Тут страница с материалами темы и с возможностью добавления новых
+                        <div class="row row-margin-top">
+                            <h6 ><i class="fa fa-paperclip" aria-hidden="true"></i>&nbsp;Прикрепить задачу к теме</h6 >
+                        </div>
+                        <form>
+                            <div class="row">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <div class="row">
+                                            <div class="col">
+                                                <input type="radio" name="typeAddProblem" id="typeAddSelect" checked="checked">
+                                                <label for="typeAddSelect">Выбрать задачу из существующих</label>
+                                            </div>
+
+                                            <div class="col">
+                                                <select class="form-control" id="selectProblems">
+                                                    <option>Задача 1</option>
+                                                    <option>Задача 2</option>
+                                                    <option>Задача 3</option>
+                                                    <option>Задача 4</option>
+                                                    <option>Задача 5</option>
+                                                    <option>Задача 6</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="radio" name="typeAddProblem" id="typeAddNew">
+                                        <label for="typeAddNew">Создать новую задачу и прикрепить её к теме</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <button class="btn btn-success" type="submit"><i class="fa fa-paperclip" aria-hidden="true"></i>&nbsp;Прикрепить</button>
+                            </div>
+                        </form>
                     </div>
 
+                    <div id="themeSettings" style="display: none;">
+                        <form>
+                            <div class="row row-margin-top">
+                                <div class="col-3 col-align-center">
+                                    <label for="nameOfTheme">Наименование темы</label>
+                                </div>
+                                <div class="col">
+                                    <input type="text" id="nameOfTheme" class="form-control" value="Динамическое программирование">
+                                    <!--<div class="col invalid-tooltip">-->
+                                    <!--Наименование курса не может быть пустым-->
+                                    <!--</div>-->
+                                    <!--<div class="col my-invalid-tooltip">Некорректное наименование</div>-->
+                                </div>
+                            </div>
 
+                            <div class="row row-margin-top">
+                                <div class = "col col-align-right">
+
+                                    <button class="btn btn-primary" type="submit">
+                                        <i class="fa fa-floppy-o" aria-hidden="true"></i>&nbsp;Сохранить
+                                    </button>
+
+                                    <!--<button class="btn btn-primary" type="submit" th:unless="${isCreate}">-->
+                                        <!--<i class="fa fa-floppy-o" aria-hidden="true"></i>&nbsp;Сохранить-->
+                                    <!--</button>-->
+
+                                    <!--<button class="btn btn-primary" type="submit" th:if="${isCreate}">-->
+                                        <!--<i class="fa fa-plus" aria-hidden="true"></i>&nbsp;Создать-->
+                                    <!--</button>-->
+                                </div>
+                            </div>
+                        </form>
+                    </div>
                 </div>
 
             </div>
@@ -45,5 +229,29 @@
     </div>
 
     <footer th:replace="base :: footer"></footer>
+
+
+    <script>
+        //Клик по вкладке Задачи темы
+        $('#linkThemeProblems').click(function(e){
+            $('#linkThemeProblems').addClass('active');
+            $('#problemsOfTheme').show();
+        });
+
+        //Клик по вкладке Параметры
+        $('#linkThemeSettings').click(function(e){
+            $('#linkThemeSettings').addClass('active');
+            $('#themeSettings').show();
+        });
+
+        //Обработка кликов по радио-кнопкам с выбором типа прикрепления задачи
+        $('#typeAddSelect').click(function(e){
+            $('#selectProblems').attr('disabled', false);
+        });
+
+        $('#typeAddNew').click(function(e){
+            $('#selectProblems').attr('disabled', true);
+        });
+    </script>
 </body>
 </html>
