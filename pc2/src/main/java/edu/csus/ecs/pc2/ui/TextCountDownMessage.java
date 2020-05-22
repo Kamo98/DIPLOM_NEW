@@ -52,7 +52,10 @@ public class TextCountDownMessage extends TimerTask implements ICountDownMessage
 
     public void actionOnClose() {
         if (exitOnClose) {
-            System.exit(4);
+            System.out.println("logout success");
+            setExitOnClose(false);
+            timer.cancel();
+            // System.exit(4);
         } else {
             timer.cancel();
         }

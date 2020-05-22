@@ -1,21 +1,5 @@
 package edu.csus.ecs.pc2.core;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.io.Serializable;
-import java.lang.management.ManagementFactory;
-import java.security.MessageDigest;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Properties;
-import java.util.Vector;
-import java.util.logging.ConsoleHandler;
-import java.util.logging.Level;
-
 import edu.csus.ecs.pc2.VersionInfo;
 import edu.csus.ecs.pc2.clics.RunSubmitterInterfaceManager;
 import edu.csus.ecs.pc2.convert.EventFeedRun;
@@ -27,41 +11,12 @@ import edu.csus.ecs.pc2.core.exception.ServerProcessException;
 import edu.csus.ecs.pc2.core.log.EvaluationLog;
 import edu.csus.ecs.pc2.core.log.Log;
 import edu.csus.ecs.pc2.core.log.StaticLog;
-import edu.csus.ecs.pc2.core.model.Account;
-import edu.csus.ecs.pc2.core.model.BalloonSettings;
-import edu.csus.ecs.pc2.core.model.Category;
-import edu.csus.ecs.pc2.core.model.Clarification;
+import edu.csus.ecs.pc2.core.model.*;
 import edu.csus.ecs.pc2.core.model.Clarification.ClarificationStates;
-import edu.csus.ecs.pc2.core.model.ClientId;
-import edu.csus.ecs.pc2.core.model.ClientSettings;
-import edu.csus.ecs.pc2.core.model.ClientType;
 import edu.csus.ecs.pc2.core.model.ClientType.Type;
-import edu.csus.ecs.pc2.core.model.ContestInformation;
-import edu.csus.ecs.pc2.core.model.ContestTime;
-import edu.csus.ecs.pc2.core.model.ElementId;
-import edu.csus.ecs.pc2.core.model.FinalizeData;
-import edu.csus.ecs.pc2.core.model.Group;
-import edu.csus.ecs.pc2.core.model.IInternalContest;
-import edu.csus.ecs.pc2.core.model.ILoginListener;
-import edu.csus.ecs.pc2.core.model.IPacketListener;
-import edu.csus.ecs.pc2.core.model.Judgement;
-import edu.csus.ecs.pc2.core.model.JudgementRecord;
-import edu.csus.ecs.pc2.core.model.Language;
-import edu.csus.ecs.pc2.core.model.LoginEvent;
 import edu.csus.ecs.pc2.core.model.MessageEvent.Area;
-import edu.csus.ecs.pc2.core.model.PacketEvent;
 import edu.csus.ecs.pc2.core.model.PacketEvent.Action;
-import edu.csus.ecs.pc2.core.model.PlaybackInfo;
-import edu.csus.ecs.pc2.core.model.Problem;
-import edu.csus.ecs.pc2.core.model.ProblemDataFiles;
-import edu.csus.ecs.pc2.core.model.Profile;
-import edu.csus.ecs.pc2.core.model.Run;
 import edu.csus.ecs.pc2.core.model.Run.RunStates;
-import edu.csus.ecs.pc2.core.model.RunExecutionStatus;
-import edu.csus.ecs.pc2.core.model.RunFiles;
-import edu.csus.ecs.pc2.core.model.RunResultFiles;
-import edu.csus.ecs.pc2.core.model.SerializedFile;
-import edu.csus.ecs.pc2.core.model.Site;
 import edu.csus.ecs.pc2.core.packet.Packet;
 import edu.csus.ecs.pc2.core.packet.PacketFactory;
 import edu.csus.ecs.pc2.core.packet.PacketType;
@@ -69,26 +24,21 @@ import edu.csus.ecs.pc2.core.report.ContestSummaryReports;
 import edu.csus.ecs.pc2.core.security.FileSecurity;
 import edu.csus.ecs.pc2.core.security.FileSecurityException;
 import edu.csus.ecs.pc2.core.security.Permission;
-import edu.csus.ecs.pc2.core.transport.ConnectionHandlerID;
-import edu.csus.ecs.pc2.core.transport.IBtoA;
-import edu.csus.ecs.pc2.core.transport.ITransportManager;
-import edu.csus.ecs.pc2.core.transport.ITwoToOne;
-import edu.csus.ecs.pc2.core.transport.TransportException;
+import edu.csus.ecs.pc2.core.transport.*;
 import edu.csus.ecs.pc2.core.transport.connection.ConnectionManager;
 import edu.csus.ecs.pc2.imports.ccs.ContestSnakeYAMLLoader;
 import edu.csus.ecs.pc2.imports.ccs.IContestLoader;
 import edu.csus.ecs.pc2.profile.ProfileCloneSettings;
 import edu.csus.ecs.pc2.profile.ProfileManager;
-import edu.csus.ecs.pc2.ui.ILogWindow;
-import edu.csus.ecs.pc2.ui.ILoginUI;
-import edu.csus.ecs.pc2.ui.IStartupContestDialog;
-import edu.csus.ecs.pc2.ui.LoadUIClass;
-import edu.csus.ecs.pc2.ui.TextCountDownMessage;
-import edu.csus.ecs.pc2.ui.UIPlugin;
-import edu.csus.ecs.pc2.ui.UIPluginList;
-import org.springframework.context.annotation.Bean;
+import edu.csus.ecs.pc2.ui.*;
 import org.springframework.stereotype.Component;
-import ru.vkr.vkr.VkrApplication;
+
+import java.io.*;
+import java.lang.management.ManagementFactory;
+import java.security.MessageDigest;
+import java.util.*;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Level;
 
 /**
  * Implementation of InternalContest InternalController.
@@ -170,7 +120,7 @@ public class InternalController implements IInternalController, ITwoToOne, IBtoA
     /**
      * Is this started using a GUI ?
      */
-    private boolean usingGUI = true;
+    private boolean usingGUI = false;
 
     private Log log;
 
@@ -2295,21 +2245,7 @@ public class InternalController implements IInternalController, ITwoToOne, IBtoA
     }   
 
     private void shutdown() {
-
-        ICountDownMessage countDownMessage = null;
-        if (usingGUI) {
-            /**
-             * GUI countdown
-             */
-            countDownMessage = (ICountDownMessage) loadUIClass(countdownClassName);
-        }
-
-        if (countDownMessage == null) {
-            /**
-             * Text count down
-             */
-            countDownMessage = new TextCountDownMessage();
-        }
+        ICountDownMessage countDownMessage = new TextCountDownMessage();
         
         if (contest.getClientId() != null) {
             info("connectionDropped: shutting down " + contest.getClientId());
@@ -3804,7 +3740,7 @@ public class InternalController implements IInternalController, ITwoToOne, IBtoA
         }
 
         if (haltOnFatalError) {
-            System.exit(4);
+            // System.exit(4);
         }
         
     }
