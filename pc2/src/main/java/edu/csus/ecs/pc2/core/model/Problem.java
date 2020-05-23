@@ -390,46 +390,46 @@ public class Problem implements IElementObject {
         String retStr = "Problem[";
         
         retStr += "displayName=" + displayName;
-        retStr += "; elementId=" + elementId;
-        retStr += "; number=" + number;
-        retStr += "; dataFileName=" + judgesInputDataFileName;
-        retStr += "; answerFileName=" + answerFileName;
-        retStr += "; testCaseDataFilenames=" + testCaseDataFilenames;
-        retStr += "; testCaseAnswerFilenames=" + testCaseAnswerFilenames;
-        retStr += "; active=" + active;
-        retStr += "; readInputDataFromSTDIN=" + readInputDataFromSTDIN;
-        retStr += "; timeOutInSeconds=" + timeOutInSeconds;
+        retStr += ";<br/> elementId=" + elementId;
+        retStr += ";<br/> number=" + number;
+        retStr += ";<br/> dataFileName=" + judgesInputDataFileName;
+        retStr += ";<br/> answerFileName=" + answerFileName;
+        retStr += ";<br/> testCaseDataFilenames=" + testCaseDataFilenames;
+        retStr += ";<br/> testCaseAnswerFilenames=" + testCaseAnswerFilenames;
+        retStr += ";<br/> active=" + active;
+        retStr += ";<br/> readInputDataFromSTDIN=" + readInputDataFromSTDIN;
+        retStr += ";<br/> timeOutInSeconds=" + timeOutInSeconds;
         
         boolean validatedProblem = getValidatorType()==VALIDATOR_TYPE.NONE;
-        retStr += "; validatedProblem=" + validatedProblem;
-        retStr += "; validatorType=" + getValidatorType();
-        retStr += "; pc2ValidatorSettings=" + getPC2ValidatorSettings();
-        retStr += "; clicsValidatorSettings=" + getClicsValidatorSettings();
-        retStr += "; customValidatorSettings=" + getCustomValidatorSettings();
+        retStr += ";<br/> validatedProblem=" + validatedProblem;
+        retStr += ";<br/> validatorType=" + getValidatorType();
+        retStr += ";<br/> pc2ValidatorSettings=" + getPC2ValidatorSettings();
+        retStr += ";<br/> clicsValidatorSettings=" + getClicsValidatorSettings();
+        retStr += ";<br/> customValidatorSettings=" + getCustomValidatorSettings();
         
-        retStr += "; problemHasInputValidator=" + isProblemHasInputValidator();
-        retStr += "; inputValidatorRunStatus=" + getInputValidationStatus();
+        retStr += ";<br/> problemHasInputValidator=" + isProblemHasInputValidator();
+        retStr += ";<br/> inputValidatorRunStatus=" + getInputValidationStatus();
         
-        retStr += "; inputValidatorProgramName=" + inputValidatorProgramName;
-        retStr += "; inputValidatorCommandLine=" + inputValidatorCommandLine;
+        retStr += ";<br/> inputValidatorProgramName=" + inputValidatorProgramName;
+        retStr += ";<br/> inputValidatorCommandLine=" + inputValidatorCommandLine;
         
         
-        retStr += "; internationalJudgementReadMethod=" + internationalJudgementReadMethod;
-        retStr += "; executionPrepCommand=" + executionPrepCommand;
+        retStr += ";<br/> internationalJudgementReadMethod=" + internationalJudgementReadMethod;
+        retStr += ";<br/> executionPrepCommand=" + executionPrepCommand;
 
-        retStr += "; showValidationToJudges=" + showValidationToJudges;
-        retStr += "; hideOutputWindow=" + hideOutputWindow;
-        retStr += "; showCompareWindow=" + showCompareWindow;
-        retStr += "; computerJudged=" + computerJudged;
-        retStr += "; manualReview=" + manualReview;
-        retStr += "; prelimaryNotification=" + prelimaryNotification;
-        retStr += "; shortName=" + shortName;
-        retStr += "; letter=" + letter;
-        retStr += "; colorName=" + colorName;
-        retStr += "; colorRGB=" + colorRGB;
-        retStr += "; usingExternalDataFiles=" + usingExternalDataFiles;
-        retStr += "; externalDataFileLocation=" + externalDataFileLocation;
-        retStr += "; state=" + state;
+        retStr += ";<br/> showValidationToJudges=" + showValidationToJudges;
+        retStr += ";<br/> hideOutputWindow=" + hideOutputWindow;
+        retStr += ";<br/> showCompareWindow=" + showCompareWindow;
+        retStr += ";<br/> computerJudged=" + computerJudged;
+        retStr += ";<br/> manualReview=" + manualReview;
+        retStr += ";<br/> prelimaryNotification=" + prelimaryNotification;
+        retStr += ";<br/> shortName=" + shortName;
+        retStr += ";<br/> letter=" + letter;
+        retStr += ";<br/> colorName=" + colorName;
+        retStr += ";<br/> colorRGB=" + colorRGB;
+        retStr += ";<br/> usingExternalDataFiles=" + usingExternalDataFiles;
+        retStr += ";<br/> externalDataFileLocation=" + externalDataFileLocation;
+        retStr += ";<br/> state=" + state;
       
         retStr += "]";
         return retStr;

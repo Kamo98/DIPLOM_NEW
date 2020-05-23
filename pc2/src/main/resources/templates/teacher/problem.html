@@ -48,6 +48,11 @@
                 <div class="container" id="containerOfTabs">
 
                     <div id="problemSettings">
+
+                        <ul>
+                            <li th:each="problem : ${problems}"><span th:text="${problem.getDisplayName()}"></span></li>
+                        </ul>
+
                         <form>
                             <div class="row row-margin-top">
                                 <div class="col-3 col-align-center">
