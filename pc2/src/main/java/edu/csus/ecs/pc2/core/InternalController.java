@@ -2765,8 +2765,8 @@ public class InternalController implements IInternalController, ITwoToOne, IBtoA
         }
 
         isStarted = true;
-        String loginName = "root";
-        String password = "administrator1";
+        String loginName = "team1";
+        String password = "team1";
 
         try {
 

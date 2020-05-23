@@ -7,16 +7,23 @@ import edu.csus.ecs.pc2.core.model.SerializedFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.UUID;
 
 @Service
 public class SubmitRunService {
     private static Logger logger = LoggerFactory.getLogger(SubmitRunService.class);
 
     SerializedFile[] otherFiles = null;
+
+    @Value("${spring.servlet.multipart.location}")
+    private String location;
 
     @Autowired
     ApplicationContext applicationContext;
@@ -26,8 +33,29 @@ public class SubmitRunService {
         return file.isFile();
     }
 
-    protected void submitRun(Problem problem, Language language, String fileName) {
+    String convertFileToString(MultipartFile file) {
+        if (file != null && !file.getOriginalFilename().isEmpty()) {
+            File uploadDir = new File(location);
+
+            if (!uploadDir.exists()) {
+                uploadDir.mkdir();
+            }
+
+            String uuidFile = UUID.randomUUID().toString();
+            String resultFilename = uuidFile + "." + file.getOriginalFilename();
+            try {
+                file.transferTo(new File(location + "/" + resultFilename));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return location + resultFilename  ;
+        }
+        return "";
+    }
+
+    public void submitRun(Problem problem, Language language, MultipartFile file) {
         InternalController internalController = (InternalController) applicationContext.getBean("getInternalController");
+        String fileName = convertFileToString(file);
         if (!fileExists(fileName)) {
             File curdir = new File(".");
             String message = fileName + " not found";
