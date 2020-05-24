@@ -1,14 +1,12 @@
 package ru.vkr.vkr.controller;
 
 import edu.csus.ecs.pc2.core.InternalController;
+import edu.csus.ecs.pc2.core.model.ElementId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.vkr.vkr.entity.Course;
 import ru.vkr.vkr.form.SubmitRunForm;
@@ -55,7 +53,7 @@ public class StudentController {
     public String getProblem(Model model) {
         InternalController internalController = (InternalController) applicationContext.getBean("getInternalController");
         SubmitRunForm submitRunForm = new SubmitRunForm();
-
+        model.addAttribute("runs", submitRunService.getRunSummit());
         model.addAttribute("langs", internalController.getContest().getLanguages());
         model.addAttribute("problems", internalController.getContest().getProblems());
         model.addAttribute("submitRunForm", submitRunForm);
@@ -71,6 +69,12 @@ public class StudentController {
         return "redirect:/student/problem";
     }
 
+    @GetMapping("/student/source/{indexRun}")
+    public String showSource(Model model,
+                             @PathVariable int indexRun) {
+        submitRunService.showSource(indexRun);
+        return "redirect:/student/problem";
+    }
 
 
 }

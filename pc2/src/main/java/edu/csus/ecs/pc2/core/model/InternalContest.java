@@ -1243,14 +1243,14 @@ public class InternalContest implements IInternalContest {
 
     public boolean isAllowed(ClientId clientId, Permission.Type type) {
         Account account = getAccount(clientId);
+        ClientType.Type clientType = clientId.getClientType();
         if (account == null) {
-            ClientType.Type clientType = clientId.getClientType();
             if (clientType.equals(Type.SERVER)) {
                 return new PermissionGroup().getPermissionList(clientType).isAllowed(type);
             }
             return false;
         } else {
-            return account.isAllowed(type);
+            return new PermissionGroup().getPermissionList(clientType).isAllowed(type);
         }
     }
 

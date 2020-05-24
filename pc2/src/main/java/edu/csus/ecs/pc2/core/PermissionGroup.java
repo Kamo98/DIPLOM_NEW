@@ -75,6 +75,7 @@ public class PermissionGroup {
         teamPermissionList.addPermission(Type.VIEW_RUNS);
         teamPermissionList.addPermission(Type.SUBMIT_CLARIFICATION);
         teamPermissionList.addPermission(Type.SUBMIT_RUN);
+        teamPermissionList.addPermission(Type.ALLOWED_TO_FETCH_RUN);
 
         /**
          * Judge permissions
