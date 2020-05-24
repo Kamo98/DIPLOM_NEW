@@ -10,7 +10,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.access.AccessDeniedHandler;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import ru.vkr.vkr.components.CustomLogoutSuccessHandler;
 import ru.vkr.vkr.components.MySimpleUrlAuthenticationSuccessHandler;
 import ru.vkr.vkr.service.UserService;

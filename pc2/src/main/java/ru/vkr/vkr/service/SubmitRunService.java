@@ -10,6 +10,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.vkr.vkr.domain.RunSubmitDto;
@@ -19,6 +21,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.Future;
 
 @Service
 public class SubmitRunService {
@@ -168,25 +171,8 @@ public class SubmitRunService {
         return result;
     }
 
-
-    public void showSource(int index) {
-        Thread viewSourceThread = new Thread() {
-            public void run() {
-                showSourceForSelectedRun(index);
-            }
-        };
-        viewSourceThread.setName("ViewSourceThread-");
-        viewSourceThread.start();
-    }
-
-
-    /**
-     * Displays a {@link MultipleFileViewer} containing the source code for the run (submission) which is currently selected in the Runs grid.
-     *
-     * If no run is selected, or more than one run is selected, prompts the user to select just one run (row) in the grid
-     * and does nothing else.
-     */
-    public void showSourceForSelectedRun(int index) {
+    @Async("threadPoolTaskExecutor")
+    public Future<String> showSourceForSelectedRun(int index) {
 
         InternalController internalController = (InternalController) applicationContext.getBean("getInternalController");
         IInternalContest contest = internalController.getContest();
@@ -195,7 +181,6 @@ public class SubmitRunService {
         if (!isAllowed(contest, Permission.Type.ALLOWED_TO_FETCH_RUN)) {
             internalController.getLog().log(Log.WARNING, "Account does not have the permission ALLOWED_TO_FETCH_RUN; cannot view run source.");
             showMessage("Unable to fetch run, check log");
-            return;
         }
 
         // we are allowed to view source and there's exactly one run selected; try to obtain the run source and display it in a MFV
@@ -222,10 +207,6 @@ public class SubmitRunService {
                     // wait for the server to reply (i.e., to make a callback to the run listener) -- but only for up to 30 sec
                     int waitedMS = 0;
                     serverReplied = false;
-                    while (!serverReplied && waitedMS < 30000) {
-                        Thread.sleep(100);
-                        waitedMS += 100;
-                    }
 
                     //check if we got a reply from the server
                     if (serverReplied) {
@@ -241,8 +222,7 @@ public class SubmitRunService {
                             //we got a reply from the server but we didn't get any RunFiles
                             internalController.getLog().log(Log.WARNING, "Server failed to return RunFiles in response to fetch run request");
                             internalController.getLog().log(Log.WARNING, "Unable to fetch source files for run " + run.getNumber() + " from server");
-                            showMessage("Unable to fetch selected run; check log");
-                            return;
+                            return new AsyncResult<String>("Unable to fetch selected run; check log");
                         }
 
                     } else {
@@ -250,64 +230,23 @@ public class SubmitRunService {
                         // the server failed to reply to the fetchRun request within the time limit
                         internalController.getLog().log(Log.WARNING, "No response from server to fetch run request after " + waitedMS + "ms");
                         internalController.getLog().log(Log.WARNING, "Unable to fetch run " + run.getNumber() + " from server");
-                        showMessage("Unable to fetch selected run; check log");
-                        return;
+                        return new AsyncResult<String>("Unable to fetch selected run; check log");
                     }
                 }
 
                 //if we get here we know there should be RunFiles in the contest model -- but let's sanity-check that
                 if (!contest.isRunFilesPresent(run)) {
-
                     //something bad happened -- we SHOULD have RunFiles at this point!
                     internalController.getLog().log(Log.SEVERE, "Unable to find RunFiles for run " + run.getNumber() + " -- server error?");
-                    showMessage("Unable to fetch selected run; check log");
-                    return;
-
+                    return new AsyncResult<String>("Unable to fetch selected run; check log");
                 } else {
-
                     //get the RunFiles
                     RunFiles runFiles = contest.getRunFiles(run);
 
                     if (runFiles != null) {
-
                         // get the (serialized) source files out of the RunFiles
                         SerializedFile mainFile = runFiles.getMainFile();
-                        SerializedFile[] otherFiles = runFiles.getOtherFiles();
-
-                        // create a MultiFileViewer in which to display the runFiles
-                        MultipleFileViewer mfv = new MultipleFileViewer(internalController.getLog(), "Source files for Site " + run.getSiteNumber() + " Run " + run.getNumber());
-                        mfv.setContestAndController(contest, internalController);
-
-                        // add any other files to the MFV (these are added first so that the mainFile will appear at index 0)
-                        boolean otherFilesPresent = false;
-                        boolean otherFilesLoadedOK = false;
-                        if (otherFiles != null) {
-                            otherFilesPresent = true;
-                            otherFilesLoadedOK = true;
-                            for (SerializedFile otherFile : otherFiles) {
-                                otherFilesLoadedOK &= mfv.addFilePane(otherFile.getName(), otherFile);
-                            }
-                        }
-
-                        // add the mainFile to the MFV
-                        boolean mainFilePresent = false;
-                        boolean mainFileLoadedOK = false;
-                        if (mainFile != null) {
-                            mainFilePresent = true;
-                            mainFileLoadedOK = mfv.addFilePane("Main File" + " (" + mainFile.getName() + ")", mainFile);
-                        }
-
-                        // if we successfully added all files, show the MFV
-                        if ((!mainFilePresent || (mainFilePresent && mainFileLoadedOK))
-                                && (!otherFilesPresent || (otherFilesPresent && otherFilesLoadedOK))) {
-                            mfv.setSelectedIndex(0);  //always make leftmost selected; normally this will be MainFile
-                            mfv.setVisible(true);
-                            showMessage("");
-                        } else {
-                            internalController.getLog().log(Log.WARNING, "Unable to load run source files into MultiFileViewer");
-                            showMessage("Unable to load run source files into MultiFileViewer");
-                        }
-
+                        return new AsyncResult<String>(new String(mainFile.getBuffer()));
                     } else {
                         // runfiles is null
                         internalController.getLog().log(Log.WARNING, "Unable to obtain RunFiles for Site " + run.getSiteNumber() + " run " + run.getNumber());
@@ -326,11 +265,12 @@ public class SubmitRunService {
             internalController.getLog().log(Log.WARNING, "Exception logged ", e);
             showMessage("Unable to show run source, check log");
         }
-
+        return null;
     }
-    
-    void showMessage(String message) {
+
+    String showMessage(String message) {
         logger.info(message);
+        return message;
     }
 
 
