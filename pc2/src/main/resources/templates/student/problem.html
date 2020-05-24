@@ -30,6 +30,9 @@
                 <li th:unless="${isCreate}">
                     <a class="nav-link" href="" id="linkSendProblem">Сдать</a>
                 </li>
+                <li th:unless="${isCreate}">
+                    <a class="nav-link" href="" id="linkViewRuns">Посылки</a>
+                </li>
             </ul>
 
 
@@ -58,9 +61,9 @@
                             </div>
                             <div class="col">
                                 <select id="compilerSend" class="form-control" th:field="*{language}">
-                                    <option th:each="lang : ${langs}"
-                                            th:value="${lang}"
-                                            th:utext="${lang.displayName}"/>
+                                    <option th:each="lang, state : ${langs}"
+                                            th:value="${state.index}"
+                                            th:text="${lang.displayName}"/>
                                 </select>
                             </div>
                         </div>
@@ -71,8 +74,8 @@
                             </div>
                             <div class="col">
                                 <select id="task" class="form-control" th:field="*{problem}">
-                                    <option th:each="problm : ${problems}"
-                                            th:value="${problm}"
+                                    <option th:each="problm, state : ${problems}"
+                                            th:value="${state.index}"
                                             th:utext="${problm.displayName}"/>
                                 </select>
                             </div>
@@ -105,6 +108,16 @@
                     </form>
                 </div>
 
+
+
+
+                <div id="ViewRuns" style="display:none;">
+
+                </div>
+
+
+
+
             </div>
         </div>
 
@@ -125,6 +138,11 @@
     $('#linkSendProblem').click(function (e) {
         $('#linkSendProblem').addClass('active');
         $('#sendProblem').show();
+    });
+
+    $('#linkViewRuns').click(function (e) {
+        $('#linkViewRuns').addClass('active');
+        $('#ViewRuns').show();
     });
 
 </script>

@@ -35,26 +35,27 @@ public class SubmitRunService {
 
     String convertFileToString(MultipartFile file) {
         if (file != null && !file.getOriginalFilename().isEmpty()) {
-            File uploadDir = new File(location);
-
+            String newLocation = location  + UUID.randomUUID().toString();
+            File uploadDir = new File(newLocation);
             if (!uploadDir.exists()) {
                 uploadDir.mkdir();
             }
-
-            String uuidFile = UUID.randomUUID().toString();
-            String resultFilename = uuidFile + "." + file.getOriginalFilename();
+            String resultFilename = newLocation + "\\" + file.getOriginalFilename();
             try {
-                file.transferTo(new File(location + "/" + resultFilename));
+                file.transferTo(new File(resultFilename));
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            return location + resultFilename  ;
+            return resultFilename;
         }
         return "";
     }
 
-    public void submitRun(Problem problem, Language language, MultipartFile file) {
+    public void submitRun(int problemIndex, int languageIndex, MultipartFile file) {
         InternalController internalController = (InternalController) applicationContext.getBean("getInternalController");
+        Problem problem = internalController.getContest().getProblems()[problemIndex];
+        Language language = internalController.getContest().getLanguages()[languageIndex];
+
         String fileName = convertFileToString(file);
         if (!fileExists(fileName)) {
             File curdir = new File(".");

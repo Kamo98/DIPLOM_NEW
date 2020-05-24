@@ -5,26 +5,26 @@ import edu.csus.ecs.pc2.core.model.Problem;
 import org.springframework.web.multipart.MultipartFile;
 
 public class SubmitRunForm {
-    private Language language;
+    private int language;
 
-    private Problem problem;
+    private int problem;
 
     private MultipartFile multipartFile;
 
-    public Language getLanguage() {
-        return language;
-    }
-
-    public void setLanguage(Language language) {
-        this.language = language;
-    }
-
-    public Problem getProblem() {
+    public int getProblem() {
         return problem;
     }
 
-    public void setProblem(Problem problem) {
+    public void setProblem(int problem) {
         this.problem = problem;
+    }
+
+    public int getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(int language) {
+        this.language = language;
     }
 
     public MultipartFile getMultipartFile() {

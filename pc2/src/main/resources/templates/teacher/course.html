@@ -196,7 +196,9 @@
 
                                             <div class="col">
                                                 <select class="form-control" id="selectGroups" th:field="*{group}">
-                                                    <option th:each="group : ${teacherGroups}" th:value="${group.id}" th:text="${group.name}">Группа</option>
+                                                    <option th:each="group : ${teacherGroups}"
+                                                            th:value="${group.id}"
+                                                            th:text="${group.name}">Группа</option>
                                                 </select>
                                             </div>
                                         </div>
