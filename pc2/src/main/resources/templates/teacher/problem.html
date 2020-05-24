@@ -49,9 +49,6 @@
 
                     <div id="problemSettings">
 
-                        <ul>
-                            <li th:each="problem : ${problems}"><span th:text="${problem.getDisplayName()}"></span></li>
-                        </ul>
 
                         <form>
                             <div class="row row-margin-top">
@@ -150,7 +147,51 @@
 
                     </div>
 
-                    <div id="testsProblem" style="display:none;"></div>
+                    <div id="testsProblem" style="display:none;">
+                        <form th:action="@{'/teacher/problem/tests-upload'}" th:object="${loadTestsForm}" method="post" enctype="multipart/form-data">
+
+                            <div class="row row-margin-top">
+                                <div class="col-3 col-align-center">
+                                    <label for="extensionIn">Расширение входных файлов:</label>
+                                </div>
+                                <div class="col-3">
+                                    <select id="extensionIn" class="form-control" th:field="*{extensionIn}">
+                                        <option value=".in">.in</option>
+                                        <option value=".dat">.dat</option>
+                                        <option value=".txt">.txt</option>
+                                        <option value=".inp">.inp</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-3 col-align-center">
+                                    <label for="extensionAns">Расширение выходных файлов:</label>
+                                </div>
+                                <div class="col-3">
+                                    <select id="extensionAns" class="form-control" th:field="*{extensionAns}">
+                                        <option value=".ans">.ans</option>
+                                        <option value=".dat">.dat</option>
+                                        <option value=".txt">.txt</option>
+                                        <option value=".out">.out</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="row row-margin-top">
+                                <div class="col-3 col-align-center">
+                                    <label for="dirTests">Выберите директорию с тестами:</label>
+                                </div>
+                                <div class="col">
+                                    <input type="file" id="dirTests" class="form-control" multiple="multiple" th:field="*{dirTests}">
+                                </div>
+                            </div>
+
+                            <div class="row row-margin-top">
+                                <div class="col">
+                                    <button type="submit" class="btn btn-primary">Загрузить</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
 
                     <div id="checkerProblem" style="display:none;"></div>
 
