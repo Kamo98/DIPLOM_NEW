@@ -3,28 +3,24 @@ package ru.vkr.vkr.controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.multipart.MultipartFile;
 import ru.vkr.vkr.entity.Course;
 import ru.vkr.vkr.entity.Group;
 import ru.vkr.vkr.entity.Problem;
 import ru.vkr.vkr.facade.ProblemFacade;
+import ru.vkr.vkr.form.CheckerSettingsForm;
 import ru.vkr.vkr.form.LoadTestsForm;
 import ru.vkr.vkr.service.CourseService;
 import ru.vkr.vkr.service.GroupService;
 import ru.vkr.vkr.service.ProblemService;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.UUID;
 
 @Controller
 public class ProblemController {
@@ -57,11 +53,16 @@ public class ProblemController {
         LoadTestsForm loadTestsForm = new LoadTestsForm();
         model.addAttribute("loadTestsForm", loadTestsForm);
 
+        //Для чекера
+        CheckerSettingsForm checkerSettingsForm = new CheckerSettingsForm();
+        model.addAttribute("checkerSettingsForm", checkerSettingsForm);
+
         Collection<String> fileTests = problemFacade.getAllTestsById(problemId);
         model.addAttribute("fileTests", fileTests);
 
         return "teacher/problem";
     }
+
 
     @PostMapping("/teacher/problem/{problemId}/tests-upload")
     public String uploadProblemTests(LoadTestsForm loadTestsForm, @PathVariable Long problemId) throws IOException {
@@ -69,14 +70,21 @@ public class ProblemController {
 
         Problem problem = problemService.getProblemById(problemId);
 
-        String problemPc2Id = problemFacade.loadTestFiles(loadTestsForm, problem);
-
-        problem.setElementId(problemPc2Id);
-        problemService.save(problem);
+        problemFacade.loadTestFiles(loadTestsForm, problem);
+        problemFacade.addTestsToProblem(problem);
 
         return "redirect:/teacher/problem/" + problemId;
     }
 
+
+    @PostMapping("/teacher/problem/{problemId}/checker-settings")
+    public String checkerSettings(CheckerSettingsForm checkerSettingsForm, @PathVariable Long problemId) {
+        Problem problem = problemService.getProblemById(problemId);
+
+        problemFacade.setParamsOfChecker(problem, checkerSettingsForm);
+
+        return "redirect:/teacher/problem/" + problemId;
+    }
 
     @GetMapping("/teacher/problem-create")
     public String problemCreateGet(Model model, Problem problem) {
@@ -87,7 +95,12 @@ public class ProblemController {
     @PostMapping("/teacher/problem-create")
     public String problemCreatePost(Model model, Problem problem) {
         problemService.save(problem);
-        problemFacade.makeDirectory(problem.getId());
+
+        //Инициализируем задачу
+        Long problemPc2NumId = problemFacade.initProblem(problem);
+
+        problem.setNumElementId(problemPc2NumId);
+        problemService.save(problem);
 
 
         return "redirect:/teacher/problem/" + problem.getId();

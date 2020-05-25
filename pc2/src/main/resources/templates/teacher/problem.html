@@ -206,7 +206,50 @@
                         </form>
                     </div>
 
-                    <div id="checkerProblem" style="display:none;"></div>
+                    <div id="checkerProblem" style="display:none;">
+                        <form th:action="@{'/teacher/problem/'+ ${problem.id} +'/checker-settings'}" th:object="${checkerSettingsForm}" method="post" enctype="multipart/form-data">
+                            <div class="row row-margin-top">
+                                <div class="col">
+                                    <input type="radio" name="typeChecker" id="clicsValidator" checked="checked" th:value="true" th:field="*{clicsValidator}">
+                                    <label for="clicsValidator">Использовать встроенный чекер</label>
+                                </div>
+                            </div>
+                            <div class="row row-margin-top">
+                                <div class="col">
+                                    <input type="checkbox" id="caseSensitive" th:field="*{caseSensitive}">
+                                    <label for="caseSensitive">Чувствительный к регистру</label>
+                                </div>
+                                <div class="col">
+                                    <input type="checkbox" id="spaceSensitive" th:field="*{spaceSensitive}">
+                                    <label for="spaceSensitive">Чувствительный к пробелам</label>
+                                </div>
+                            </div>
+                            <div class="row row-margin-top">
+                                <div class="col">
+                                    <input type="checkbox" id="floatAbsoluteTolerance" th:field="*{floatAbsoluteTolerance}">
+                                    <label for="floatAbsoluteTolerance">Установаить допустимую абсолютную погрешность</label>
+                                </div>
+                                <div class="col">
+                                    <input type="text" class="form-control" th:field="*{absoluteTolerance}">
+                                </div>
+                            </div>
+
+                            <div class="row row-margin-top">
+                                <div class="col">
+                                    <input type="radio" name="typeChecker" id="customValidator" th:value="false" th:field="*{clicsValidator}">
+                                    <label for="customValidator">Использовать встроенный чекер</label>
+                                </div>
+                            </div>
+
+                            <div class="row row-margin-top">
+                                <div class = "col col-align-right">
+                                    <button class="btn btn-primary" type="submit">
+                                        <i class="fa fa-floppy-o" aria-hidden="true"></i>&nbsp;Сохранить
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
 
                     <div id="sendProblem" style="display:none;">
                         <form>

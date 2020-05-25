@@ -73,6 +73,17 @@ public class ElementId implements Serializable {
 
     }
 
+    //************
+    // ***Изменение, чтобы адекватно искать задачи
+    public void setNum(long num_){
+        num = num_;
+    }
+
+    public long getNum(){
+        return num;
+    }
+    //*************
+
     public String toString() {
         return new String(name) + "-" + num;
     }

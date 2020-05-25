@@ -24,7 +24,7 @@ public class Problem {
     private Integer memoryLimit;
 
     @Column
-    private String elementId;
+    private Long numElementId;      //Для адекватного поиска задач в PC2
 
     public String getName() {
         return name;
@@ -51,13 +51,6 @@ public class Problem {
         this.memoryLimit = memoryLimit;
     }
 
-    public String getElementId() {
-        return elementId;
-    }
-
-    public void setElementId(String elementId) {
-        this.elementId = elementId;
-    }
 
     public Long getId() {
         return id;
@@ -65,5 +58,13 @@ public class Problem {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getNumElementId() {
+        return numElementId;
+    }
+
+    public void setNumElementId(Long numElementId) {
+        this.numElementId = numElementId;
     }
 }
