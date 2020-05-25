@@ -36,12 +36,15 @@ public class ProblemController {
     private ProblemService problemService;
 
 
+    //todo: в этом методе отчасти дублируется код из такого же в TeacherController, а это не хорошо
     @ModelAttribute
     public void addAttributes(Model model) {
         Collection<Course> teacherCourses = courseService.getCoursesByCurrentTeacher();
         Collection<Group> teacherGroups = groupService.getGroupsByCurrentTeacher();
+        Collection<Problem> teacherProblems = problemService.getProblemsByCurrentTeacher();
         model.addAttribute("teacherCourses", teacherCourses);
         model.addAttribute("teacherGroups", teacherGroups);
+        model.addAttribute("teacherProblems", teacherProblems);
     }
 
     @GetMapping("/teacher/problem/{problemId}")
@@ -64,6 +67,19 @@ public class ProblemController {
     }
 
 
+    //Изменение основных параметров здадачи
+    @PostMapping("/teacher/problem/{problemId}")
+    public String postProblem(@PathVariable Long problemId, Problem newProblem) {
+        //todo: нужна валидация данных
+        Problem problem = problemService.getProblemById(problemId);
+        problem.setName(newProblem.getName());
+        problem.setMemoryLimit(newProblem.getMemoryLimit());
+        problem.setTimeLimit(newProblem.getTimeLimit());
+        problemService.save(problem);
+        return "redirect:/teacher/problem/" + problemId;
+    }
+
+    //Загрузка тестов
     @PostMapping("/teacher/problem/{problemId}/tests-upload")
     public String uploadProblemTests(LoadTestsForm loadTestsForm, @PathVariable Long problemId) throws IOException {
         logger.info("Количество тестовых файлов = " + loadTestsForm.getDirTests().length);
@@ -77,6 +93,7 @@ public class ProblemController {
     }
 
 
+    //Установка параметров чекера
     @PostMapping("/teacher/problem/{problemId}/checker-settings")
     public String checkerSettings(CheckerSettingsForm checkerSettingsForm, @PathVariable Long problemId) {
         Problem problem = problemService.getProblemById(problemId);
@@ -94,6 +111,7 @@ public class ProblemController {
 
     @PostMapping("/teacher/problem-create")
     public String problemCreatePost(Model model, Problem problem) {
+        problemService.setAuthorForNewCourse(problem);
         problemService.save(problem);
 
         //Инициализируем задачу

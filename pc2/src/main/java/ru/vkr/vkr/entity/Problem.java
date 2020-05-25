@@ -26,6 +26,10 @@ public class Problem {
     @Column
     private Long numElementId;      //Для адекватного поиска задач в PC2
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "teacher_id")
+    private Teacher teacherAuthor;
+
     public String getName() {
         return name;
     }
@@ -66,5 +70,13 @@ public class Problem {
 
     public void setNumElementId(Long numElementId) {
         this.numElementId = numElementId;
+    }
+
+    public Teacher getTeacherAuthor() {
+        return teacherAuthor;
+    }
+
+    public void setTeacherAuthor(Teacher teacherAuthor) {
+        this.teacherAuthor = teacherAuthor;
     }
 }

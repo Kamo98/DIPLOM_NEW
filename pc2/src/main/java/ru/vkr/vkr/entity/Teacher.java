@@ -27,6 +27,10 @@ public class Teacher {
     private Set<Course> courses;
 
 
+    @OneToMany(mappedBy = "teacherAuthor", fetch = FetchType.LAZY)
+    private Set<Problem> problems;
+
+
     public void setId(Long id) {
         this.id = id;
     }
@@ -73,5 +77,13 @@ public class Teacher {
 
     public void setCourses(Set<Course> courses) {
         this.courses = courses;
+    }
+
+    public Set<Problem> getProblems() {
+        return problems;
+    }
+
+    public void setProblems(Set<Problem> problems) {
+        this.problems = problems;
     }
 }

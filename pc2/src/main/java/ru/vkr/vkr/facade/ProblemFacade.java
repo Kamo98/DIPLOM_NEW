@@ -79,8 +79,6 @@ public class ProblemFacade {
         //Поток для чтения
         problem.setReadInputDataFromSTDIN(true);
 
-
-
         //Судьи
         problem.setComputerJudged(true);
         problem.setManualReview(false);
@@ -88,21 +86,15 @@ public class ProblemFacade {
 
 
         //Добавить в списки автосудий задачу
-//        ClientSettings clientSettingsList[] = internalController.getContest().getClientSettingsList();
-//        for (int i = 0; i < clientSettingsList.length; i++) {
-//           if (clientSettingsList[i].isAutoJudging()) {
-//               Filter filter = clientSettingsList[i].getAutoJudgeFilter();
-//               filter.
-//           }
-//        }
-//        internalController.getContest().getClientSettings(clientId);
-
-//        AutoJudgeSetting autoJudgeSetting = new AutoJudgeSetting("TestJudge");
-//
-//        ClientId[] clientIds = internalController.getContest().getLocalLoggedInClients(ClientType.Type.JUDGE);
-//        //clientIds[0].
-//
-//        Vector<Account> judges = internalController.getContest().getAccounts(ClientType.Type.JUDGE);
+        //todo: не совмем уверен что в список clientSettingsList будут попадать все автосудьи, которые есть в системе
+        ClientSettings clientSettingsList[] = internalController.getContest().getClientSettingsList();
+        for (int i = 0; i < clientSettingsList.length; i++) {
+           if (clientSettingsList[i].isAutoJudging()) {
+               Filter filter = clientSettingsList[i].getAutoJudgeFilter();
+               filter.addProblem(problem);
+               internalController.updateClientSettings(clientSettingsList[i]);
+           }
+        }
 
         ProblemDataFiles problemDataFiles = new ProblemDataFiles(problem);
         internalController.addNewProblem(problem, problemDataFiles);

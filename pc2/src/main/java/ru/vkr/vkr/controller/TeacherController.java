@@ -6,10 +6,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.vkr.vkr.domain.ROLE;
-import ru.vkr.vkr.entity.Course;
-import ru.vkr.vkr.entity.Group;
-import ru.vkr.vkr.entity.Student;
-import ru.vkr.vkr.entity.User;
+import ru.vkr.vkr.entity.*;
 import ru.vkr.vkr.facade.AdminFacade;
 import ru.vkr.vkr.facade.TeacherFacade;
 import ru.vkr.vkr.form.SubscriptionForm;
@@ -17,6 +14,7 @@ import ru.vkr.vkr.form.UserForm;
 import ru.vkr.vkr.repository.StudentRepository;
 import ru.vkr.vkr.service.CourseService;
 import ru.vkr.vkr.service.GroupService;
+import ru.vkr.vkr.service.ProblemService;
 import ru.vkr.vkr.service.UserService;
 import java.util.List;
 
@@ -36,6 +34,8 @@ public class TeacherController {
     @Autowired
     private UserService userService;
     @Autowired
+    private ProblemService problemService;
+    @Autowired
     private StudentRepository studentRepository;
     @Autowired
     private TeacherFacade teacherFacade;
@@ -52,8 +52,10 @@ public class TeacherController {
     public void addAttributes(Model model) {
         Collection<Course> teacherCourses = courseService.getCoursesByCurrentTeacher();
         Collection<Group> teacherGroups = groupService.getGroupsByCurrentTeacher();
+        Collection<Problem> teacherProblems = problemService.getProblemsByCurrentTeacher();
         model.addAttribute("teacherCourses", teacherCourses);
         model.addAttribute("teacherGroups", teacherGroups);
+        model.addAttribute("teacherProblems", teacherProblems);
         model.addAttribute(pageTabAttribute, true);
         pageTabAttribute = "tabMain";
         model.addAttribute(messageAttribute, true);
