@@ -66,6 +66,7 @@ public class MySimpleUrlAuthenticationSuccessHandler implements AuthenticationSu
         internalController.start(curStringMas);
 
 
+
         final Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
         for (final GrantedAuthority grantedAuthority : authorities) {
 

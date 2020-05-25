@@ -1,7 +1,6 @@
 package ru.vkr.vkr;
 
 
-import edu.csus.ecs.pc2.Starter;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
