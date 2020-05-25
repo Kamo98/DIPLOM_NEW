@@ -22,12 +22,23 @@ import java.util.*;
 @Component
 public class ProblemFacade {
 
-    @Value("${upload.path}")
+    @Value("${spring.servlet.multipart.location}")
     private String uploadPath;
 
     @Autowired
     private ApplicationContext applicationContext;
 
+
+    public void makeDirectory (Long problemId) {
+        File pathTests = new File(uploadPath + "/tests");
+        if (!pathTests.exists())
+            pathTests.mkdir();
+
+        String dirTests = uploadPath + "/tests/problem-" + problemId;
+        File fileTests = new File(dirTests);
+        if (!fileTests.exists())
+            fileTests.mkdir();
+    }
 
     public Collection<Problem> getAllProblems() {
         InternalController internalController = (InternalController) applicationContext.getBean("getInternalController");
@@ -36,15 +47,26 @@ public class ProblemFacade {
         return problems;
     }
 
-    public void addMyProblem() {
+    public Collection<String> getAllTestsById (Long problemId) {
+        Collection<String> filesList = new ArrayList<>();
+        File dirFile = new File(uploadPath + "/tests/problem-" + problemId);
+        if (dirFile.exists()) {
+            String[] filesArr = dirFile.list();
+            if (filesArr != null)
+                Collections.addAll(filesList, filesArr);
+        }
+        return filesList;
+    }
+
+    public String addNewProblem(ru.vkr.vkr.entity.Problem problemDb) {
         InternalController internalController = (InternalController) applicationContext.getBean("getInternalController");
 
-        String baseDirectoryName = "H:\\Университет\\8 сем - FINISH!!!\\Диплом\\DIPLOM\\pc2v9-PC2_RELEASE_9_6_x\\pc2\\src\\main\\resources\\static\\tests\\T121";
+        String baseDirectoryName = uploadPath + "/tests/problem-" + problemDb.getId();
 
         //Основные параметры задачи
-        Problem problem = new Problem("Test121");
-        problem.setShortName("T121");
-        problem.setTimeOutInSeconds(2);
+        Problem problem = new Problem(problemDb.getName());
+        problem.setShortName("problem-" + problemDb.getId());
+        problem.setTimeOutInSeconds(problemDb.getTimeLimit());
 
         //Поток для чтения
         problem.setReadInputDataFromSTDIN(true);
@@ -57,14 +79,15 @@ public class ProblemFacade {
         problem.setShowValidationToJudges(true);
 
         //Тесты
-//        problem.setDataFileName("01.in");
-//        problem.setAnswerFileName("01.ans");
+        final boolean externalFiles = true;
+        problem.setUsingExternalDataFiles(externalFiles);
+        problem.setExternalDataFileLocation(baseDirectoryName);
 //        problem.addTestCaseFilenames("01.in", "01.ans");
 //        problem.addTestCaseFilenames("02.in", "02.ans");
 //        problem.addTestCaseFilenames("03.in", "03.ans");
-//        problem.setUsingExternalDataFiles(false);
-//        problem.setExternalDataFileLocation("H:\\Университет\\8 сем - FINISH!!!\\Диплом\\DIPLOM\\pc2v9-PC2_RELEASE_9_6_x\\pc2\\src\\main\\resources\\static\\tests\\Test121");
-//        //problem.j
+
+        ProblemDataFiles problemDataFiles = loadDataFiles(problem, null, baseDirectoryName, ".in", ".ans", externalFiles);
+
 
         //Судьи
         problem.setComputerJudged(true);
@@ -79,21 +102,6 @@ public class ProblemFacade {
 //
 //        Vector<Account> judges = internalController.getContest().getAccounts(ClientType.Type.JUDGE);
 
-        IInternalContest contest = internalController.getContest();
-
-
-        final boolean externalFiles = true;
-        problem.setUsingExternalDataFiles(externalFiles);
-        problem.setExternalDataFileLocation("H:\\Университет\\8 сем - FINISH!!!\\Диплом\\DIPLOM\\pc2v9-PC2_RELEASE_9_6_x\\pc2\\src\\main\\resources\\static\\tests\\T121");
-        problem.addTestCaseFilenames("01.in", "01.ans");
-        problem.addTestCaseFilenames("02.in", "02.ans");
-        problem.addTestCaseFilenames("03.in", "03.ans");
-
-        ProblemDataFiles problemDataFiles = loadDataFiles(problem, null, baseDirectoryName, ".in", ".ans", externalFiles);
-
-
-
-        Problem problems[] = contest.getProblems();
 //        //Problem problem = problems[problems.length-1].copy("Test120_copy");
 //
 //        ProblemDataFiles problemDataFiles = new ProblemDataFiles(problem);
@@ -114,19 +122,19 @@ public class ProblemFacade {
         //problemDataFiles.set
 
         internalController.addNewProblem(problem, problemDataFiles);
+
+
+//        IInternalContest contest = internalController.getContest();
+//        Problem problems[] = contest.getProblems();
+        return problem.getElementId().toString();
     }
 
 
-    public void loadTestFiles(LoadTestsForm loadTestsForm) throws IOException {
+    public String loadTestFiles(LoadTestsForm loadTestsForm, ru.vkr.vkr.entity.Problem problemDb) throws IOException {
         String extensionIn = loadTestsForm.getExtensionIn();
         String extensionAns = loadTestsForm.getExtensionAns();
 
-        String problemId = "problem-1";
-        String uloadDirPath = uploadPath + "/tests/" + problemId;
-        File uploadDir = new File(uloadDirPath);
-
-        if (!uploadDir.exists())
-            uploadDir.mkdir();
+        String uloadDirPath = uploadPath + "/tests/problem-" + problemDb.getId();
 
 
         //Изменение расширений файлов с extensionIn и extensionAns на .in и .ans
@@ -165,7 +173,7 @@ public class ProblemFacade {
             }
         }
 
-        
+        return addNewProblem(problemDb);
     }
 
 

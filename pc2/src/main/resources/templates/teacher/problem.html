@@ -24,7 +24,7 @@
 
 
                 <ul class="nav nav-pills tabs-menu">
-                    <li th:unless="${isCreate}">
+                    <li>
                         <a class="nav-link active" href="" id="linkGeneralSetting"><i class="fa fa-cogs" aria-hidden="true"></i>&nbsp;Общие настройки</a>
                     </li>
                     <li th:unless="${isCreate}">
@@ -50,75 +50,82 @@
                     <div id="problemSettings">
 
 
-                        <form>
+                        <form th:action="${isCreate} ? @{'/teacher/problem-create'} : @{'/teacher/problem/' + ${problem.id}}"
+                            th:object="${problem}" method="post">
                             <div class="row row-margin-top">
                                 <div class="col-3 col-align-center">
                                     <label for="nameOfProblem">Наименование задачи:</label>
                                 </div>
                                 <div class="col">
-                                    <input type="text" id="nameOfProblem" class="form-control">
+                                    <input type="text" id="nameOfProblem" class="form-control" th:field="*{name}">
                                 </div>
                             </div>
                             <div class="row row-margin-top">
                                 <div class="col-3 col-align-center">
-                                    <label for="timeLimit">Ограничение по времени:</label>
+                                    <label for="timeLimit">Ограничение по времени (сек):</label>
                                 </div>
                                 <div class="col-3">
-                                    <input type="text" id="timeLimit" class="form-control">
+                                    <input type="text" id="timeLimit" class="form-control" th:field="*{timeLimit}">
                                 </div>
                                 <div class="col-3 col-align-center">
-                                    <label for="memoryLimit">Ограничение по памяти:</label>
+                                    <label for="memoryLimit">Ограничение по памяти (Мб):</label>
                                 </div>
                                 <div class="col-3">
-                                    <input type="text" id="memoryLimit" class="form-control">
+                                    <input type="text" id="memoryLimit" class="form-control"  th:field="*{memoryLimit}">
                                 </div>
                             </div>
 
 
                             <div class="row row-margin-top">
                                 <div class = "col col-align-right">
-                                    <button class="btn btn-primary" type="submit">
+                                    <button class="btn btn-primary" type="submit" th:unless="${isCreate}">
                                         <i class="fa fa-floppy-o" aria-hidden="true"></i>&nbsp;Сохранить
+                                    </button>
+
+                                    <button class="btn btn-primary" type="submit" th:if="${isCreate}">
+                                        <i class="fa fa-plus" aria-hidden="true"></i>&nbsp;Создать
                                     </button>
                                 </div>
                             </div>
                         </form>
 
 
-                        <div class="row row-margin-top">
-                            <div class="col"><h6 ><i class="fa fa-tags" aria-hidden="true"></i>&nbsp;Теги задачи</h6 ></div>
-                        </div>
+                        <div style="display:none;">
+                            <div class="row row-margin-top">
+                                <div class="col"><h6 ><i class="fa fa-tags" aria-hidden="true"></i>&nbsp;Теги задачи</h6 ></div>
+                            </div>
 
-                        <div class="row row-margin-top">
-                            <div class="col-2"><a href="#"><i class="fa fa-tag" aria-hidden="true"></i>&nbsp;Тег1</a>
-                                &nbsp;&nbsp;
-                                <a href="#" class="hash-tag-remove"><i class="fa fa-times" aria-hidden="true"></i></a>
+                            <div class="row row-margin-top">
+                                <div class="col-2"><a href="#"><i class="fa fa-tag" aria-hidden="true"></i>&nbsp;Тег1</a>
+                                    &nbsp;&nbsp;
+                                    <a href="#" class="hash-tag-remove"><i class="fa fa-times" aria-hidden="true"></i></a>
+                                </div>
+                                <div class="col-2"><a href="#"><i class="fa fa-tag" aria-hidden="true"></i>&nbsp;Тег1</a>
+                                    &nbsp;&nbsp;
+                                    <a href="#" class="hash-tag-remove"><i class="fa fa-times" aria-hidden="true"></i></a>
+                                </div>
+                                <div class="col-2"><a href="#"><i class="fa fa-tag" aria-hidden="true"></i>&nbsp;Тег1</a>
+                                    &nbsp;&nbsp;
+                                    <a href="#" class="hash-tag-remove"><i class="fa fa-times" aria-hidden="true"></i></a>
+                                </div>
                             </div>
-                            <div class="col-2"><a href="#"><i class="fa fa-tag" aria-hidden="true"></i>&nbsp;Тег1</a>
-                                &nbsp;&nbsp;
-                                <a href="#" class="hash-tag-remove"><i class="fa fa-times" aria-hidden="true"></i></a>
-                            </div>
-                            <div class="col-2"><a href="#"><i class="fa fa-tag" aria-hidden="true"></i>&nbsp;Тег1</a>
-                                &nbsp;&nbsp;
-                                <a href="#" class="hash-tag-remove"><i class="fa fa-times" aria-hidden="true"></i></a>
-                            </div>
-                        </div>
 
-                        <div class="row row-margin-top col-align-centered">
-                            <div class="col-4">
-                                <label for="selectTags">Выберите новый тег для задачи: </label>
-                            </div>
-                            <div class="col">
-                                <select class="form-control" id="selectTags">
-                                    <option>Тег 1</option>
-                                    <option>Тег 2</option>
-                                    <option>Тег 3</option>
-                                    <option>Тег 4</option>
-                                    <option>Тег 5</option>
-                                </select>
-                            </div>
-                            <div class="col">
-                                <a class="btn btn-primary"><i class="fa fa-plus" aria-hidden="true"></i>&nbsp;Добавить</a>
+                            <div class="row row-margin-top col-align-centered">
+                                <div class="col-4">
+                                    <label for="selectTags">Выберите новый тег для задачи: </label>
+                                </div>
+                                <div class="col">
+                                    <select class="form-control" id="selectTags">
+                                        <option>Тег 1</option>
+                                        <option>Тег 2</option>
+                                        <option>Тег 3</option>
+                                        <option>Тег 4</option>
+                                        <option>Тег 5</option>
+                                    </select>
+                                </div>
+                                <div class="col">
+                                    <a class="btn btn-primary"><i class="fa fa-plus" aria-hidden="true"></i>&nbsp;Добавить</a>
+                                </div>
                             </div>
                         </div>
 
@@ -148,7 +155,7 @@
                     </div>
 
                     <div id="testsProblem" style="display:none;">
-                        <form th:action="@{'/teacher/problem/tests-upload'}" th:object="${loadTestsForm}" method="post" enctype="multipart/form-data">
+                        <form th:action="@{'/teacher/problem/'+ ${problem.id} +'/tests-upload'}" th:object="${loadTestsForm}" method="post" enctype="multipart/form-data">
 
                             <div class="row row-margin-top">
                                 <div class="col-3 col-align-center">
@@ -189,6 +196,12 @@
                                 <div class="col">
                                     <button type="submit" class="btn btn-primary">Загрузить</button>
                                 </div>
+                            </div>
+
+                            <div class="row row-margin-top">
+                                <ul>
+                                    <li th:each="test : ${fileTests}" th:text="${test}"></li>
+                                </ul>
                             </div>
                         </form>
                     </div>
