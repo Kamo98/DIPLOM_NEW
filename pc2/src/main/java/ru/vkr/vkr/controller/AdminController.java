@@ -57,7 +57,7 @@ public class AdminController {
     // добавление списка преподавателей
     @PostMapping("/admin/addTeachers")
     public String addTeacher(Model model, @ModelAttribute("userForm") UserForm userForm) {
-        System.out.println("/admin/addTeachers");
+        logger.info("/admin/addTeachers");
         if (adminFacade.addUsers(userForm, ROLE.ROLE_TEACHER) == null) {
             model.addAttribute(userForm);
 

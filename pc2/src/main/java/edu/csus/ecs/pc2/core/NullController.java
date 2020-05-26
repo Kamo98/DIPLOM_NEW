@@ -364,6 +364,11 @@ public class NullController implements IInternalController {
 
     }
 
+    @Override
+    public void start(String[] stringArray, String loginName, String password) {
+
+    }
+
     public void startAllContestTimes() {
 
     }

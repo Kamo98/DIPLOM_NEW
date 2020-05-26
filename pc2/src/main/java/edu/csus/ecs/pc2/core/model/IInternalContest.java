@@ -2,6 +2,7 @@ package edu.csus.ecs.pc2.core.model;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.List;
 import java.util.Vector;
 
 import edu.csus.ecs.pc2.core.IStorage;
@@ -20,6 +21,7 @@ import edu.csus.ecs.pc2.core.security.ISecurityMessageListener;
 import edu.csus.ecs.pc2.core.security.Permission;
 import edu.csus.ecs.pc2.core.transport.ConnectionHandlerID;
 import edu.csus.ecs.pc2.profile.ProfileCloneSettings;
+import javafx.util.Pair;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
@@ -31,6 +33,21 @@ import org.springframework.stereotype.Component;
 
 // $HeadURL$
 public interface IInternalContest {
+
+    /**
+     *
+     * @param loginAndPasswordBeforeUserPc2 - список всех логинов и паролей пользователей до добавления нового пользователя
+     * @return пользователь с логином и паролем отличающиеся от списка
+     */
+    Account getAccountForRegistration(List<Pair<String, String>> loginAndPasswordBeforeUserPc2);
+
+    /**
+     *
+     * @param login
+     * @param password
+     * @return
+     */
+    Account getAccountByLoginAndPassword(String login, String password);
 
     /**
      * 

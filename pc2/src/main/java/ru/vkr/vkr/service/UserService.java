@@ -1,9 +1,13 @@
 package ru.vkr.vkr.service;
 
 
+import edu.csus.ecs.pc2.core.InternalController;
+import edu.csus.ecs.pc2.core.model.Account;
+import javafx.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -44,6 +48,8 @@ public class UserService implements UserDetailsService {
     private TeacherRepository teacherRepository;
     @Autowired
     BCryptPasswordEncoder bCryptPasswordEncoder;
+    @Autowired
+    private ApplicationContext applicationContext;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -67,11 +73,10 @@ public class UserService implements UserDetailsService {
 
     public boolean saveUser(User user) {
         User userFromDB = userRepository.findByUsername(user.getUsername());
-
         if (userFromDB != null) {
             return false;
         }
-        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+        user.setPassword(user.getPassword());
         userRepository.save(user);
         return true;
     }
@@ -92,6 +97,8 @@ public class UserService implements UserDetailsService {
     //todo: когда будет интерфейс, нужно будет возвращать его, а не идентификаторы teacher или student
     public List<Long> addUsers(UserForm userForm, ROLE role) {
         List<Long> usersId = new ArrayList<>();
+        InternalController internalController = (InternalController) applicationContext.getBean("getInternalController");
+
 
         String fios = userForm.getFios().trim();
         List<String> surname = new ArrayList<>();
@@ -126,9 +133,11 @@ public class UserService implements UserDetailsService {
             user.setUsername(login);
             user.setPassword(password);
             user.setRole(roleRepository.findById(role.getId()).get());
+            Account account = generateNewAccount(user, role);
+            user.setLoginPC2(account.getDisplayName());
             saveUser(user);
-
-            logger.info("UserService.addUsers: fio = " + fiosArr[i] + "  login = " + login + "  pass = " + password);
+            logger.info("UserService.addUsers: fio = " + fiosArr[i] + "  login = " + login + "  pass = " + password +
+                    "loginPC2 = " );
 
             switch (role) {
                 case ROLE_STUDENT: {
@@ -151,9 +160,43 @@ public class UserService implements UserDetailsService {
                     usersId.add(teacher.getId());
                     break;
                 }
-                default: return null;
+                default:
+                    return null;
             }
         }
         return usersId;
+    }
+
+    /**
+     * генерация соответствующего пользователя в pc2
+      */
+    private Account generateNewAccount(User user, ROLE role) {
+        InternalController internalController = (InternalController) applicationContext.getBean("getInternalController");
+        List<Pair<String, String>> listLoginPasswordBeforeAddAccount = getListLoginPasswordAccount();
+        internalController.generateNewAccounts(role.getRolePc2(), 1, 1, 1, true);
+        int count = 0;
+        while (count < 100 && internalController.getContest().getAccounts().length == listLoginPasswordBeforeAddAccount.size()) {
+            try {
+                Thread.sleep(100);
+                count++;
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        Account newAccount = internalController.getContest().
+                getAccountForRegistration(listLoginPasswordBeforeAddAccount);
+        newAccount.setPassword(user.getPassword());
+        internalController.updateAccount(newAccount);
+        user.setLoginPC2(newAccount.getDisplayName());
+        return newAccount;
+    }
+
+    private List<Pair<String, String>> getListLoginPasswordAccount() {
+        InternalController internalController = (InternalController) applicationContext.getBean("getInternalController");
+        List<Pair<String, String>> loginAndPasswordUserPc2 = new ArrayList<>();
+        for (Account account : internalController.getContest().getAccounts()) {
+            loginAndPasswordUserPc2.add(new Pair<>(account.getDisplayName(), account.getPassword()));
+        }
+        return loginAndPasswordUserPc2;
     }
 }

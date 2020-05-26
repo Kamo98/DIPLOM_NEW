@@ -1,6 +1,7 @@
 package ru.vkr.vkr.components;
 
 import edu.csus.ecs.pc2.core.InternalController;
+import edu.csus.ecs.pc2.core.model.ClientId;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import org.springframework.security.web.RedirectStrategy;
 import org.springframework.security.web.WebAttributes;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
+import ru.vkr.vkr.entity.User;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -61,10 +63,10 @@ public class MySimpleUrlAuthenticationSuccessHandler implements AuthenticationSu
         roleTargetUrlMap.put("ROLE_TEACHER", "/teacher");
         roleTargetUrlMap.put("ROLE_STUDENT", "/student");
 
+        User successUser = (User)authentication.getPrincipal();
         String[] curStringMas = {};
         InternalController internalController = (InternalController) applicationContext.getBean("getInternalController");
-        internalController.start(curStringMas);
-
+        internalController.start(curStringMas, successUser.getLoginPC2(), successUser.getPassword());
 
 
         final Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();

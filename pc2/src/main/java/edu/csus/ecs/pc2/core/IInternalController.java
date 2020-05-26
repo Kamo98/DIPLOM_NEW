@@ -147,6 +147,9 @@ public interface IInternalController {
      */
     void start(String[] stringArray);
 
+    void start(String[] stringArray, String loginName, String password);
+
+
     /**
      * Login to server, start MainUI.
      * 
