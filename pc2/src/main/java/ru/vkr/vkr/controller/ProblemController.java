@@ -11,12 +11,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import ru.vkr.vkr.entity.Course;
 import ru.vkr.vkr.entity.Group;
+import ru.vkr.vkr.entity.HashTag;
 import ru.vkr.vkr.entity.Problem;
 import ru.vkr.vkr.facade.ProblemFacade;
 import ru.vkr.vkr.form.CheckerSettingsForm;
 import ru.vkr.vkr.form.LoadTestsForm;
 import ru.vkr.vkr.service.CourseService;
 import ru.vkr.vkr.service.GroupService;
+import ru.vkr.vkr.service.HashTagService;
 import ru.vkr.vkr.service.ProblemService;
 
 import java.io.IOException;
@@ -34,6 +36,8 @@ public class ProblemController {
     private ProblemFacade problemFacade;
     @Autowired
     private ProblemService problemService;
+    @Autowired
+    private HashTagService hashTagService;
 
 
     //todo: в этом методе отчасти дублируется код из такого же в TeacherController, а это не хорошо
@@ -64,6 +68,9 @@ public class ProblemController {
         problemFacade.setCheckerParamsToForm(checkerSettingsForm, problem);
         model.addAttribute("checkerSettingsForm", checkerSettingsForm);
 
+        //Теги
+        Collection<HashTag> hashTags = hashTagService.getAllTags();
+        model.addAttribute("hashTags", hashTags);
 
         return "teacher/problem";
     }
@@ -137,5 +144,14 @@ public class ProblemController {
     }
 
 
+
+
+
+    @GetMapping("/teacher/tags")
+    public String getAllTags(Model model) {
+        Collection<HashTag> hashTags = hashTagService.getAllTags();
+        model.addAttribute("hashTags", hashTags);
+        return "/teacher/tags";
+    }
 
 }

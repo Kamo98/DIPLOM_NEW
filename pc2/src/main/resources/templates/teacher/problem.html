@@ -48,8 +48,6 @@
                 <div class="container" id="containerOfTabs">
 
                     <div id="problemSettings">
-
-
                         <form th:action="${isCreate} ? @{'/teacher/problem-create'} : @{'/teacher/problem/' + ${problem.id}}"
                             th:object="${problem}" method="post">
                             <div class="row row-margin-top">
@@ -90,7 +88,7 @@
                         </form>
 
 
-                        <div style="display:none;">
+                        <div id="tagsProblems" th:unless="${isCreate}">
                             <div class="row row-margin-top">
                                 <div class="col"><h6 ><i class="fa fa-tags" aria-hidden="true"></i>&nbsp;Теги задачи</h6 ></div>
                             </div>
@@ -110,23 +108,25 @@
                                 </div>
                             </div>
 
-                            <div class="row row-margin-top col-align-centered">
-                                <div class="col-4">
-                                    <label for="selectTags">Выберите новый тег для задачи: </label>
+                            <form>
+                                <div class="row row-margin-top col-align-centered">
+                                    <div class="col-3">
+                                        <label for="selectTags">Выберите новый тег для задачи: </label>
+                                    </div>
+
+                                    <div class="col">
+                                        <select class="form-control" id="selectTags">
+                                            <option th:each="tag : ${hashTags}">
+                                                <span th:if="${tag.level}" th:each="i : ${#numbers.sequence(1, tag.level)}">--</span>
+                                                [[ ${tag.name} ]]
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <div class="col-2">
+                                        <a class="btn btn-primary"><i class="fa fa-plus" aria-hidden="true"></i>&nbsp;Добавить</a>
+                                    </div>
                                 </div>
-                                <div class="col">
-                                    <select class="form-control" id="selectTags">
-                                        <option>Тег 1</option>
-                                        <option>Тег 2</option>
-                                        <option>Тег 3</option>
-                                        <option>Тег 4</option>
-                                        <option>Тег 5</option>
-                                    </select>
-                                </div>
-                                <div class="col">
-                                    <a class="btn btn-primary"><i class="fa fa-plus" aria-hidden="true"></i>&nbsp;Добавить</a>
-                                </div>
-                            </div>
+                            </form>
                         </div>
 
                         <hr class="row row-margin-top"/>
@@ -144,7 +144,7 @@
                         </div>
                     </div>
 
-                    <div id="statementProblem" style="display:none;">
+                    <div id="statementProblem"  style="display:none;" th:unless="${isCreate}">
                         <!--<div class="alert alert-warning" role="alert">-->
                             <!--Курс пока не содержит ни одной темы.-->
                         <!--</div>-->
@@ -154,7 +154,7 @@
 
                     </div>
 
-                    <div id="testsProblem" style="display:none;">
+                    <div id="testsProblem" style="display:none;" th:unless="${isCreate}">
                         <form th:action="@{'/teacher/problem/'+ ${problem.id} +'/tests-upload'}" th:object="${loadTestsForm}" method="post" enctype="multipart/form-data">
 
                             <div class="row row-margin-top">
@@ -224,7 +224,7 @@
 
                     </div>
 
-                    <div id="checkerProblem" style="display:none;">
+                    <div id="checkerProblem" style="display:none;" th:unless="${isCreate}">
                         <form th:action="@{'/teacher/problem/'+ ${problem.id} +'/checker-settings'}" th:object="${checkerSettingsForm}" method="post" enctype="multipart/form-data">
                             <div class="row row-margin-top">
                                 <div class="col">
@@ -280,7 +280,7 @@
                         </form>
                     </div>
 
-                    <div id="sendProblem" style="display:none;">
+                    <div id="sendProblem" style="display:none;" th:unless="${isCreate}">
                         <form>
                             <div class="row row-margin-top">
                                 <div class="col-3 col-align-center">
