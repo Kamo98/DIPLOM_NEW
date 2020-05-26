@@ -8,6 +8,9 @@ public class CheckerSettingsForm {
     private boolean floatAbsoluteTolerance;
     private double absoluteTolerance;
 
+    private boolean floatRelativeTolerance;
+    private double relativeTolerance;
+
 
     public boolean isCaseSensitive() {
         return caseSensitive;
@@ -50,4 +53,19 @@ public class CheckerSettingsForm {
         this.absoluteTolerance = absoluteTolerance;
     }
 
+    public boolean isFloatRelativeTolerance() {
+        return floatRelativeTolerance;
+    }
+
+    public void setFloatRelativeTolerance(boolean floatRelativeTolerance) {
+        this.floatRelativeTolerance = floatRelativeTolerance;
+    }
+
+    public double getRelativeTolerance() {
+        return relativeTolerance;
+    }
+
+    public void setRelativeTolerance(double relativeTolerance) {
+        this.relativeTolerance = relativeTolerance;
+    }
 }

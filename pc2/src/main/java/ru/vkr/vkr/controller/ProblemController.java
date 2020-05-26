@@ -56,12 +56,14 @@ public class ProblemController {
         LoadTestsForm loadTestsForm = new LoadTestsForm();
         model.addAttribute("loadTestsForm", loadTestsForm);
 
-        //Для чекера
-        CheckerSettingsForm checkerSettingsForm = new CheckerSettingsForm();
-        model.addAttribute("checkerSettingsForm", checkerSettingsForm);
-
         Collection<String> fileTests = problemFacade.getAllTestsById(problemId);
         model.addAttribute("fileTests", fileTests);
+
+        //Для чекера
+        CheckerSettingsForm checkerSettingsForm = new CheckerSettingsForm();
+        problemFacade.setCheckerParamsToForm(checkerSettingsForm, problem);
+        model.addAttribute("checkerSettingsForm", checkerSettingsForm);
+
 
         return "teacher/problem";
     }
@@ -79,9 +81,12 @@ public class ProblemController {
         return "redirect:/teacher/problem/" + problemId;
     }
 
+
+
     //Загрузка тестов
     @PostMapping("/teacher/problem/{problemId}/tests-upload")
     public String uploadProblemTests(LoadTestsForm loadTestsForm, @PathVariable Long problemId) throws IOException {
+        //todo: нужна валидация данных
         logger.info("Количество тестовых файлов = " + loadTestsForm.getDirTests().length);
 
         Problem problem = problemService.getProblemById(problemId);
@@ -89,6 +94,13 @@ public class ProblemController {
         problemFacade.loadTestFiles(loadTestsForm, problem);
         problemFacade.addTestsToProblem(problem);
 
+        return "redirect:/teacher/problem/" + problemId;
+    }
+
+
+    @GetMapping("/teacher/problem/{problemId}/test-delete/{testName}")
+    public String deleteProblemTest(@PathVariable Long problemId, @PathVariable String testName) {
+        problemFacade.deleteTestFile(problemId, testName);
         return "redirect:/teacher/problem/" + problemId;
     }
 
@@ -114,7 +126,7 @@ public class ProblemController {
         problemService.setAuthorForNewCourse(problem);
         problemService.save(problem);
 
-        //Инициализируем задачу
+        //Инициализируем задачу в pc2
         Long problemPc2NumId = problemFacade.initProblem(problem);
 
         problem.setNumElementId(problemPc2NumId);

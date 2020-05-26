@@ -31,6 +31,10 @@ public class ProblemFacade {
     @Autowired
     private ApplicationContext applicationContext;
 
+    //Стандартные имена тестовых файлов
+    private final String extensionInStandart = ".in";
+    private final String extensionAnsStandart = ".ans";
+
 
     //todo: надо разделить на несколько методов, чтобы вызывать отдельные там где требуется та или иная папка
     private void makeDirectory (Long problemId) {
@@ -122,6 +126,10 @@ public class ProblemFacade {
 
             if (checkerSettingsForm.isFloatAbsoluteTolerance())
                 clicsValidatorSettings.setFloatAbsoluteTolerance(checkerSettingsForm.getAbsoluteTolerance());
+
+            if (checkerSettingsForm.isFloatRelativeTolerance())
+                clicsValidatorSettings.setFloatRelativeTolerance(checkerSettingsForm.getRelativeTolerance());
+
             clicsValidatorSettings.setCaseSensitive(checkerSettingsForm.isCaseSensitive());
             clicsValidatorSettings.setSpaceSensitive(checkerSettingsForm.isSpaceSensitive());
             problem.setCLICSValidatorSettings(clicsValidatorSettings);
@@ -140,6 +148,26 @@ public class ProblemFacade {
         problem.setShowValidationToJudges(true);
 
         internalController.updateProblem(problem);
+    }
+
+
+    public void setCheckerParamsToForm(CheckerSettingsForm checkerSettingsForm, ru.vkr.vkr.entity.Problem problemDb) {
+        InternalController internalController = (InternalController) applicationContext.getBean("getInternalController");
+        //Ищем задачу
+        Problem problem = findProblemInPC2(internalController, problemDb);
+
+        if (problem.getValidatorType() == Problem.VALIDATOR_TYPE.CLICSVALIDATOR) {
+            checkerSettingsForm.setClicsValidator(true);
+
+            ClicsValidatorSettings clicsValidatorSettings = problem.getClicsValidatorSettings();
+
+            checkerSettingsForm.setFloatAbsoluteTolerance(clicsValidatorSettings.isFloatAbsoluteToleranceSpecified());
+            checkerSettingsForm.setAbsoluteTolerance(clicsValidatorSettings.getFloatAbsoluteTolerance());
+            checkerSettingsForm.setFloatRelativeTolerance(clicsValidatorSettings.isFloatRelativeToleranceSpecified());
+            checkerSettingsForm.setRelativeTolerance(clicsValidatorSettings.getFloatRelativeTolerance());
+            checkerSettingsForm.setCaseSensitive(clicsValidatorSettings.isCaseSensitive());
+            checkerSettingsForm.setSpaceSensitive(clicsValidatorSettings.isSpaceSensitive());
+        }
     }
 
 
@@ -205,7 +233,7 @@ public class ProblemFacade {
 //        problem.addTestCaseFilenames("02.in", "02.ans");
 //        problem.addTestCaseFilenames("03.in", "03.ans");
 
-        ProblemDataFiles problemDataFiles = loadDataFiles(problem, null, baseDirectoryName, ".in", ".ans", externalFiles);
+        ProblemDataFiles problemDataFiles = loadDataFiles(problem, null, baseDirectoryName, extensionInStandart, extensionAnsStandart, externalFiles);
         internalController.updateProblem(problem, problemDataFiles);
     }
 
@@ -218,14 +246,31 @@ public class ProblemFacade {
 
 
     public Collection<String> getAllTestsById (Long problemId) {
-        Collection<String> filesList = new ArrayList<>();
+        Set<String> filesList = new HashSet<>();
         File dirFile = new File(uploadPath + "/tests/problem-" + problemId);
         if (dirFile.exists()) {
             String[] filesArr = dirFile.list();
-            if (filesArr != null)
-                Collections.addAll(filesList, filesArr);
+            if (filesArr != null) {
+                for (String fileName : filesArr) {
+                    if (fileName.endsWith(extensionInStandart))     //Файл входной
+                        filesList.add(fileName.substring(0, fileName.length() - extensionInStandart.length()));
+                }
+            }
         }
         return filesList;
+    }
+
+    public void deleteTestFile(Long problemId, String testName) {
+        String path = uploadPath + "/tests/problem-" + problemId;
+        File dirFile = new File(path);
+        if (dirFile.exists()) {
+            File testIn = new File(path + "/" + testName + extensionInStandart);
+            if (testIn.exists())
+                testIn.delete();
+            File testAns = new File(path + "/" + testName + extensionAnsStandart);
+            if (testAns.exists())
+                testAns.delete();
+        }
     }
 
 

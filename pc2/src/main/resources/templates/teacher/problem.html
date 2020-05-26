@@ -19,7 +19,7 @@
 
 
             <div class="main-content col-9 border rounded-lg">
-                <h5 class="centered green-h" th:unless="${isCreate}">Задача "Название задачи"</h5>
+                <h5 class="centered green-h" th:unless="${isCreate}">Задача "[[ ${problem.name} ]]"</h5>
                 <h5 class="centered green-h" th:if="${isCreate}">Задача "Без названия"</h5>
 
 
@@ -185,7 +185,7 @@
 
                             <div class="row row-margin-top">
                                 <div class="col-3 col-align-center">
-                                    <label for="dirTests">Выберите директорию с тестами:</label>
+                                    <label for="dirTests">Выберите файлы с тестами:</label>
                                 </div>
                                 <div class="col">
                                     <input type="file" id="dirTests" class="form-control" multiple="multiple" th:field="*{dirTests}">
@@ -197,13 +197,31 @@
                                     <button type="submit" class="btn btn-primary">Загрузить</button>
                                 </div>
                             </div>
-
-                            <div class="row row-margin-top">
-                                <ul>
-                                    <li th:each="test : ${fileTests}" th:text="${test}"></li>
-                                </ul>
-                            </div>
                         </form>
+
+                        <div class="row row-margin-top">
+                            <div class="col">
+                                <h6 ><i class="fa fa-list" aria-hidden="true"></i>&nbsp;Тесты к задаче</h6 >
+                                <div class="container col-align-centered">
+                                    <div class="row table-header row-table">
+                                        <div class="col-1">№</div>
+                                        <div class="col">Входный файл</div>
+                                        <div class="col">Выходный файл</div>
+                                        <div class="col-3">Управление</div>
+                                    </div>
+
+                                    <div th:class="'row row-table ' + ((${iState.index} % 2 == 1) ? 'dark-row' : '')" th:each="test, iState : ${fileTests}">
+                                        <div class="col-1" th:text="${iState.index} + 1"></div>
+                                        <div class="col" th:text="${test} + '.in'"></div>
+                                        <div class="col" th:text="${test} + '.ans'"></div>
+                                        <div class="col-3">
+                                            <a class="btn btn-danger" th:href="@{'/teacher/problem/' + ${problem.id} + '/test-delete/' + ${test}}"><i class="fa fa-trash-o fa-lg"></i></a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
 
                     <div id="checkerProblem" style="display:none;">
@@ -236,10 +254,21 @@
 
                             <div class="row row-margin-top">
                                 <div class="col">
-                                    <input type="radio" name="typeChecker" id="customValidator" th:value="false" th:field="*{clicsValidator}">
-                                    <label for="customValidator">Использовать встроенный чекер</label>
+                                    <input type="checkbox" id="floatRelativeTolerance" th:field="*{floatRelativeTolerance}">
+                                    <label for="floatRelativeTolerance">Установаить допустимую относительную погрешность</label>
+                                </div>
+                                <div class="col">
+                                    <input type="text" class="form-control" th:field="*{relativeTolerance}">
                                 </div>
                             </div>
+
+                            <!--todo: кастомный чекер оставляем на потом-->
+                            <!--<div class="row row-margin-top">-->
+                                <!--<div class="col">-->
+                                    <!--<input type="radio" name="typeChecker" id="customValidator" th:value="false" th:field="*{clicsValidator}">-->
+                                    <!--<label for="customValidator">Использовать собственный чекер</label>-->
+                                <!--</div>-->
+                            <!--</div>-->
 
                             <div class="row row-margin-top">
                                 <div class = "col col-align-right">
