@@ -2610,7 +2610,7 @@ public class InternalController implements IInternalController, ITwoToOne, IBtoA
     /**
      * Start the UI.
      */
-    public void start(String[] stringArray) {
+    public void start(String[] stringArray, String loginName, String password) {
 
         /**
          * Saved exception.
@@ -2765,8 +2765,195 @@ public class InternalController implements IInternalController, ITwoToOne, IBtoA
         }
 
         isStarted = true;
-        String loginName = "team1";
-        String password = "team1";
+
+        try {
+
+            if (savedTransportException == null) {
+                login(loginName, password); // starts login attempt, will show failure to LoginFrame
+            }
+
+        } catch (Exception e) {
+            log.log(Log.INFO, "Exception while logging in ", e);
+            if (usingGUI) {
+                loginUI.setStatusMessage(e.getMessage());
+            } else {
+                fatalError(e.getMessage());
+            }
+        }
+
+
+        String contactInfo = getHostContacted() + ":" + getPortContacted();
+
+        if (usingGUI && (savedTransportException != null && loginUI != null)) {
+            loginUI.disableLoginButton();
+            loginUI.setStatusMessage("Unable to contact server, contact staff");
+            showErrorMessage("Unable to contact server at: " + contactInfo, "Error contacting server");
+        } else if (savedTransportException != null) {
+            connectionManager = null;
+            fatalError("Unable to contact server at: " + contactInfo + ", contact staff", savedTransportException);
+        }
+    }
+
+    /**
+     * Start the UI.
+     */
+    public void start(String[] stringArray) {
+
+        /**
+         * Saved exception.
+         *
+         * If TransportException thrown before UI has been created, save the exception and present it on the UI later.
+         */
+        TransportException savedTransportException = null;
+
+        String[] requireArguementArgs = { //
+                "--login", //
+                "--password", //
+                MAIN_UI_OPTION,
+                REMOTE_SERVER_OPTION_STRING, //
+                PORT_OPTION_STRING, //
+                LOAD_OPTION_STRING, //
+                PROFILE_OPTION_STRING, //
+                INI_FILENAME_OPTION_STRING, //
+                CONTEST_PASSWORD_OPTION, //
+                "--id", //
+                FILE_OPTION_STRING };
+
+        parseArguments = new ParseArguments(stringArray, requireArguementArgs);
+
+        if (parseArguments.isOptPresent(DEBUG_OPTION_STRING)){
+            parseArguments.dumpArgs(System.out);
+        }
+
+        contest.setCommandLineArguments(parseArguments);
+
+        if (parseArguments.isOptPresent("--server")) {
+            if (!isContactingRemoteServer()) {
+                theProfile = getCurrentProfile();
+                String profilePath = theProfile.getProfilePath();
+                insureProfileDirectory(theProfile);
+                startLog(profilePath, "pc2.startup", null, null);
+            } else {
+                startLog(null, "pc2.startup", null, null);
+            }
+        } else {
+            startLog(null, "pc2.startup."+System.currentTimeMillis(), null, null);
+        }
+
+        handleCommandLineOptions();
+
+        for (String arg : stringArray) {
+            if (arg.equals(FIRST_SERVER_OPTION_STRING)) {
+                setContactingRemoteServer(false);
+            }
+        }
+
+        /**
+         * if (args DOES NOT contains login/pwd) { String s; if (args contains LoginUI ) { s = args login UI } else { s = pc2 LoginFrame } UIPlugin l = classloader (s); l.setModelAndListener (contest,
+         * this); } else { this.login (login,password)
+         *
+         */
+
+        log.info("Starting ConnectionManager...");
+        if (connectionManager == null){
+            /**
+             * If connection manager has not been set, create new one.
+             */
+            connectionManager = new ConnectionManager(log);
+        }
+        log.info("Started ConnectionManager");
+
+        boolean useIniFile = !parseArguments.isOptPresent("--skipini");
+
+        if (parseArguments.isOptPresent(INI_FILENAME_OPTION_STRING) && useIniFile) {
+            String iniName = parseArguments.getOptValue(INI_FILENAME_OPTION_STRING);
+            Exception exception = null;
+            try {
+                System.err.println("Loading INI from " + iniName);
+                ini.setIniURLorFile(iniName);
+                // _source is set if we can successfully open the stream
+                if (!ini.containsKey("_source")) {
+                    System.err.println("Unable to load INI from " + iniName);
+                    getLog().log(Log.WARNING, "Unable to read ini URL " + iniName);
+                    exception = new Exception("Unable to read ini file " + iniName);
+                }
+            } catch (Exception e) {
+                System.err.println("Unable to load INI from " + iniName);
+                getLog().log(Log.WARNING, "Unable to read ini URL " + iniName, e);
+                exception = e;
+            }
+
+            if (exception != null) {
+                fatalError("Cannot start PC^2, " + iniName + " cannot be read (" + exception.getMessage() + ")", exception);
+            }
+        }
+
+        contest.setSiteNumber(0);
+
+        if (useIniFile && (!parseArguments.isOptPresent(INI_FILENAME_OPTION_STRING))) {
+            if (IniFile.isFilePresent()) {
+                // Only read and load .ini file if it is present.
+                new IniFile();
+            } else {
+                String currentDirectory = Utilities.getCurrentDirectory();
+                fatalError("Cannot start PC^2, " + IniFile.getINIFilename() + " file not found in " + currentDirectory);
+            }
+        }
+
+        // SOMEDAY code add NO_SAVE_OPTION_STRING
+        if (parseArguments.isOptPresent("--nosave")) {
+            saveCofigurationToDisk = false;
+        }
+
+        if (parseArguments.isOptPresent("--server")) {
+
+            info("Starting Server Transport...");
+            connectionManager.startServerTransport(this);
+            serverModule = true;
+
+            contactingRemoteServer = false;
+            setServerRemoteHostAndPort(parseArguments.getOptValue(REMOTE_SERVER_OPTION_STRING));
+
+            if (!isContactingRemoteServer()) {
+                theProfile = getCurrentProfile();
+                String profilePath = theProfile.getProfilePath();
+                insureProfileDirectory(theProfile);
+                startLog(profilePath, "pc2.startup", null, null);
+            }
+
+            try {
+                setServerPort(parseArguments.getOptValue(PORT_OPTION_STRING));
+            } catch (NumberFormatException numException) {
+                savedTransportException = new TransportException("Unable to parse value after --port '" + parseArguments.getOptValue(PORT_OPTION_STRING) + "'");
+                log.log(Log.WARNING, "Exception parsing --port ", numException);
+            }
+
+        } else {
+            // Client contact server
+
+            try {
+
+                setClientServerAndPort(parseArguments.getOptValue(PORT_OPTION_STRING));
+
+                info("Contacting server at " + remoteHostName + ":" + remoteHostPort);
+                connectionManager.startClientTransport(remoteHostName, remoteHostPort, this);
+            } catch (NumberFormatException numException) {
+                savedTransportException = new TransportException("Unable to parse value after --port '" + parseArguments.getOptValue(PORT_OPTION_STRING) + "'");
+                log.log(Log.WARNING, "Exception setting remote host and port ", numException);
+            }
+
+            try {
+                connectionManager.connectToMyServer();
+            } catch (TransportException transportException) {
+                savedTransportException = transportException;
+                log.log(Log.INFO, "Exception contacting my server ", transportException);
+                info("Unable to contact server at " + remoteHostName + ":" + port + " " + transportException.getMessage());
+            }
+        }
+
+        isStarted = true;
+        String loginName = "root";
+        String password = "administrator1";
 
         try {
 

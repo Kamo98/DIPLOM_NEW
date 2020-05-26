@@ -21,6 +21,16 @@ public class User implements UserDetails {
     private String username;
     @Size(min=2, message = "Не меньше 5 знаков")
     private String password;
+
+    public String getLoginPC2() {
+        return loginPC2;
+    }
+
+    public void setLoginPC2(String loginPC2) {
+        this.loginPC2 = loginPC2;
+    }
+
+    private String loginPC2;
     @Transient
     private String passwordConfirm;
     @ManyToOne(fetch = FetchType.EAGER)

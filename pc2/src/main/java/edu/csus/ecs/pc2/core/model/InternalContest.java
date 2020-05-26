@@ -3,11 +3,7 @@ package edu.csus.ecs.pc2.core.model;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.Properties;
-import java.util.Vector;
+import java.util.*;
 
 import edu.csus.ecs.pc2.core.IStorage;
 import edu.csus.ecs.pc2.core.ParseArguments;
@@ -59,6 +55,7 @@ import edu.csus.ecs.pc2.core.transport.ConnectionHandlerID;
 import edu.csus.ecs.pc2.profile.ProfileCloneSettings;
 import edu.csus.ecs.pc2.profile.ProfileLoadException;
 import edu.csus.ecs.pc2.profile.ProfileManager;
+import javafx.util.Pair;
 import org.springframework.stereotype.Component;
 
 /**
@@ -3160,5 +3157,33 @@ public class InternalContest implements IInternalContest {
     @Override
     public String getCommandLineOptionValue(String optionNaeme) {
         return parseArguments.getOptValue(optionNaeme);
+    }
+
+    @Override
+    public Account getAccountByLoginAndPassword(String login, String password) {
+        for (Account account : getAccounts()) {
+            if (account.getDisplayName().equals(login) && account.getPassword().equals(password)) {
+                return account;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public Account getAccountForRegistration(List<Pair<String, String>> loginAndPasswordBeforeUserPc2) {
+        for (Account account : getAccounts()) {
+            boolean isAccount = true;
+            for (Pair<String, String> dates : loginAndPasswordBeforeUserPc2) {
+                if (account.getDisplayName().equals(dates.getKey()) &&
+                        account.getPassword().equals(dates.getValue())) {
+                    isAccount = false;
+                    break;
+                }
+            }
+            if (isAccount) {
+                return account;
+            }
+        }
+        return null;
     }
 }
