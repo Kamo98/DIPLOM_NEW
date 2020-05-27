@@ -163,8 +163,8 @@ public class TeacherController {
     //Создание нового курса
     @PostMapping("/teacher/course-create")
     public String courseCreatePost (Model model, @Valid Course course, BindingResult bindingResult) {
-        //course.setName(course.getName().trim());
-        if (bindingResult.hasErrors()) {        //Ошибки валидации есть
+        // проверка на ошибки валидации
+        if (bindingResult.hasErrors()) {
             model.addAttribute("isCreate", true);
             return "teacher/course";
         }

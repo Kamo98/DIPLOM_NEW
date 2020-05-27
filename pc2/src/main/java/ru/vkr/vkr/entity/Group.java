@@ -18,16 +18,17 @@ public class Group {
     @Size(min=5, max=250, message = "Наименование группы должно содержать более 5 и менее 250 символов")
     private String name;
 
+    // Преподаватель группы
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "teacher_id")
     private Teacher teacherOwner;
 
+    // Подписки на курсы
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "course_id")
+    private Course courseSubscriptions;
 
-    //Подписки на курсы
-    @ManyToMany(mappedBy = "subscribers")
-    private Set<Course> courseSubscriptions;
-
-    //todo: сейчас при удалении группы удаляются все студенты вместе с учётками
+    // Студенты группы
     @OneToMany(mappedBy = "group", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<Student> students;
 
@@ -63,11 +64,11 @@ public class Group {
         return "id = " + id + "  name = " + name;
     }
 
-    public Set<Course> getCourseSubscriptions() {
+    public Course getCourseSubscriptions() {
         return courseSubscriptions;
     }
 
-    public void setCourseSubscriptions(Set<Course> courseSubscriptions) {
+    public void setCourseSubscriptions(Course courseSubscriptions) {
         this.courseSubscriptions = courseSubscriptions;
     }
 

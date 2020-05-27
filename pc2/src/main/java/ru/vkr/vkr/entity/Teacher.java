@@ -22,11 +22,11 @@ public class Teacher {
     @OneToOne(fetch = FetchType.LAZY)
     private User user;
 
-
+    // курсы, созданные преподавателем
     @OneToMany(mappedBy = "teacherAuthor", fetch = FetchType.LAZY)
     private Set<Course> courses;
 
-
+    // задачи, созданные преподавателем
     @OneToMany(mappedBy = "teacherAuthor", fetch = FetchType.LAZY)
     private Set<Problem> problems;
 

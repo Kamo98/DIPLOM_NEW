@@ -3,6 +3,7 @@ package ru.vkr.vkr.entity;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.Set;
 
 @Entity
 @Table(name = "t_problem")
@@ -23,12 +24,27 @@ public class Problem {
     @Column(nullable = false)
     private Integer memoryLimit;
 
+    @Column(nullable = false)
+    private String pathToTextProblem;
+
     @Column
     private Long numElementId;      //Для адекватного поиска задач в PC2
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "teacher_id")
     private Teacher teacherAuthor;
+
+    @ManyToMany(mappedBy = "chapterProblems", fetch = FetchType.LAZY)
+    private Set<Chapter> chapters;
+
+
+    public Set<Chapter> getChapters() {
+        return chapters;
+    }
+
+    public void setChapters(Set<Chapter> chapters) {
+        this.chapters = chapters;
+    }
 
     public String getName() {
         return name;
