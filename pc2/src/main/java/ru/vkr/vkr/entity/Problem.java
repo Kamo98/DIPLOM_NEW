@@ -3,6 +3,7 @@ package ru.vkr.vkr.entity;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.Set;
 
 @Entity
 @Table(name = "t_problem")
@@ -29,6 +30,13 @@ public class Problem {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "teacher_id")
     private Teacher teacherAuthor;
+
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name="t_tag_problem",
+            joinColumns = @JoinColumn(name = "problem_id"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id"))
+    private Set<HashTag> hashTags;
 
     public String getName() {
         return name;
@@ -78,5 +86,13 @@ public class Problem {
 
     public void setTeacherAuthor(Teacher teacherAuthor) {
         this.teacherAuthor = teacherAuthor;
+    }
+
+    public Set<HashTag> getHashTags() {
+        return hashTags;
+    }
+
+    public void setHashTags(Set<HashTag> hashTags) {
+        this.hashTags = hashTags;
     }
 }
