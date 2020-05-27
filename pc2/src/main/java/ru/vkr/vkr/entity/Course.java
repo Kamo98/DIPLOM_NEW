@@ -18,18 +18,26 @@ public class Course {
     @Size(min=5, max=250, message = "Наименование курса должно содержать более 5 и менее 250 символов")
     private String name;
 
+    // Преподаватель курса
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "teacher_id")
     private Teacher teacherAuthor;
 
-    //Подписчики курса
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name="t_courseSubscriber",
-            joinColumns = @JoinColumn(name = "course_id"),
-            inverseJoinColumns = @JoinColumn(name = "group_id"))
+    // Подписчики(группы) курса
+    @OneToMany(mappedBy = "courseSubscriptions", fetch = FetchType.LAZY)
     private Set<Group> subscribers;
 
+    // Подписчики(группы) курса
+    @OneToMany(mappedBy = "courseChapters", fetch = FetchType.LAZY)
+    private Set<Chapter> chapters;
 
+    public Set<Chapter> getChapters() {
+        return chapters;
+    }
+
+    public void setChapters(Set<Chapter> chapters) {
+        this.chapters = chapters;
+    }
 
     public String getName() {
         return name;

@@ -87,19 +87,6 @@
                     </div>
                 </div>
 
-                <div class="row row-margin-bottom" th:if="${teacherGroups}">
-                    <div class = "col border rounded-lg quick-panel">
-                        <h5><i class="fa fa-users" aria-hidden="true"></i>&nbsp;Мои группы</h5>
-                        <hr />
-                        <ul>
-                            <li th:each="group : ${teacherGroups}">
-                                <a th:href="@{'/teacher/group/' + ${group.id}}" th:text="${group.name}">Группа</a>
-                            </li>
-                        </ul>
-                        <div class="link-new"><a th:href="@{/teacher/group-create}"><i class="fa fa-plus" aria-hidden="true"></i>&nbsp;Создать группу</a></div>
-                    </div>
-                </div>
-
                 <div class="row row-margin-bottom" th:if="${teacherProblems}">
                     <div class = "col border rounded-lg quick-panel">
                         <h5><i class="fa fa-tasks" aria-hidden="true"></i>&nbsp;Мои задачи</h5>

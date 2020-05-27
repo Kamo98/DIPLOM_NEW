@@ -45,7 +45,7 @@
 
                     <div id="themesOfCourse" th:unless="${isCreate}" class="col-align-centered">
                         <!--<div class="alert alert-warning" role="alert">-->
-                            <!--Курс пока не содержит ни одной темы.-->
+                            <!--.-->
                         <!--</div>-->
 
                         <div class="row row-table table-header">
@@ -59,71 +59,20 @@
                                 Управление
                             </div>
                         </div>
-                        <div class="row row-table">
+
+                        <div th:if="${#lists.isEmpty(course.chapters)}" class="alert alert-warning" role="alert">
+                            Курс пока не содержит ни одной темы
+                        </div>
+
+                        <div class="row row-table" th:each="chapter : ${course.chapters}" th:id="'teacher_'+${chapter.id}">
                             <div class="col">
-                                <a href="/teacher/theme"><i class="fa fa-book fa-fw" aria-hidden="true"></i>&nbsp;
-                                    Динамическое программирование
+                                <a href="/teacher/theme"><i class="fa fa-book fa-fw" aria-hidden="true"
+                                                            th:text="${chapter.name}"></i>&nbsp;
                                 </a>
                             </div>
                             <div class="col-2">
                                 <i class="fa fa-calendar" aria-hidden="true"></i>&nbsp;
                                 06/11/2020
-                            </div>
-                            <div class="col-2">
-                                <a class="btn btn-danger" href="#"><i class="fa fa-trash-o fa-lg"></i></a>
-                            </div>
-                        </div>
-                        <div class="row row-table dark-row">
-                            <div class="col">
-                                <a href="/teacher/theme"><i class="fa fa-book fa-fw" aria-hidden="true"></i>&nbsp;
-                                    Обходы в графах
-                                </a>
-                            </div>
-                            <div class="col-2">
-                                <i class="fa fa-calendar" aria-hidden="true"></i>&nbsp;
-                                15/11/2020
-                            </div>
-                            <div class="col-2">
-                                <a class="btn btn-danger" href="#"><i class="fa fa-trash-o fa-lg"></i></a>
-                            </div>
-                        </div>
-                        <div class="row row-table">
-                            <div class="col">
-                                <a href="/teacher/theme"><i class="fa fa-book fa-fw" aria-hidden="true"></i>&nbsp;
-                                    Потоки
-                                </a>
-                            </div>
-                            <div class="col-2">
-                                <i class="fa fa-calendar" aria-hidden="true"></i>&nbsp;
-                                27/11/2020
-                            </div>
-                            <div class="col-2">
-                                <a class="btn btn-danger" href="#"><i class="fa fa-trash-o fa-lg"></i></a>
-                            </div>
-                        </div>
-                        <div class="row row-table dark-row">
-                            <div class="col">
-                                <a href="/teacher/theme"><i class="fa fa-book fa-fw" aria-hidden="true"></i>&nbsp;
-                                    Простая геометрия
-                                </a>
-                            </div>
-                            <div class="col-2">
-                                <i class="fa fa-calendar" aria-hidden="true"></i>&nbsp;
-                                19/11/2020
-                            </div>
-                            <div class="col-2">
-                                <a class="btn btn-danger" href="#"><i class="fa fa-trash-o fa-lg"></i></a>
-                            </div>
-                        </div>
-                        <div class="row row-table">
-                            <div class="col">
-                                <a href="/teacher/theme"><i class="fa fa-book fa-fw" aria-hidden="true"></i>&nbsp;
-                                    Тренировка от 21/11/2020
-                                </a>
-                            </div>
-                            <div class="col-2">
-                                <i class="fa fa-calendar" aria-hidden="true"></i>&nbsp;
-                                21/11/2020
                             </div>
                             <div class="col-2">
                                 <a class="btn btn-danger" href="#"><i class="fa fa-trash-o fa-lg"></i></a>

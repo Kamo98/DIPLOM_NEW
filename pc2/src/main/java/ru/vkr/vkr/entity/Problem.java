@@ -24,6 +24,9 @@ public class Problem {
     @Column(nullable = false)
     private Integer memoryLimit;
 
+    @Column(nullable = false)
+    private String pathToTextProblem;
+
     @Column
     private Long numElementId;      //Для адекватного поиска задач в PC2
 
@@ -31,6 +34,17 @@ public class Problem {
     @JoinColumn(name = "teacher_id")
     private Teacher teacherAuthor;
 
+    @ManyToMany(mappedBy = "chapterProblems", fetch = FetchType.LAZY)
+    private Set<Chapter> chapters;
+
+
+    public Set<Chapter> getChapters() {
+        return chapters;
+    }
+
+    public void setChapters(Set<Chapter> chapters) {
+        this.chapters = chapters;
+    }
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name="t_tag_problem",
