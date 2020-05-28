@@ -262,35 +262,36 @@ public class TeacherController {
 
 
     //Страница с созданием новой группы
-    @GetMapping("/teacher/course/{course_id}/chapter-create")
+    @GetMapping("/teacher/course/{courseId}/chapter-create")
     public String chapterCreateGet (Model model,
-                                    @PathVariable Long course_id,
+                                    @PathVariable Long courseId,
                                     Chapter chapter) {
-        model.addAttribute("course_id", course_id);
+        model.addAttribute("course_id", courseId);
         model.addAttribute("isCreate", true);
         return "teacher/theme";
     }
 
-    //Создание новой группы
-    @PostMapping("/teacher/course/{course_id}/chapter-create")
+    //Создание новой темы/лабы
+    @PostMapping("/teacher/course/{courseId}/chapter-create")
     public String chapterCreatePost (Model model,
-                                     @PathVariable Long course_id,
+                                     @PathVariable Long courseId,
                                      @Valid Chapter chapter,
                                      BindingResult bindingResult) {
         // проверка на ошибки валидации
         if (bindingResult.hasErrors()) {
-            model.addAttribute("course_id", course_id);
+            model.addAttribute("course_id", courseId);
             model.addAttribute("isCreate", true);
             return "teacher/theme";
         }
+        Course course = courseService.getCourseById(courseId);
         // Привязываем курс к теме
-        chapterService.setCourse(chapter, course_id);
+        chapterService.setCourse(chapter, course);
         // Обновляем курс
-        courseService.addChapter(chapter, course_id);
+        courseService.addChapter(chapter, course);
         // Сохраняем изменения
         chapterService.saveChapter(chapter);
         //И переходим к теме/лабе
-        return "redirect:/teacher/course/" + course_id + "/chapter/" + chapter.getId();
+        return "redirect:/teacher/course/" + courseId + "/chapter/" + chapter.getId();
     }
 
     // страница для просмотра данных темы/лабы
@@ -307,7 +308,7 @@ public class TeacherController {
 
     //Для изменения параметров темы/лабы
     @PostMapping("/teacher/course/{course_id}/chapter/{chapter_id}")
-    public String coursePost(Model model,
+    public String updateChapterSettings(Model model,
                              @Valid Chapter chapterForm,
                              @PathVariable Long course_id,
                              @PathVariable Long chapter_id,
@@ -321,4 +322,16 @@ public class TeacherController {
         chapterService.saveChapter(chapter);
         return "redirect:/teacher/course/" + course_id + "/chapter/" + chapter_id;
     }
+
+    //Удаление темы/лабы
+    @GetMapping("/teacher/course/{courseId}/delete-chapter/{chapterId}")
+    public String deletChapter(Model model,
+                               @PathVariable Long courseId,
+                               @PathVariable Long chapterId) {
+        Chapter chapter = chapterService.getChapterById(chapterId);
+        chapterService.getChapterById(chapterId);
+        chapterService.deleteChapter(chapter);
+        return "redirect:/teacher/course/" + courseId;
+    }
+
 }

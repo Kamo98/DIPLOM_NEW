@@ -22,8 +22,7 @@ public class ChapterService {
         return chapterRepository.findById(id).get();
     }
 
-    public void setCourse(Chapter chapter, Long course_id) {
-        Course course = courseRepository.getOne(course_id);
+    public void setCourse(Chapter chapter, Course course) {
         chapter.setCourseChapters(course);
     }
 
@@ -35,5 +34,10 @@ public class ChapterService {
     public void updateName(Chapter chapter, String name) {
         logger.info("set new name chapter " + chapter.getName() + "-->" + name);
         chapter.setName(name);
+    }
+
+    public void deleteChapter(Chapter chapter) {
+        logger.info("delete chapter " + chapter.getName());
+        chapterRepository.delete(chapter);
     }
 }

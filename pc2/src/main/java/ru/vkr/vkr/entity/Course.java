@@ -28,7 +28,9 @@ public class Course {
     private Set<Group> subscribers;
 
     // Подписчики(группы) курса
-    @OneToMany(mappedBy = "courseChapters", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "courseChapters",
+            fetch = FetchType.LAZY,
+            cascade = CascadeType.ALL)
     private Set<Chapter> chapters;
 
     public Set<Chapter> getChapters() {

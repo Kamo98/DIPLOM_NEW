@@ -44,12 +44,10 @@ public class CourseService {
         course.setTeacherAuthor(authenticationFacade.getCurrentTeacher());
     }
 
-    public void addChapter(Chapter chapter, Long id) {
-        Course course = courseRepository.getOne(id);
+    public void addChapter(Chapter chapter, Course course) {
         Set<Chapter> chapterSet = course.getChapters();
         chapterSet.add(chapter);
         course.setChapters(chapterSet);
-        saveCourse(course);
     }
 
 
