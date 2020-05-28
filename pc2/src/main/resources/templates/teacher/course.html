@@ -46,9 +46,6 @@
             <div class="container" id="containerOfTabs">
 
                 <div id="themesOfCourse" th:unless="${isCreate}" class="col-align-centered">
-                    <!--<div class="alert alert-warning" role="alert">-->
-                    <!--.-->
-                    <!--</div>-->
 
                     <div class="row row-table table-header">
                         <div class="col">
@@ -90,91 +87,53 @@
                                 <i class="fa fa-plus" aria-hidden="true"></i>&nbsp;Добавить новую тему
                             </a>
                         </div>
-                        <div class="col">
-
-                        </div>
-                        <div class="col col-align-right">
-                            <a class="btn btn-danger" th:href="@{'/teacher/course-delete/'+${course.id}}">
-                                <i class="fa fa-trash-o fa-lg"></i>&nbsp;Удалить курс
-                            </a>
-                        </div>
+                        <div class="col"></div>
                     </div>
                 </div>
 
-                <div id="subscribesOfCourse" th:unless="${isCreate}" style="display: none;">
-                    <div class="alert alert-warning" role="alert" th:if="${courseSubscribers.empty}">
-                        На курс пока не подписана ни одна группа
-                    </div>
-                    <div class="alert alert-danger" role="alert" th:if="${groupRepeat}">
-                        Добавляемая вами группы уже является подписчиком курса
-                    </div>
-
-                    <div class="col-align-centered" th:unless="${courseSubscribers.empty}">
-                        <div class="row row-table table-header">
-                            <div class="col">
-                                Группа
-                            </div>
-                            <div class="col-3">
-                                Управление
-                            </div>
+                <div id="subscribesOfCourse" th:unless="${isCreate}" class="col-align-centered" style="display: none;">
+                    <div class="row row-table table-header">
+                        <div class="col">
+                            Группа
                         </div>
+                        <div class="col-2">
+                            Количество участников
+                        </div>
+                        <div class="col-2">
+                            Управление
+                        </div>
+                    </div>
 
-                        <div th:class="'row row-table ' + ((${iState.index} % 2 == 1) ? 'dark-row' : '')"
-                             th:each="subscribe, iState : ${courseSubscribers}">
-                            <div class="col col-align-center">
-                                <a th:href="@{'/teacher/group/' + ${subscribe.id}}"><i class="fa fa-users"
-                                                                                       aria-hidden="true"></i>&nbsp;
-                                    [[ ${subscribe.name} ]]
-                                </a>
-                            </div>
-                            <div class="col-3">
-                                <a class="btn btn-danger"
-                                   th:href="@{'/teacher/course/' + ${course.id} + '/signDown/' + ${subscribe.id} }"><i
-                                        class="fa fa-trash-o fa-lg"></i>&nbsp;
-                                    Отписать от курса
-                                </a>
-                            </div>
+                    <div th:if="${#lists.isEmpty(course.subscribers)}" class="alert alert-warning" role="alert">
+                        Курс пока не содержит ни одной группы
+                    </div>
+
+                    <div class="row row-table" th:each="subscriber : ${course.subscribers}">
+                        <div class="col">
+                            <a th:href="@{'/teacher/course/'+${course.id}+'/group/'+${subscriber.id}}"><i
+                                    class="fa fa-book fa-fw" aria-hidden="true"></i>&nbsp;
+                                [[ ${subscriber.name} ]]
+                            </a>
+                        </div>
+                        <div class="col-2">
+                            <i class="fa fa-calendar" aria-hidden="true"></i>&nbsp;
+                            [[ ${#lists.size(subscriber.students)} ]]
+                        </div>
+                        <div class="col-2">
+                            <a class="btn btn-danger" th:href="@{'/teacher/course/'+${course.id}+'/delete-group/'+${subscriber.id}}">
+                                <i class="fa fa-trash-o fa-lg"></i></a>
                         </div>
                     </div>
 
 
                     <div class="row row-margin-top">
-                        <h6><i class="fa fa-user-plus" aria-hidden="true"></i>&nbsp;Подписать группу на курс</h6>
+                        <div class="col">
+                            <a class="btn btn-success" th:href="@{'/teacher/course/'+${course.id}+'/group-create'}">
+                                <i class="fa fa-plus" aria-hidden="true"></i>&nbsp;Добавить новую группу
+                            </a>
+                        </div>
+                        <div class="col"></div>
                     </div>
-                    <form th:action="@{'/teacher/course/' + ${course.id} + '/signUp'}" th:object="${subscriptionForm}"
-                          method="POST">
-                        <div class="row">
-                            <div class="col">
-                                <div class="form-group">
-                                    <div class="row">
-                                        <div class="col">
-                                            <input type="radio" name="typeAddGroup" id="typeAddSelect"
-                                                   checked="checked">
-                                            <label for="typeAddSelect">Выбрать группу из существующих</label>
-                                        </div>
-
-                                        <div class="col">
-                                            <select class="form-control" id="selectGroups" th:field="*{group}">
-                                                <option th:each="group : ${teacherGroups}"
-                                                        th:value="${group.id}"
-                                                        th:text="${group.name}">Группа
-                                                </option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <input type="radio" name="typeAddGroup" id="typeAddNew">
-                                    <label for="typeAddNew">Создать новую группу и подписать</label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <button class="btn btn-success" type="submit"><i class="fa fa-plus" aria-hidden="true"></i>&nbsp;Подписать
-                                на курс
-                            </button>
-                        </div>
-                    </form>
                 </div>
 
                 <div id="courseSettings" style="display: none;">
@@ -208,6 +167,12 @@
                             </div>
                         </div>
                     </form>
+                    <br><br><br>
+                    <div class="col col-align-right" th:unless="${isCreate}">
+                        <a class="btn btn-danger" th:href="@{'/teacher/course-delete/'+${course.id}}">
+                            <i class="fa fa-trash-o fa-lg"></i>&nbsp;Удалить курс
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>

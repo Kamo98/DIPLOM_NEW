@@ -38,6 +38,10 @@ public class GroupService {
         group.setTeacherOwner(authenticationFacade.getCurrentTeacher());
     }
 
+    public void setCourse(Group group, Course course) {
+        group.setCourseSubscriptions(course);
+    }
+
 
     public Group getGroupById(Long idGroup) {
         return groupRepository.getOne(idGroup);
