@@ -33,16 +33,17 @@ public class HashTagService {
             tag2child.get(parentId).add(tag);
         }
 
-        dfs(-1L, sortedTags, tag2child);
+        dfs(-1L, sortedTags, tag2child, 0);
         return sortedTags;
     }
 
 
-    private void dfs(Long cur, Collection<HashTag> sortedTags, HashMap<Long, Collection<HashTag>> tag2child) {
+    private void dfs(Long cur, Collection<HashTag> sortedTags, HashMap<Long, Collection<HashTag>> tag2child, int level) {
         if (tag2child.containsKey(cur))
             for (HashTag to : tag2child.get(cur)) {
+                to.setLevel(level);
                 sortedTags.add(to);
-                dfs(to.getId(), sortedTags, tag2child);
+                dfs(to.getId(), sortedTags, tag2child, level + 1);
             }
     }
 }

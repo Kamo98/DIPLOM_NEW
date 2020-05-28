@@ -16,8 +16,8 @@ public class HashTag {
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false)
-    private Integer level;
+    //Для подсчёта уровня вложенности при dfs(нет в базе)
+    transient private Integer level;
 
     //Родителский тег
     @ManyToOne(fetch = FetchType.EAGER)
@@ -27,6 +27,10 @@ public class HashTag {
     //Дочерние теги (пока не используются и видимо не будут)
 //    @OneToMany(mappedBy = "parent", fetch = FetchType.LAZY)
 //    private Set<HashTag> children;
+
+    //Задачи, к которым прикреплён
+    @ManyToMany(mappedBy = "hashTags")
+    private Set<Problem> problems;
 
     public Long getId() {
         return id;
@@ -44,13 +48,6 @@ public class HashTag {
         this.name = name;
     }
 
-    public Integer getLevel() {
-        return level;
-    }
-
-    public void setLevel(Integer level) {
-        this.level = level;
-    }
 
     public HashTag getParent() {
         return parent;
@@ -58,6 +55,24 @@ public class HashTag {
 
     public void setParent(HashTag parent) {
         this.parent = parent;
+    }
+
+    @Transient
+    public Integer getLevel() {
+        return level;
+    }
+
+    @Transient
+    public void setLevel(Integer level) {
+        this.level = level;
+    }
+
+    public Set<Problem> getProblems() {
+        return problems;
+    }
+
+    public void setProblems(Set<Problem> problems) {
+        this.problems = problems;
     }
 
     //Связь с задачей
