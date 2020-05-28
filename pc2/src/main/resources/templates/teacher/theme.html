@@ -18,10 +18,11 @@
 
 
             <div class="main-content col-9 border rounded-lg">
-                <h5 class="centered green-h">Тема "Динамическое программирование"</h5>
+                <h5 class="centered green-h" th:unless="${isCreate}">Тема "[[ ${chapter.name} ]]"</h5>
+                <h5 class="centered green-h" th:if="${isCreate}">Курс "Новая тема"</h5>
 
                 <ul class="nav nav-pills tabs-menu">
-                    <li>
+                    <li th:unless="${isCreate}">
                         <a class="nav-link active" href="#" id="linkThemeProblems"><i class="fa fa-tasks" aria-hidden="true"></i>&nbsp;Задачи</a>
                     </li>
                     <li>
@@ -34,7 +35,7 @@
 
                 <div class="container" id="containerOfTabs">
 
-                    <div id="problemsOfTheme" >
+                    <div id="problemsOfTheme"  th:unless="${isCreate}" >
                         <!--<div class="alert alert-warning" role="alert">-->
                             <!--К теме пока не прикреплена ни одна задача-->
                         <!--</div>-->
@@ -189,34 +190,30 @@
                     </div>
 
                     <div id="themeSettings" style="display: none;">
-                        <form>
+                        <form class="needs-validation" novalidate th:action="${isCreate}? @{'/teacher/course/'+${course_id}+'/chapter-create'} : @{'/teacher/course/'+${course_id}+'/chapter/' + ${chapter.id}}"
+                              th:object="${chapter}" method="POST">
                             <div class="row row-margin-top">
                                 <div class="col-3 col-align-center">
                                     <label for="nameOfTheme">Наименование темы</label>
                                 </div>
                                 <div class="col">
-                                    <input type="text" id="nameOfTheme" class="form-control" value="Динамическое программирование">
+                                    <input type="text" id="nameOfTheme" class="form-control" th:field="*{name}" >
                                     <!--<div class="col invalid-tooltip">-->
                                     <!--Наименование курса не может быть пустым-->
                                     <!--</div>-->
-                                    <!--<div class="col my-invalid-tooltip">Некорректное наименование</div>-->
+                                    <div class="col my-invalid-tooltip" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Некорректное наименование</div>
                                 </div>
                             </div>
 
                             <div class="row row-margin-top">
                                 <div class = "col col-align-right">
-
-                                    <button class="btn btn-primary" type="submit">
+                                    <button class="btn btn-primary" type="submit" th:unless="${isCreate}">
                                         <i class="fa fa-floppy-o" aria-hidden="true"></i>&nbsp;Сохранить
                                     </button>
 
-                                    <!--<button class="btn btn-primary" type="submit" th:unless="${isCreate}">-->
-                                        <!--<i class="fa fa-floppy-o" aria-hidden="true"></i>&nbsp;Сохранить-->
-                                    <!--</button>-->
-
-                                    <!--<button class="btn btn-primary" type="submit" th:if="${isCreate}">-->
-                                        <!--<i class="fa fa-plus" aria-hidden="true"></i>&nbsp;Создать-->
-                                    <!--</button>-->
+                                    <button class="btn btn-primary" type="submit" th:if="${isCreate}">
+                                        <i class="fa fa-plus" aria-hidden="true"></i>&nbsp;Создать
+                                    </button>
                                 </div>
                             </div>
                         </form>
@@ -230,8 +227,15 @@
 
     <footer th:replace="base :: footer"></footer>
 
+    <script th:if="${isCreate}">
+        //Чтобы при запуске страницы создания активировалась вкладка с настройками
+        $(document).ready(function() {
+            $("#linkThemeSettings").click();
+        });
+    </script>
 
     <script>
+
         //Клик по вкладке Задачи темы
         $('#linkThemeProblems').click(function(e){
             $('#linkThemeProblems').addClass('active');

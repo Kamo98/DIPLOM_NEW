@@ -1,5 +1,6 @@
 package ru.vkr.vkr.controller;
 
+import com.sun.org.apache.xpath.internal.operations.Mod;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,10 +13,8 @@ import ru.vkr.vkr.facade.TeacherFacade;
 import ru.vkr.vkr.form.SubscriptionForm;
 import ru.vkr.vkr.form.UserForm;
 import ru.vkr.vkr.repository.StudentRepository;
-import ru.vkr.vkr.service.CourseService;
-import ru.vkr.vkr.service.GroupService;
-import ru.vkr.vkr.service.ProblemService;
-import ru.vkr.vkr.service.UserService;
+import ru.vkr.vkr.service.*;
+
 import java.util.List;
 
 import javax.validation.Valid;
@@ -30,11 +29,11 @@ public class TeacherController {
     @Autowired
     private GroupService groupService;
     @Autowired
-    private AdminFacade adminFacade;
-    @Autowired
     private UserService userService;
     @Autowired
     private ProblemService problemService;
+    @Autowired
+    private ChapterService chapterService;
     @Autowired
     private StudentRepository studentRepository;
     @Autowired
@@ -151,8 +150,6 @@ public class TeacherController {
     }
 
 
-
-
     //Страница с созданием нового курса
     @GetMapping("/teacher/course-create")
     public String courseCreate(Model model, Course course) {
@@ -263,10 +260,65 @@ public class TeacherController {
         return "redirect:/teacher/group/" + groupId;
     }
 
-    @GetMapping("/teacher/theme")
-    public String testTheme() {
+
+    //Страница с созданием новой группы
+    @GetMapping("/teacher/course/{course_id}/chapter-create")
+    public String chapterCreateGet (Model model,
+                                    @PathVariable Long course_id,
+                                    Chapter chapter) {
+        model.addAttribute("course_id", course_id);
+        model.addAttribute("isCreate", true);
         return "teacher/theme";
     }
 
+    //Создание новой группы
+    @PostMapping("/teacher/course/{course_id}/chapter-create")
+    public String chapterCreatePost (Model model,
+                                     @PathVariable Long course_id,
+                                     @Valid Chapter chapter,
+                                     BindingResult bindingResult) {
+        // проверка на ошибки валидации
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("course_id", course_id);
+            model.addAttribute("isCreate", true);
+            return "teacher/theme";
+        }
+        // Привязываем курс к теме
+        chapterService.setCourse(chapter, course_id);
+        // Обновляем курс
+        courseService.addChapter(chapter, course_id);
+        // Сохраняем изменения
+        chapterService.saveChapter(chapter);
+        //И переходим к теме/лабе
+        return "redirect:/teacher/course/" + course_id + "/chapter/" + chapter.getId();
+    }
 
+    // страница для просмотра данных темы/лабы
+    @GetMapping("/teacher/course/{course_id}/chapter/{chapter_id}")
+    public String showTheme(Model model,
+                            @PathVariable Long course_id,
+                            @PathVariable Long chapter_id) {
+        Chapter chapter = chapterService.getChapterById(chapter_id);
+        model.addAttribute("course_id", course_id);
+        model.addAttribute("chapter", chapter);
+        model.addAttribute("isCreate", false);
+        return "teacher/theme";
+    }
+
+    //Для изменения параметров темы/лабы
+    @PostMapping("/teacher/course/{course_id}/chapter/{chapter_id}")
+    public String coursePost(Model model,
+                             @Valid Chapter chapterForm,
+                             @PathVariable Long course_id,
+                             @PathVariable Long chapter_id,
+                             BindingResult bindingResult) {
+        //todo: при создании курса валидация работает, при обновлении нет, нужно разбираться
+//        if (bindingResult.hasErrors()) {        //Ошибки валидации есть
+//            return "teacher/course";
+//        }
+        Chapter chapter = chapterService.getChapterById(chapter_id);
+        chapterService.updateName(chapter, chapterForm.getName());
+        chapterService.saveChapter(chapter);
+        return "redirect:/teacher/course/" + course_id + "/chapter/" + chapter_id;
+    }
 }

@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.vkr.vkr.entity.Chapter;
 import ru.vkr.vkr.entity.Course;
 import ru.vkr.vkr.entity.Group;
 import ru.vkr.vkr.facade.AuthenticationFacade;
@@ -11,6 +12,7 @@ import ru.vkr.vkr.repository.CourseRepository;
 import ru.vkr.vkr.repository.GroupRepository;
 
 import java.util.Collection;
+import java.util.Set;
 
 @Service
 public class CourseService {
@@ -30,6 +32,7 @@ public class CourseService {
         courseRepository.save(course);
     }
 
+
     public void deleteCourse(Course course) {
         logger.info("delete course " + course.toString());
         courseRepository.delete(course);
@@ -39,6 +42,14 @@ public class CourseService {
     public void setAuthorForNewCourse(Course course){
         //Автор курса - текущий пользователь (преподаватель)
         course.setTeacherAuthor(authenticationFacade.getCurrentTeacher());
+    }
+
+    public void addChapter(Chapter chapter, Long id) {
+        Course course = courseRepository.getOne(id);
+        Set<Chapter> chapterSet = course.getChapters();
+        chapterSet.add(chapter);
+        course.setChapters(chapterSet);
+        saveCourse(course);
     }
 
 

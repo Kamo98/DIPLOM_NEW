@@ -66,8 +66,8 @@
 
                         <div class="row row-table" th:each="chapter : ${course.chapters}" th:id="'teacher_'+${chapter.id}">
                             <div class="col">
-                                <a href="/teacher/theme"><i class="fa fa-book fa-fw" aria-hidden="true"
-                                                            th:text="${chapter.name}"></i>&nbsp;
+                                <a th:href="@{'/teacher/course/'+${course.id}+'/chapter/'+${chapter.id}}"><i class="fa fa-book fa-fw" aria-hidden="true"></i>&nbsp;
+                                    [[ ${chapter.name} ]]
                                 </a>
                             </div>
                             <div class="col-2">
@@ -82,7 +82,7 @@
 
                         <div class="row row-margin-top">
                             <div class = "col">
-                                <a class="btn btn-success" href="/theme">
+                                <a class="btn btn-success" th:href="@{'/teacher/course/'+${course.id}+'/chapter-create'}">
                                     <i class="fa fa-plus" aria-hidden="true"></i>&nbsp;Добавить новую тему
                                 </a>
                             </div>
