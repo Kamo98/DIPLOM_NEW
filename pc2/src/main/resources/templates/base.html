@@ -73,7 +73,6 @@
         <div th:fragment="side-panels" class="col">
             <div class="container">
 
-
                 <div class="row row-margin-bottom" th:if="${teacherCourses}">
                     <div class = "col border rounded-lg quick-panel">
                         <h5><i class="fa fa-graduation-cap" aria-hidden="true"></i>&nbsp;Мои курсы</h5>
@@ -102,27 +101,13 @@
                     </div>
                 </div>
 
-
-
-
-
-
-
-
-
-                <div class="row row-margin-bottom" th:if="${studentCourses}">
+                <div class="row row-margin-bottom" th:if="${studentCourse}">
                     <div class = "col border rounded-lg quick-panel">
-                        <h5><i class="fa fa-graduation-cap" aria-hidden="true"></i>&nbsp;Курсы</h5>
+                        <h5><i class="fa fa-graduation-cap" aria-hidden="true"></i>&nbsp;Курс</h5>
                         <hr />
                         <ul>
                             <li>
                                 <a th:href="@{'/student/course/'}">Курс 1</a>
-                            </li>
-                            <li>
-                                <a th:href="@{'/student/course/'}">Курс 2</a>
-                            </li>
-                            <li>
-                                <a th:href="@{'/student/course/'}">Курс 3</a>
                             </li>
                         </ul>
                     </div>

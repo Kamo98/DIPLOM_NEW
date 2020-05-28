@@ -8,6 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ru.vkr.vkr.entity.Course;
 import ru.vkr.vkr.form.SubmitRunForm;
+import ru.vkr.vkr.service.StudentService;
 import ru.vkr.vkr.service.SubmitRunService;
 
 import java.util.ArrayList;
@@ -23,6 +24,8 @@ public class StudentController {
     @Autowired
     private SubmitRunService submitRunService;
     @Autowired
+    private StudentService studentService;
+    @Autowired
     private ApplicationContext applicationContext;
 
     @ModelAttribute
@@ -31,14 +34,10 @@ public class StudentController {
         model.addAttribute("studentCourses", studentCourses);
     }
 
-    @GetMapping("/student")
-    public String mainStudent(Model model) {
-        return "student/main";
-    }
-
-
     @GetMapping("/student/course")
     public String getCourse(Model model) {
+        Course course = studentService.getCourse();
+        model.addAttribute("course", course);
         return "student/course";
     }
 

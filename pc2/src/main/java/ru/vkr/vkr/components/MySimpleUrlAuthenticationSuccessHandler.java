@@ -61,7 +61,7 @@ public class MySimpleUrlAuthenticationSuccessHandler implements AuthenticationSu
         Map<String, String> roleTargetUrlMap = new HashMap<>();
         roleTargetUrlMap.put("ROLE_ADMIN", "/admin/teachers");
         roleTargetUrlMap.put("ROLE_TEACHER", "/teacher");
-        roleTargetUrlMap.put("ROLE_STUDENT", "/student");
+        roleTargetUrlMap.put("ROLE_STUDENT", "/student/course");
 
         User successUser = (User)authentication.getPrincipal();
         String[] curStringMas = {};
