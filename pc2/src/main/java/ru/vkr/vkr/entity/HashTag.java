@@ -1,9 +1,12 @@
 package ru.vkr.vkr.entity;
 
+import com.sun.naming.internal.FactoryEnumeration;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.HashMap;
 import java.util.Set;
+import java.util.List;
 
 @Entity
 @Table(name="t_tag")
@@ -29,8 +32,8 @@ public class HashTag {
 //    private Set<HashTag> children;
 
     //Задачи, к которым прикреплён
-    @ManyToMany(mappedBy = "hashTags")
-    private Set<Problem> problems;
+    @ManyToMany(mappedBy = "hashTags", fetch = FetchType.LAZY)
+    private List<Problem> problems;
 
     public Long getId() {
         return id;
@@ -67,11 +70,11 @@ public class HashTag {
         this.level = level;
     }
 
-    public Set<Problem> getProblems() {
+    public List<Problem> getProblems() {
         return problems;
     }
 
-    public void setProblems(Set<Problem> problems) {
+    public void setProblems(List<Problem> problems) {
         this.problems = problems;
     }
 

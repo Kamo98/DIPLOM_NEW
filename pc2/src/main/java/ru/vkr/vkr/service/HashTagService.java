@@ -8,17 +8,26 @@ import ru.vkr.vkr.repository.HashTagRepository;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 
 @Service
 public class HashTagService {
     @Autowired
     private HashTagRepository hashTagRepository;
 
-    //Возвращает список тегов, отсортированных для корректного вывода в виде дерева
-    public Collection<HashTag> getAllTags(){
-        Collection<HashTag> sortedTags = new ArrayList<>();
+    public void save(HashTag hashTag) {
+        hashTagRepository.save(hashTag);
+    }
 
-        Collection<HashTag> hashTagList = hashTagRepository.findAll();
+    public void deleteAll() {
+        hashTagRepository.deleteAll();
+    }
+
+    //Возвращает список тегов, отсортированных для корректного вывода в виде дерева
+    public List<HashTag> getAllTags(){
+        List<HashTag> sortedTags = new ArrayList<>();
+
+        List<HashTag> hashTagList = hashTagRepository.findAll();
 
         //Построим список смежности дерева
         HashMap<Long, Collection<HashTag>> tag2child = new HashMap<>();     //Для хранения детей каждого тега

@@ -10,16 +10,15 @@ import ru.vkr.vkr.domain.ROLE;
 import ru.vkr.vkr.entity.*;
 import ru.vkr.vkr.facade.AdminFacade;
 import ru.vkr.vkr.facade.TeacherFacade;
+import ru.vkr.vkr.form.SearchProblemForm;
 import ru.vkr.vkr.form.SubscriptionForm;
 import ru.vkr.vkr.form.UserForm;
 import ru.vkr.vkr.repository.StudentRepository;
 import ru.vkr.vkr.service.*;
 
-import java.util.List;
+import java.util.*;
 
 import javax.validation.Valid;
-import java.util.Collection;
-import java.util.Set;
 
 @Controller
 public class TeacherController {
@@ -38,6 +37,9 @@ public class TeacherController {
     private StudentRepository studentRepository;
     @Autowired
     private TeacherFacade teacherFacade;
+    @Autowired
+    private SearchService searchService;
+
 
     //todo: костыльное решение для активизации нужной вкладки при загрузке страницы
     private String pageTabAttribute = "tabMain";
@@ -55,6 +57,7 @@ public class TeacherController {
         model.addAttribute("teacherCourses", teacherCourses);
         model.addAttribute("teacherGroups", teacherGroups);
         model.addAttribute("teacherProblems", teacherProblems);
+        model.addAttribute("isTeacher", true);
         model.addAttribute(pageTabAttribute, true);
         pageTabAttribute = "tabMain";
         model.addAttribute(messageAttribute, true);
@@ -318,4 +321,33 @@ public class TeacherController {
         studentRepository.delete(student);
         return "redirect:/teacher/course/" + courseId + "/group/" + groupId;
     }
+
+
+
+    /**
+     * Пул задач
+     * ********************************************
+     */
+
+    @GetMapping("/teacher/pool-problems")
+    public String poolProblems(Model model) {
+        searchService.poolProblemsGet(model);
+        return "/pool-problems";
+    }
+
+    @PostMapping("/teacher/pool-problems")
+    public String poolSearchProblems(Model model, SearchProblemForm searchProblemForm) {
+        searchService.poolSearchProblems(model, searchProblemForm);
+        return "/pool-problems";
+    }
+
+
+
+    //Для вставки в бд тегов
+    @GetMapping("/teacher/gen-tags")
+    public String genTags() {
+        searchService.genTags();
+        return "redirect:/teacher/pool-problems";
+    }
+
 }

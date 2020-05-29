@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="base :: common_header(~{::title})">
+    <title>Пул задач</title>
+
+</head>
+
+<body>
+
+    <div th:replace="base :: navigation"></div>
+
+    <div class="container">
+        <div class="row row-margin-bottom">
+
+            <!--    Вставка боковой панели  -->
+            <div th:replace="base :: side-panels"></div>
+            <!-- *** -->
+
+
+            <div class="main-content col-9 border rounded-lg">
+                <h5 class="centered green-h">Пул задач</h5>
+
+
+                <div class="container" id="containerOfTabs">
+
+                    <div id="formSearch">
+                        <form th:action="${isTeacher} ? @{'/teacher/pool-problems'} : (${isStudent} ? @{'/student/pool-problems'} : @{'#'})" th:object="${searchProblemForm}" method="post">
+                            <div class="row row-margin-top">
+                                <div class="col">
+                                    <label for="tags-scrolling">Выберите интересующие вас теги</label>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-6 border rounded-lg" id="tags-scrolling">
+                                    <div th:each="tag, iStat : ${hashTags}" th:style="'margin-left: ' + ${tag.level}*2 + 'rem;'">
+                                        <input type="checkbox" th:class="'tag-checkbox parent-' + ((${tag.parent}) ? (${tag.parent.id}) : '')"
+                                               th:id="'hashTag-' + ${tag.id}" th:field="*{tagList[__${iStat.index}__]}">
+                                        <label th:for="'hashTag-' + ${tag.id}" th:text="${tag.name}">Тег</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row row-margin-top">
+                                <div class="col">
+                                    <button type="submit" class="btn btn-success"><i class="fa fa-search" aria-hidden="true"></i>&nbsp; Найти</button>
+                                </div>
+                            </div>
+                        </form>
+
+                        <div class="col-align-centered row-margin-top">
+                            <div class="row row-table table-header">
+                                <div class="col">
+                                    <i class="fa fa-tasks" aria-hidden="true"></i>&nbsp; Задача
+                                </div>
+                                <div class="col">
+                                    <i class="fa fa-wrench" aria-hidden="true"></i>&nbsp; Сложность
+                                </div>
+                                <div class="col">
+                                    <i class="fa fa-tags" aria-hidden="true"></i>&nbsp; Теги
+                                </div>
+                            </div>
+
+                            <div th:class="'row row-table ' + ((${iState.index} % 2 == 1) ? 'dark-row' : '')" th:each="problem, iState : ${problems}">
+                                <div class="col">
+                                    <a th:href="${isTeacher} ? @{'/teacher/problem/' + ${problem.id}} : (${isStudent} ? @{'/student/problem/' + ${problem.id}} : @{'#'})"
+                                       th:text="${problem.name}">
+                                        Задача
+                                    </a>
+                                </div>
+                                <div class="col">
+                                    Высокая
+                                </div>
+                                <div class="col">
+                                    <span th:each="tag : ${problem.hashTags}">
+                                        <a href="#">
+                                            #[[ ${tag.name} ]]
+                                        </a>
+                                        &nbsp;
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+
+    <footer th:replace="base :: footer"></footer>
+
+
+    <script>
+
+
+    </script>
+</body>
+</html>

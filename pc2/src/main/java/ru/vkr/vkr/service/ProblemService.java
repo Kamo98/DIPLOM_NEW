@@ -9,11 +9,12 @@ import ru.vkr.vkr.facade.AuthenticationFacade;
 import ru.vkr.vkr.repository.ProblemRepository;
 
 import java.util.Collection;
+import java.util.List;
 
 @Service
 public class ProblemService {
 
-    private static Logger logger = LoggerFactory.getLogger(UserService.class);
+    private static Logger logger = LoggerFactory.getLogger(ProblemService.class);
 
     @Autowired
     private ProblemRepository problemRepository;
@@ -39,5 +40,10 @@ public class ProblemService {
 
     public Collection<Problem> getProblemsByCurrentTeacher() {
         return problemRepository.findByTeacherAuthor_id(authenticationFacade.getCurrentTeacher().getId());
+    }
+
+
+    public List<Problem> getAllProblems() {
+        return problemRepository.findAll();
     }
 }

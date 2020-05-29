@@ -7,9 +7,11 @@ $('.tabs-menu a').click(function (e) {
 });
 
 $(document).ready(function () {
+
     $("#submit").click(function () {
         $("#form").submit();
     });
+
     $("#curUserName").ajaxComplete($.ajax({
         type: 'get',
         url: "/username",
@@ -20,6 +22,7 @@ $(document).ready(function () {
             console.log("name = " + data);
         }
     }));
+
     $("#downloadLoginPassword").click(function () {
         $.ajax({
             type : 'get',
@@ -38,6 +41,15 @@ $(document).ready(function () {
         })
     });
 
+
+    //При клике на чекбокс тега помечаются или наоборот снимаются галки со всех его потомков
+    //todo: есть косяки при рекурсивном запуске события, но пока так
+    $(".tag-checkbox").click(function (e) {
+        var idTag = $(this).attr('id').split('-')[1];
+        var classChild = '.parent-' + idTag;
+        $(classChild).click();
+        $(classChild).prop('checked', $(this).is(':checked'));
+    });
 
 });
 
@@ -118,6 +130,8 @@ $(".myButtonFio").click(function (e) {
 
      e.preventDefault();
 });
+
+
 
 
 

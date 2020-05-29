@@ -228,7 +228,7 @@ hr {
 
 .row-table {
     border-bottom: 1px #CCC solid;
-    height: 3.5rem;
+    min-height: 3.5rem;
 }
 
 
@@ -275,6 +275,12 @@ hr {
 /***************
 ****Хеш-теги****/
 
+#tags-scrolling {
+    height: 15rem;
+    overflow-y: auto;
+
+}
+
 
 .hash-tag-remove {
     color: red;
@@ -284,6 +290,7 @@ hr {
 .row-table-tags {
     height: 3rem;
 }
+
 
 
 /***************/
