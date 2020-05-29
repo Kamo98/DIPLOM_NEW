@@ -15,6 +15,7 @@ import ru.vkr.vkr.entity.HashTag;
 import ru.vkr.vkr.entity.Problem;
 import ru.vkr.vkr.facade.ProblemFacade;
 import ru.vkr.vkr.form.CheckerSettingsForm;
+import ru.vkr.vkr.form.ChoiceTagsForm;
 import ru.vkr.vkr.form.LoadTestsForm;
 import ru.vkr.vkr.service.CourseService;
 import ru.vkr.vkr.service.GroupService;
@@ -71,6 +72,9 @@ public class ProblemController {
         //Теги
         Collection<HashTag> hashTags = hashTagService.getAllTags();
         model.addAttribute("hashTags", hashTags);
+        ChoiceTagsForm choiceTagsForm = new ChoiceTagsForm();
+        choiceTagsForm.setTagList(problem.getHashTags());
+        model.addAttribute("choiceTagsForm", choiceTagsForm);
 
         return "teacher/problem";
     }
@@ -88,6 +92,14 @@ public class ProblemController {
         return "redirect:/teacher/problem/" + problemId;
     }
 
+
+    @PostMapping("/teacher/problem/{problemId}/update-tags")
+    public String updateHashTagsPrbolem(@PathVariable Long problemId, ChoiceTagsForm choiceTagsForm) {
+        Problem problem = problemService.getProblemById(problemId);
+        problem.setHashTags(choiceTagsForm.getTagList());       //todo: не знаю, насколько это эффективно
+        problemService.save(problem);
+        return "redirect:/teacher/problem/" + problemId;
+    }
 
 
     //Загрузка тестов
