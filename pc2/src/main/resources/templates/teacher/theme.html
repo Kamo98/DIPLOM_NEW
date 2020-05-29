@@ -23,6 +23,9 @@
 
                 <ul class="nav nav-pills tabs-menu">
                     <li th:unless="${isCreate}">
+                        <a class="nav-link active" href="#" id="linkTmOfChapter"><i class="fa fa-book fa-fw" aria-hidden="true"></i>&nbsp;Теоретический материал</a>
+                    </li>
+                    <li>
                         <a class="nav-link active" href="#" id="linkThemeProblems"><i class="fa fa-tasks" aria-hidden="true"></i>&nbsp;Задачи</a>
                     </li>
                     <li>
@@ -34,6 +37,44 @@
 
 
                 <div class="container" id="containerOfTabs">
+
+                    <div id="tmOfChapter" th:unless="${isCreate}" class="col-align-centered">
+
+                        <div class="row row-table table-header">
+                            <div class="col">
+                                Наименование темы
+                            </div>
+                            <div class="col-2">
+                                Управление
+                            </div>
+                        </div>
+
+                        <div th:if="${#lists.isEmpty(chapter.chapterTheories)}" class="alert alert-warning" role="alert">
+                            Тема пока не содержит ни одного теоретического материала
+                        </div>
+
+                        <div class="row row-table" th:each="theory : ${chapter.chapterTheories}">
+                            <div class="col">
+                                <a href="#"><i class="fa fa-book fa-fw" aria-hidden="true"></i>&nbsp;
+                                    [[ ${theory.name} ]]
+                                </a>
+                            </div>
+                            <div class="col-2">
+                                <a class="btn btn-danger" href="#">
+                                    <i class="fa fa-trash-o fa-lg"></i></a>
+                            </div>
+                        </div>
+
+
+                        <div class="row row-margin-top">
+                            <div class="col">
+                                <a class="btn btn-success" >
+                                    <i class="fa fa-plus" aria-hidden="true"></i>&nbsp;Добавить новый теоретический материал
+                                </a>
+                            </div>
+                            <div class="col"></div>
+                        </div>
+                    </div>
 
                     <div id="problemsOfTheme"  th:unless="${isCreate}" >
                         <!--<div class="alert alert-warning" role="alert">-->
@@ -247,6 +288,13 @@
             $('#linkThemeSettings').addClass('active');
             $('#themeSettings').show();
         });
+
+        //Клик по вкладке Теоретический материал
+        $('#linkTmOfChapter').click(function(e){
+            $('#linkTmOfChapter').addClass('active');
+            $('#tmOfChapter').show();
+        });
+
 
         //Обработка кликов по радио-кнопкам с выбором типа прикрепления задачи
         $('#typeAddSelect').click(function(e){
