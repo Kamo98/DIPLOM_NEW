@@ -1,5 +1,6 @@
 package ru.vkr.vkr.controller;
 
+import com.sun.org.apache.xpath.internal.operations.Mod;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,10 +13,8 @@ import ru.vkr.vkr.facade.TeacherFacade;
 import ru.vkr.vkr.form.SubscriptionForm;
 import ru.vkr.vkr.form.UserForm;
 import ru.vkr.vkr.repository.StudentRepository;
-import ru.vkr.vkr.service.CourseService;
-import ru.vkr.vkr.service.GroupService;
-import ru.vkr.vkr.service.ProblemService;
-import ru.vkr.vkr.service.UserService;
+import ru.vkr.vkr.service.*;
+
 import java.util.List;
 
 import javax.validation.Valid;
@@ -30,11 +29,11 @@ public class TeacherController {
     @Autowired
     private GroupService groupService;
     @Autowired
-    private AdminFacade adminFacade;
-    @Autowired
     private UserService userService;
     @Autowired
     private ProblemService problemService;
+    @Autowired
+    private ChapterService chapterService;
     @Autowired
     private StudentRepository studentRepository;
     @Autowired
@@ -69,71 +68,12 @@ public class TeacherController {
         return "teacher/main";
     }
 
-
-    @GetMapping("/teacher/group/{groupId}")
-    public String groupGet(Model model, @PathVariable Long groupId) {
-        //todo: нужен контроль доступа к группе (только владелец имеет доступ)
-        Group group = groupService.getGroupById(groupId);
-        UserForm userForm = new UserForm();
-
-        model.addAttribute("group", group);
-        model.addAttribute("userForm", userForm);
-        return "teacher/group";
-    }
-
-    @PostMapping("/teacher/group/{groupId}")
-    public String groupPost(@Valid Group groupForm, @PathVariable Long groupId) {
-        //todo: тоже нужна валидация, как и в случае с курсом
-        Group group = groupService.getGroupById(groupId);
-        group.setName(groupForm.getName());
-        groupService.saveGroup(group);
-        return "redirect:/teacher/group/" + groupId;
-    }
-
-
-    //Страница с созданием новой группы
-    @GetMapping("/teacher/group-create")
-    public String groupCreateGet (Model model, Group group) {
-        model.addAttribute("isCreate", true);
-        return "teacher/group";
-    }
-
-    //Создание новой группы
-    @PostMapping("/teacher/group-create")
-    public String groupCreatePost (Model model, @Valid Group group, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {        //Ошибки валидации есть
-            model.addAttribute("isCreate", true);
-            return "teacher/group";
-        }
-
-        //Устанавливаем владельца группы
-        groupService.setAuthorForNewGroup(group);
-        groupService.saveGroup(group);
-
-        //И переходим к группе
-        return "redirect:/teacher/group/" + group.getId();
-    }
-
-    //Удаление группы
-    @GetMapping("/teacher/group-delete/{groupId}")
-    public String deleteGroup(@PathVariable Long groupId) {
-        Group group = groupService.getGroupById(groupId);
-        groupService.deleteGroup(group);
-        return "redirect:/teacher";
-    }
-
-
-
     //Страница с курсом
     @GetMapping("/teacher/course/{courseId}")
     public String courseGet(Model model, @PathVariable Long courseId) {
         //todo: нужен контроль доступа к курсу (только автор имеет доступ)
         Course course = courseService.getCourseById(courseId);
-        SubscriptionForm subscriptionForm = new SubscriptionForm();
-        Set<Group> courseSubscribers = course.getSubscribers();
         model.addAttribute("course", course);
-        model.addAttribute("subscriptionForm", subscriptionForm);
-        model.addAttribute("courseSubscribers",  courseSubscribers);
         return "teacher/course";
     }
 
@@ -149,8 +89,6 @@ public class TeacherController {
         courseService.saveCourse(course);
         return "redirect:/teacher/course/" + course.getId();
     }
-
-
 
 
     //Страница с созданием нового курса
@@ -186,47 +124,152 @@ public class TeacherController {
         return "redirect:/teacher";
     }
 
+    //Страница с созданием новой темы/лабы
+    @GetMapping("/teacher/course/{courseId}/chapter-create")
+    public String chapterCreateGet (Model model,
+                                    @PathVariable Long courseId,
+                                    Chapter chapter) {
+        model.addAttribute("course_id", courseId);
+        model.addAttribute("isCreate", true);
+        return "teacher/theme";
+    }
 
 
-    //Подписка группы на курс
-    @PostMapping("/teacher/course/{courseId}/signUp")
-    public String signUpForCourse(@PathVariable Long courseId, SubscriptionForm subscriptionForm) {
-        //todo: нужна проверка на владение курсом и группой
-        Course course = courseService.getCourseById(courseId);
-        Group group = subscriptionForm.getGroup();
-
-        if (courseService.containsGroup(course, group)) {
-            //На курс такая группа уже подписана
-            messageAttribute = "groupRepeat";
-        } else {
-            courseService.signUpForCourse(course, group);
-            courseService.saveCourse(course);
+    //Создание новой темы/лабы
+    @PostMapping("/teacher/course/{courseId}/chapter-create")
+    public String createChapter (Model model,
+                                     @PathVariable Long courseId,
+                                     @Valid Chapter chapter,
+                                     BindingResult bindingResult) {
+        // проверка на ошибки валидации
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("course_id", courseId);
+            model.addAttribute("isCreate", true);
+            return "teacher/theme";
         }
-
-        pageTabAttribute = "pageSubscribes";            //Для активации вкладки с подписчиками
-        return "redirect:/teacher/course/" + courseId;
-    }
-
-
-    //Отписка группы от курса
-    @GetMapping("/teacher/course/{courseId}/signDown/{groupId}")
-    public String signDownForCourse(@PathVariable Long courseId, @PathVariable Long groupId) {
-        //todo: нужна проверка на владение курсом и группой
         Course course = courseService.getCourseById(courseId);
-        Group group = groupService.getGroupById(groupId);
+        // Привязываем курс к теме
+        chapterService.setCourse(chapter, course);
+        // Сохраняем изменения
+        chapterService.saveChapter(chapter);
+        // И переходим к теме/лабе
+        return "redirect:/teacher/course/" + courseId + "/chapter/" + chapter.getId();
+    }
 
-        courseService.signDownForCourse(course, group);
-        courseService.saveCourse(course);
+    // страница для просмотра данных темы/лабы
+    @GetMapping("/teacher/course/{course_id}/chapter/{chapter_id}")
+    public String readChapter(Model model,
+                            @PathVariable Long course_id,
+                            @PathVariable Long chapter_id) {
+        Chapter chapter = chapterService.getChapterById(chapter_id);
+        model.addAttribute("course_id", course_id);
+        model.addAttribute("chapter", chapter);
+        model.addAttribute("isCreate", false);
+        return "teacher/theme";
+    }
 
-        pageTabAttribute = "pageSubscribes";            //Для активации вкладки с подписчиками
+    //Для изменения параметров темы/лабы
+    @PostMapping("/teacher/course/{course_id}/chapter/{chapter_id}")
+    public String updateChapterSettings(Model model,
+                             @Valid Chapter chapterForm,
+                             @PathVariable Long course_id,
+                             @PathVariable Long chapter_id,
+                             BindingResult bindingResult) {
+        //todo: при создании курса валидация работает, при обновлении нет, нужно разбираться
+//        if (bindingResult.hasErrors()) {        //Ошибки валидации есть
+//            return "teacher/course";
+//        }
+        Chapter chapter = chapterService.getChapterById(chapter_id);
+        chapterService.updateName(chapter, chapterForm.getName());
+        chapterService.saveChapter(chapter);
+        return "redirect:/teacher/course/" + course_id + "/chapter/" + chapter_id;
+    }
+
+    //Удаление темы/лабы
+    @GetMapping("/teacher/course/{courseId}/delete-chapter/{chapterId}")
+    public String deleteChapter(Model model,
+                               @PathVariable Long courseId,
+                               @PathVariable Long chapterId) {
+        Chapter chapter = chapterService.getChapterById(chapterId);
+        chapterService.deleteChapter(chapter);
         return "redirect:/teacher/course/" + courseId;
     }
 
+    //************************************************************
+
+    //Страница с созданием новой группы
+    @GetMapping("/teacher/course/{courseId}/group-create")
+    public String createGroup (Model model,
+                                  @PathVariable Long courseId,
+                                  Group group) {
+        model.addAttribute("course_id", courseId);
+        model.addAttribute("isCreate", true);
+        return "teacher/group";
+    }
+
+    // Создание новой группы
+    @PostMapping("/teacher/course/{courseId}/group-create")
+    public String createGroup (Model model,
+                                   @PathVariable Long courseId,
+                                   @Valid Group group,
+                                   BindingResult bindingResult) {
+        model.addAttribute("course_id", courseId);
+        // проверка на ошибки валидации
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("isCreate", true);
+            return "teacher/group";
+        }
+        // Устанавливаем владельца группы
+        groupService.setAuthorForNewGroup(group);
+        // Устанавливаем курс
+        groupService.setCourse(group, courseService.getCourseById(courseId));
+        // Сохраняем изменения
+        groupService.saveGroup(group);
+        //И переходим к группе
+        return "redirect:/teacher/course/" + courseId + "/group/" + group.getId();
+    }
+
+    //страница для просмотра данных группы
+    @GetMapping("/teacher/course/{courseId}/group/{groupId}")
+    public String readGroup(Model model,
+                            @PathVariable Long courseId,
+                            @PathVariable Long groupId) {
+        //todo: нужен контроль доступа к группе (только владелец имеет доступ)
+        Group group = groupService.getGroupById(groupId);
+        UserForm userForm = new UserForm();
+        model.addAttribute("course_id", courseId);
+        model.addAttribute("group", group);
+        model.addAttribute("userForm", userForm);
+        return "teacher/group";
+    }
+
+    //Для изменения параметров темы/лабы
+    @PostMapping("/teacher/course/{courseId}/group/{groupId}")
+    public String groupPost(Model model,
+                            @Valid Group groupForm,
+                            @PathVariable Long courseId,
+                            @PathVariable Long groupId) {
+        //todo: тоже нужна валидация, как и в случае с курсом
+        model.addAttribute("course_id", courseId);
+        Group group = groupService.getGroupById(groupId);
+        group.setName(groupForm.getName());
+        groupService.saveGroup(group);
+        return "redirect:/teacher/course/" + courseId + "/group/" + groupId;
+    }
 
 
+    //Удаление группы
+    /**
+     * Работа с группой
+     * ********************************************
+     */
 
-    @PostMapping("/teacher/group/{groupId}/addStudent")
-    public String addStudent(Model model, UserForm userForm, @PathVariable Long groupId) {
+    // добавление студентов в группу
+    @PostMapping("/teacher/course/{courseId}/addStudents/{groupId}")
+    public String addStudent(Model model,
+                             UserForm userForm,
+                             @PathVariable Long courseId,
+                             @PathVariable Long groupId) {
         Group group = groupService.getGroupById(groupId);
         List<Long> usersId = userService.addUsers(userForm, ROLE.ROLE_STUDENT);
         if (usersId == null) {
@@ -242,10 +285,20 @@ public class TeacherController {
             studentRepository.save(student);
         }
 
-        return "redirect:/teacher/group/" + groupId;
+        return "redirect:/teacher/course/" + courseId + "/group/" + groupId;
     }
 
+    // удаление группы
+    @GetMapping("/teacher/course/{courseId}/delete-group/{groupId}")
+    public String deleteGroup(Model model,
+                              @PathVariable Long courseId,
+                              @PathVariable Long groupId) {
+        Group group = groupService.getGroupById(groupId);
+        groupService.deleteGroup(group);
+        return "redirect:/teacher/course/" + courseId;
+    }
 
+    // редактирование ФИО студнета
     @ResponseBody
     @PostMapping ("/teacher/editStudent/")
     public String editFioStudent(Model model, @RequestParam(value = "fio") String newFio,
@@ -256,17 +309,13 @@ public class TeacherController {
 
 
     //Удаление студента
-    @GetMapping("/teacher/group/{groupId}/delete/{studentId}")
-    public String deleteStudent(@PathVariable Long groupId, @PathVariable Long studentId) {
+    @GetMapping("/teacher/course/{courseId}/delete-student/{groupId}/{studentId}")
+    public String deleteStudent(Model model,
+                                @PathVariable Long courseId,
+                                @PathVariable Long groupId,
+                                @PathVariable Long studentId) {
         Student student = studentRepository.getOne(studentId);
         studentRepository.delete(student);
-        return "redirect:/teacher/group/" + groupId;
+        return "redirect:/teacher/course/" + courseId + "/group/" + groupId;
     }
-
-    @GetMapping("/teacher/theme")
-    public String testTheme() {
-        return "teacher/theme";
-    }
-
-
 }

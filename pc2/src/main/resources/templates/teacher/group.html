@@ -61,7 +61,7 @@
                                 <a class="btn btn-dark myButtonFio" href="#"><i class="fa fa-pencil fa-fw"></i></a>
                             </div>
                             <div class="col-1">
-                                <a class="btn btn-danger" th:href="@{'/teacher/group/' + ${group.id} + '/delete/' + ${student.id}}"><i class="fa fa-trash-o fa-lg"></i></a>
+                                <a class="btn btn-danger" th:href="@{'/teacher/course/'+${courseId}+'/delete-student/'+${groupId}+'/'+${student.id}}"><i class="fa fa-trash-o fa-lg"></i></a>
                             </div>
                         </div>
 
@@ -76,14 +76,10 @@
                             <div class = "col">
 
                             </div>
-                            <div class = "col col-align-right">
-                                <a class="btn btn-danger" th:href="@{'/teacher/group-delete/' + ${group.id}}">
-                                    <i class="fa fa-trash-o fa-lg"></i>&nbsp;Удалить группу
-                                </a>
-                            </div>
+
                         </div>
 
-                        <form th:action="@{'/teacher/group/'+ ${group.id} + '/addStudent'}" th:object="${userForm}" method="POST">
+                        <form th:action="@{'/teacher/course/'+${courseId}+'/addStudents/'+${groupId}}" th:object="${userForm}" method="POST">
                             <div class="row row-margin-top">
                                 <div class="col">
                                     <h6 ><i class="fa fa-user-plus" aria-hidden="true"></i>&nbsp;Добавление новых членов группы</h6 >
@@ -190,7 +186,8 @@
                     </div>
 
                     <div id="groupSettings" style="display: none;">
-                        <form th:action="${isCreate}? @{/teacher/group-create}: @{'/teacher/group/' + ${group.id}}" th:object="${group}" method="POST">
+                        <form class="needs-validation" novalidate th:action="${isCreate}? @{'/teacher/course/'+${course_id}+'/group-create'} : @{'/teacher/course/'+${course_id}+'/group/' + ${group.id}}"
+                              th:object="${group}" method="POST">
                             <div class="row row-margin-top">
                                 <div class="col-3 col-align-center">
                                     <label for="nameOfGroup">Наименование группы</label>
@@ -213,6 +210,12 @@
                                 </div>
                             </div>
                         </form>
+                        <br><br>
+                        <div class = "col col-align-right" th:unless="${isCreate}">
+                            <a class="btn btn-danger" th:href="@{'/teacher/course/'+${courseId}+'/delete-group/'+${groupId}}">
+                                <i class="fa fa-trash-o fa-lg"></i>&nbsp;Удалить группу
+                            </a>
+                        </div>
                     </div>
 
                 </div>

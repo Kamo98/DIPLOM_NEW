@@ -19,15 +19,9 @@
 
 
             <div class="main-content col-9 border rounded-lg">
-                <h5 class="centered green-h" th:unless="${isCreate}">Курс "Алгоритмы и структуры данных"</h5>
-                <h5 class="centered green-h" th:if="${isCreate}">Курс "Новый курс"</h5>
-
-
+                <h5 class="centered green-h">Курс "[[ ${course.name} ]]"</h5>
                 <ul class="nav nav-pills tabs-menu">
-
                 </ul>
-
-
 
                 <div class="container" id="containerOfTabs">
 
@@ -41,62 +35,23 @@
                                 Наименование темы
                             </div>
                             <div class="col-2">
-                                Дата последнего просмотра
+                                Дедлайн
                             </div>
                         </div>
-                        <div class="row row-table">
+
+                        <div th:if="${#lists.isEmpty(course.chapters)}" class="alert alert-warning" role="alert">
+                            Курс пока не содержит ни одной темы
+                        </div>
+
+                        <div class="row row-table" th:each="chapter : ${course.chapters}">
                             <div class="col">
                                 <a href="/student/theme"><i class="fa fa-book fa-fw" aria-hidden="true"></i>&nbsp;
-                                    Динамическое программирование
+                                    [[ ${chapter.name} ]]
                                 </a>
                             </div>
                             <div class="col-2">
                                 <i class="fa fa-calendar" aria-hidden="true"></i>&nbsp;
                                 06/11/2020
-                            </div>
-                        </div>
-                        <div class="row row-table dark-row">
-                            <div class="col">
-                                <a href="/student/theme"><i class="fa fa-book fa-fw" aria-hidden="true"></i>&nbsp;
-                                    Обходы в графах
-                                </a>
-                            </div>
-                            <div class="col-2">
-                                <i class="fa fa-calendar" aria-hidden="true"></i>&nbsp;
-                                15/11/2020
-                            </div>
-                        </div>
-                        <div class="row row-table">
-                            <div class="col">
-                                <a href="/student/theme"><i class="fa fa-book fa-fw" aria-hidden="true"></i>&nbsp;
-                                    Потоки
-                                </a>
-                            </div>
-                            <div class="col-2">
-                                <i class="fa fa-calendar" aria-hidden="true"></i>&nbsp;
-                                27/11/2020
-                            </div>
-                        </div>
-                        <div class="row row-table dark-row">
-                            <div class="col">
-                                <a href="/student/theme"><i class="fa fa-book fa-fw" aria-hidden="true"></i>&nbsp;
-                                    Простая геометрия
-                                </a>
-                            </div>
-                            <div class="col-2">
-                                <i class="fa fa-calendar" aria-hidden="true"></i>&nbsp;
-                                19/11/2020
-                            </div>
-                        </div>
-                        <div class="row row-table">
-                            <div class="col">
-                                <a href="/student/theme"><i class="fa fa-book fa-fw" aria-hidden="true"></i>&nbsp;
-                                    Тренировка от 21/11/2020
-                                </a>
-                            </div>
-                            <div class="col-2">
-                                <i class="fa fa-calendar" aria-hidden="true"></i>&nbsp;
-                                21/11/2020
                             </div>
                         </div>
                     </div>

@@ -5,7 +5,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Set;
 
-@Table
+@Table(name = "t_chapter")
 @Entity
 public class Chapter {
     @Id
@@ -14,7 +14,7 @@ public class Chapter {
 
     @NotNull
     @Column(nullable = false)
-    @Size(min=5, max=250, message = "Наименование курса должно содержать более 5 и менее 250 символов")
+    @Size(min=5, max=250, message = "Наименование темы должно содержать более 5 и менее 250 символов")
     private String name;
 
     // Курс темы
@@ -28,6 +28,29 @@ public class Chapter {
             joinColumns = @JoinColumn(name = "chapter_id"),
     inverseJoinColumns = @JoinColumn(name = "problem_id"))
     private Set<Problem> chapterProblems;
+
+    // Теория темы
+    @ManyToMany
+    @JoinTable(name = "t_chapter_theories",
+            joinColumns = @JoinColumn(name = "chapter_id"),
+            inverseJoinColumns = @JoinColumn(name = "theory_id"))
+    private Set<Theory> chapterTheories;
+
+    public Set<Problem> getChapterProblems() {
+        return chapterProblems;
+    }
+
+    public void setChapterProblems(Set<Problem> chapterProblems) {
+        this.chapterProblems = chapterProblems;
+    }
+
+    public Set<Theory> getChapterTheories() {
+        return chapterTheories;
+    }
+
+    public void setChapterTheories(Set<Theory> chapterTheories) {
+        this.chapterTheories = chapterTheories;
+    }
 
     public String getName() {
         return name;
