@@ -21,7 +21,7 @@ public class Theory {
     private String source;
 
     @Column
-    private Character isFile;
+    private boolean isFile;
 
     @ManyToMany(mappedBy = "chapterTheories", fetch = FetchType.LAZY)
     private Set<Chapter> chapters;
@@ -50,11 +50,11 @@ public class Theory {
         this.source = source;
     }
 
-    public Character getFile() {
+    public boolean isFile() {
         return isFile;
     }
 
-    public void setFile(Character file) {
+    public void setFile(boolean file) {
         isFile = file;
     }
 

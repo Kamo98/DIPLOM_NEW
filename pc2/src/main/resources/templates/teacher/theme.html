@@ -56,7 +56,10 @@
 
                     <div class="row row-table" th:each="theory : ${theories}">
                         <div class="col">
-                            <a href="javascript://" th:attr="onclick=|loadFileByPath('${theory.source}')|"><i class="fa fa-book fa-fw" aria-hidden="true"></i>&nbsp;
+                            <a th:unless="${theory.file}" th:href="${theory.source}" target="_blank"><i class="fa fa-book fa-fw" aria-hidden="true"></i>&nbsp;
+                                [[ ${theory.name} ]]
+                            </a>
+                            <a th:if="${theory.file}" href="javascript://" th:attr="onclick=|loadFileByPath('${theory.source}')|"><i class="fa fa-book fa-fw" aria-hidden="true"></i>&nbsp;
                                 [[ ${theory.name} ]]
                             </a>
                         </div>
@@ -69,13 +72,13 @@
 
                     <div class="row row-margin-top">
                         <div class="col">
-                            <a class="btn btn-success" data-toggle="modal" data-target="#exampleModal"
+                            <a class="btn btn-success" data-toggle="modal" data-target="#modalDownloadFile"
                                data-whatever="@mdo">
                                 <i class="fa fa-plus" aria-hidden="true"></i>&nbsp;Добавить новый теоретический материал
                             </a>
 
-                            <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog"
-                                 aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal fade" id="modalDownloadFile" tabindex="-1" role="dialog"
+                                 aria-labelledby="modalDownloadFileLabel" aria-hidden="true">
                                 <div class="modal-dialog">
                                     <div class="modal-content">
                                         <form th:action="@{'/teacher/course/'+${course_id}+'/chapter/'+${chapter_id}+'/add-theory'}"
@@ -84,7 +87,7 @@
                                               enctype="multipart/form-data">
 
                                             <div class="modal-header">
-                                                <h5 class="modal-title" id="exampleModalLabel">Новый теоретический
+                                                <h5 class="modal-title" id="modalDownloadFileLabel">Новый теоретический
                                                     материал</h5>
                                                 <button type="button" class="close" data-dismiss="modal"
                                                         aria-label="Close">

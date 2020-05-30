@@ -51,7 +51,7 @@ public class ChapterService {
 
     public void deleteTheory(Long chapterId, Long tmId) {
         Chapter chapter = getChapterById(chapterId);
-        Theory theory = theoryRepository.getOne(tmId);
+        Theory theory = theoryRepository.findById(tmId).get();
         chapter.getChapterTheories().remove(theory);
         chapterRepository.save(chapter);
     }
@@ -93,7 +93,7 @@ public class ChapterService {
                 Theory theory = new Theory();
                 theory.setName(theoryMaterialForm.getName());
                 theory.setSource(sourceChapter);
-                theory.setFile('1');
+                theory.setFile(true);
                 chapter.getChapterTheories().add(theory);
                 theoryRepository.save(theory);
             }
@@ -101,7 +101,7 @@ public class ChapterService {
             Theory theory = new Theory();
             theory.setName(theoryMaterialForm.getName());
             theory.setSource(theoryMaterialForm.getLink());
-            theory.setFile('1');
+            theory.setFile(false);
             chapter.getChapterTheories().add(theory);
             theoryRepository.save(theory);
         }
