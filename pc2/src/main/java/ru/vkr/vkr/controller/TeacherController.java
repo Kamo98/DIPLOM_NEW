@@ -342,6 +342,12 @@ public class TeacherController {
     }
 
 
+    @GetMapping("/teacher/pool-problems/{hashTagId}")
+    public String poolProblemOneHashtag(@PathVariable("hashTagId") Long hashTagId, Model model) {
+        searchService.poolSearchProblems(model, hashTagId);
+        return "/pool-problems";
+    }
+
 
     //Для вставки в бд тегов
     @GetMapping("/teacher/gen-tags")

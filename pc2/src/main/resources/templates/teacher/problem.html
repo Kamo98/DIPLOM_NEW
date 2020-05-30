@@ -94,8 +94,13 @@
                             </div>
 
                             <div class="row">
+                                <div class="col" th:if="${#lists.isEmpty(problem.hashTags)}">
+                                    <div  class="alert alert-warning" role="alert">
+                                        Прикрепите теги к задаче, чтобы облегчить её поиск в пуле задач
+                                    </div>
+                                </div>
                                 <div class="col-4" th:each="pTag : ${problem.hashTags}">
-                                    <a href="#">#[[ ${pTag.name} ]]</a>
+                                    <a th:href="@{'/teacher/pool-problems/' + ${pTag.id}}">#[[ ${pTag.name} ]]</a>
                                     <!--&nbsp;&nbsp;-->
                                     <!--<a href="#" class="hash-tag-remove"><i class="fa fa-times" aria-hidden="true"></i></a>-->
                                 </div>
@@ -142,8 +147,8 @@
 
                         </div>
 
-                        <hr class="row row-margin-top"/>
-                        <div class="row row-margin-top">
+                        <hr class="row row-margin-top" th:unless="${isCreate}">
+                        <div class="row row-margin-top" th:unless="${isCreate}">
                             <div class = "col">
                                 <a class="btn btn-success">
                                     <i class="fa fa-arrow-right" aria-hidden="true"></i>&nbsp;Опубликовать задачу

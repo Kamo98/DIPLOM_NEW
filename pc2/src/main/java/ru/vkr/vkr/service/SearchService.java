@@ -26,24 +26,40 @@ public class SearchService {
         model.addAttribute("hashTags", hashTags);
         SearchProblemForm searchProblemForm = new SearchProblemForm(hashTags.size());
         model.addAttribute("searchProblemForm", searchProblemForm);
+        model.addAttribute("isFirstRunPool", true);
     }
 
     //Для страницы фильтрации задач
     public void poolSearchProblems(Model model, SearchProblemForm searchProblemForm) {
-        Set<Problem> problems = new HashSet<>();
         List<HashTag> hashTags = hashTagService.getAllTags();
         model.addAttribute("hashTags", hashTags);
+        filterProblemsByTags(model, searchProblemForm, hashTags, -1L);
+    }
 
+    //Для фильтрации по одному тегу
+    public void poolSearchProblems(Model model, Long selectedTagId) {
+        List<HashTag> hashTags = hashTagService.getAllTags();
+        model.addAttribute("hashTags", hashTags);
+        SearchProblemForm searchProblemForm = new SearchProblemForm(hashTags.size());
+        filterProblemsByTags(model, searchProblemForm, hashTags, selectedTagId);
+    }
+
+
+    //Непосредстванно фильтрация задач
+    //Ищет как по подному тегу selectedTagId, так и по списку тегов из searchProblemForm
+    private void filterProblemsByTags(Model model, SearchProblemForm searchProblemForm, List<HashTag> hashTags, Long selectedTagId) {
+        Set<Problem> problems = new HashSet<>();
         for (int i = 0; i < searchProblemForm.getTagList().size(); i++) {
+            if (selectedTagId != -1L && hashTags.get(i).getId().equals(selectedTagId))
+                searchProblemForm.getTagList().set(i, true);
             if (searchProblemForm.getTagList().get(i) != null && searchProblemForm.getTagList().get(i))
                 problems.addAll(hashTags.get(i).getProblems());
         }
 
         model.addAttribute("problems", problems);
-        SearchProblemForm searchProblemForm_ = new SearchProblemForm(hashTags.size());
+        SearchProblemForm searchProblemForm_ = new SearchProblemForm(hashTags.size(), searchProblemForm);
         model.addAttribute("searchProblemForm", searchProblemForm_);
     }
-
 
 
     //Для вставки в бд тегов

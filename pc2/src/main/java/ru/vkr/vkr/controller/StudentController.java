@@ -120,4 +120,9 @@ public class StudentController {
         return "/pool-problems";
     }
 
+    @GetMapping("/student/pool-problems/{hashTagId}")
+    public String poolProblemOneHashtag(@PathVariable("hashTagId") Long hashTagId, Model model) {
+        searchService.poolSearchProblems(model, hashTagId);
+        return "/pool-problems";
+    }
 }

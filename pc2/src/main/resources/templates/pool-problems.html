@@ -60,6 +60,19 @@
                                 </div>
                             </div>
 
+                            <div class="row row-margin-top" th:if="${#lists.isEmpty(problems)}">
+                                <div class="col" th:if="${isFirstRunPool}">
+                                    <div  class="alert alert-info" role="alert">
+                                        Заполните форму поиска интересующими Вас критериями и здесь появятся задачи
+                                    </div>
+                                </div>
+                                <div class="col" th:unless="${isFirstRunPool}">
+                                    <div  class="alert alert-warning" role="alert">
+                                        По Вашим критериям не найдено ни одной задачи, попробуйте ещё раз
+                                    </div>
+                                </div>
+                            </div>
+
                             <div th:class="'row row-table ' + ((${iState.index} % 2 == 1) ? 'dark-row' : '')" th:each="problem, iState : ${problems}">
                                 <div class="col">
                                     <a th:href="${isTeacher} ? @{'/teacher/problem/' + ${problem.id}} : (${isStudent} ? @{'/student/problem/' + ${problem.id}} : @{'#'})"
@@ -72,7 +85,7 @@
                                 </div>
                                 <div class="col">
                                     <span th:each="tag : ${problem.hashTags}">
-                                        <a href="#">
+                                        <a th:href="${isTeacher} ? @{'/teacher/pool-problems/' + ${tag.id}} : (${isStudent} ? @{'/student/pool-problems/' + ${tag.id}} : @{'#'})">
                                             #[[ ${tag.name} ]]
                                         </a>
                                         &nbsp;
