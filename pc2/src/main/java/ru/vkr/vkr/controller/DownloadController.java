@@ -13,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import ru.vkr.vkr.entity.Teacher;
 import ru.vkr.vkr.facade.AdminFacade;
@@ -33,12 +34,29 @@ public class DownloadController {
     private static final String FILE_PATH = "src\\main\\resources\\tmp\\report.pdf";
     private static final String APPLICATION_PDF = "application/pdf";
 
+
+    // скачивание pdf документа с логинами и паролями пользоваетелй
+    @RequestMapping(value = "/nameOfFile", method = RequestMethod.GET)
+    public @ResponseBody
+    HttpEntity<byte[]> downloadFile(@RequestParam(value = "nameOfFile") String nameOfFile) throws Exception {
+        File file = getFile(nameOfFile);
+        byte[] document = FileCopyUtils.copyToByteArray(file);
+
+        HttpHeaders header = new HttpHeaders();
+        //header.setContentType(new MediaType("application", "pdf"));
+        header.set("Content-Disposition", "inline; filename=" + file.getName());
+        header.setContentLength(document.length);
+
+        return new HttpEntity(document, header);
+    }
+
+
     // скачивание pdf документа с логинами и паролями пользоваетелй
     @RequestMapping(value = "/b", method = RequestMethod.GET, produces = APPLICATION_PDF)
     public @ResponseBody
     HttpEntity<byte[]> downloadB() throws Exception {
         createLoginPasswordDocument();
-        File file = getFile();
+        File file = getFile(FILE_PATH);
         byte[] document = FileCopyUtils.copyToByteArray(file);
 
         HttpHeaders header = new HttpHeaders();
@@ -49,10 +67,10 @@ public class DownloadController {
         return new HttpEntity(document, header);
     }
 
-    private File getFile() throws FileNotFoundException {
-        File file = new File(FILE_PATH);
+    private File getFile(String path) throws FileNotFoundException {
+        File file = new File(path);
         if (!file.exists()) {
-            throw new FileNotFoundException("file with path: " + FILE_PATH + " was not found.");
+            throw new FileNotFoundException("file with path: " + path + " was not found.");
         }
         return file;
     }

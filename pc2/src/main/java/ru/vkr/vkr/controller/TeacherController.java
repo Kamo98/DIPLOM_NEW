@@ -10,8 +10,10 @@ import ru.vkr.vkr.domain.ROLE;
 import ru.vkr.vkr.entity.*;
 import ru.vkr.vkr.facade.AdminFacade;
 import ru.vkr.vkr.facade.TeacherFacade;
+import ru.vkr.vkr.form.SubmitRunForm;
 import ru.vkr.vkr.form.SearchProblemForm;
 import ru.vkr.vkr.form.SubscriptionForm;
+import ru.vkr.vkr.form.TheoryMaterialForm;
 import ru.vkr.vkr.form.UserForm;
 import ru.vkr.vkr.repository.StudentRepository;
 import ru.vkr.vkr.service.*;
@@ -164,11 +166,25 @@ public class TeacherController {
     public String readChapter(Model model,
                             @PathVariable Long course_id,
                             @PathVariable Long chapter_id) {
+        TheoryMaterialForm theoryMaterialForm = new TheoryMaterialForm();
+        model.addAttribute("theoryMaterialForm", theoryMaterialForm);
+
         Chapter chapter = chapterService.getChapterById(chapter_id);
+        Set<Theory> theories = chapter.getChapterTheories();
+        model.addAttribute("theories", theories);
         model.addAttribute("course_id", course_id);
         model.addAttribute("chapter", chapter);
         model.addAttribute("isCreate", false);
         return "teacher/theme";
+    }
+
+    @PostMapping("/teacher/course/{course_id}/chapter/{chapter_id}/add-theory")
+    public String addTheoryMaterial(Model model,
+                                 @PathVariable Long course_id,
+                                 @PathVariable Long chapter_id,
+                                 @ModelAttribute("theoryMaterialForm") TheoryMaterialForm theoryMaterialForm) {
+        chapterService.loadTheory(chapterService.getChapterById(chapter_id), theoryMaterialForm);
+        return "redirect:/teacher/course/" + course_id + "/chapter/" + chapter_id;
     }
 
     //Для изменения параметров темы/лабы
@@ -323,6 +339,15 @@ public class TeacherController {
     }
 
 
+    //Удаление теор материала
+    @GetMapping("/teacher/course/{courseId}/delete-tm/{chapterId}/{tmId}")
+    public String deleteChapter(Model model,
+                                @PathVariable Long tmId,
+                                @PathVariable Long courseId,
+                                @PathVariable Long chapterId) {
+        chapterService.deleteTheory(chapterId, tmId);
+        return "redirect:/teacher/course/" + courseId + "/chapter/" + chapterId;
+    }
 
     /**
      * Пул задач

@@ -7,6 +7,7 @@ $('.tabs-menu a').click(function (e) {
 });
 
 $(document).ready(function () {
+    $('#sourceTM2').hide();
 
     $("#submit").click(function () {
         $("#form").submit();
@@ -42,6 +43,28 @@ $(document).ready(function () {
     });
 
 
+
+    $('#sourceFile').click(function(e){
+        $('#sourceTM1').show();
+        $('#sourceTM2').hide();
+        $('#source-text2').val("");
+    });
+
+    $('#sourceLink').click(function(e) {
+        $('#sourceTM1').hide();
+        $('#sourceTM2').show();
+    });
+   /* $("#loadTheoryFile").click(function () {
+        $.ajax({
+            type: 'post',
+            url: "/teacher/course/"+courseId+"/chapter/"+chapterId+"/add-theory",
+            data: {'theoryMaterial': theoryMaterial },
+            dataType: "html",
+            success: function () {
+                console.log("файл теории был успешно загружен");
+            }
+        });
+    };*/
     //При клике на чекбокс тега помечаются или наоборот снимаются галки со всех его потомков
     //todo: есть косяки при рекурсивном запуске события, но пока так
     $(".tag-checkbox").click(function (e) {
@@ -53,6 +76,27 @@ $(document).ready(function () {
 
 });
 
+
+function loadFileByPath(nameOfFile) {
+    var arrayPath = nameOfFile.split("\\");
+    var filename = arrayPath[arrayPath.length - 1];
+    $.ajax({
+        type : 'get',
+        url: '/download/nameOfFile',
+        data : {'nameOfFile' : nameOfFile},
+        dataType: 'binary',
+        xhrFields: {
+            'responseType': 'blob'
+        },
+        success: function (data, status, xhr) {
+            var blob = new Blob([data], {type: xhr.getResponseHeader('Content-Type')});
+            var link = document.createElement('a');
+            link.href = window.URL.createObjectURL(blob);
+            link.download = filename;
+            link.click();
+        }
+    })
+}
 
 function editFioTeacher (idTeacher, stringFIO) {
      $.ajax({
@@ -77,6 +121,10 @@ function editFioTeacher (idTeacher, stringFIO) {
          }
      });
  }
+
+
+
+
 
 $(".myButtonFio").click(function (e) {
     var editBtn = $(this);                              //Кнопка с редактированием

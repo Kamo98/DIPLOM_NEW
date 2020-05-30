@@ -14,14 +14,14 @@ public class Theory {
 
     @NotNull
     @Column(nullable = false)
-    @Size(min=5, max=250, message = "Наименование теории должно содержать более 5 и менее 250 символов")
+    @Size(min=2, max=250, message = "Наименование теории должно содержать не менее 2 и не более 250 символов")
     private String name;
 
     @Column(nullable = false)
     private String source;
 
     @Column
-    private Character isFile;
+    private boolean isFile;
 
     @ManyToMany(mappedBy = "chapterTheories", fetch = FetchType.LAZY)
     private Set<Chapter> chapters;
@@ -50,11 +50,11 @@ public class Theory {
         this.source = source;
     }
 
-    public Character getFile() {
+    public boolean isFile() {
         return isFile;
     }
 
-    public void setFile(Character file) {
+    public void setFile(boolean file) {
         isFile = file;
     }
 
