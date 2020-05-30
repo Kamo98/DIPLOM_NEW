@@ -30,7 +30,7 @@ public class Chapter {
     private Set<Problem> chapterProblems;
 
     // Теория темы
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.REFRESH)
     @JoinTable(name = "t_chapter_theories",
             joinColumns = @JoinColumn(name = "chapter_id"),
             inverseJoinColumns = @JoinColumn(name = "theory_id"))

@@ -7,303 +7,371 @@
 
 <body>
 
-    <div th:replace="base :: navigation"></div>
+<div th:replace="base :: navigation"></div>
 
-    <div class="container">
-        <div class="row row-margin-bottom">
+<div class="container">
+    <div class="row row-margin-bottom">
 
-            <!--    Вставка боковой панели  -->
-            <div th:replace="base :: side-panels"></div>
-            <!-- *** -->
-
-
-            <div class="main-content col-9 border rounded-lg">
-                <h5 class="centered green-h" th:unless="${isCreate}">Тема "[[ ${chapter.name} ]]"</h5>
-                <h5 class="centered green-h" th:if="${isCreate}">Курс "Новая тема"</h5>
-
-                <ul class="nav nav-pills tabs-menu">
-                    <li th:unless="${isCreate}">
-                        <a class="nav-link active" href="#" id="linkTmOfChapter"><i class="fa fa-book fa-fw" aria-hidden="true"></i>&nbsp;Теоретический материал</a>
-                    </li>
-                    <li>
-                        <a class="nav-link active" href="#" id="linkThemeProblems"><i class="fa fa-tasks" aria-hidden="true"></i>&nbsp;Задачи</a>
-                    </li>
-                    <li>
-                        <a class="nav-link " href="#" id="linkThemeSettings"><i class="fa fa-cogs" aria-hidden="true"></i>&nbsp;Параметры</a>
-                    </li>
-                </ul>
+        <!--    Вставка боковой панели  -->
+        <div th:replace="base :: side-panels"></div>
+        <!-- *** -->
 
 
+        <div class="main-content col-9 border rounded-lg">
+            <h5 class="centered green-h" th:unless="${isCreate}">Тема "[[ ${chapter.name} ]]"</h5>
+            <h5 class="centered green-h" th:if="${isCreate}">Курс "Новая тема"</h5>
+
+            <ul class="nav nav-pills tabs-menu">
+                <li th:unless="${isCreate}">
+                    <a class="nav-link active" href="#" id="linkTmOfChapter"><i class="fa fa-book fa-fw"
+                                                                                aria-hidden="true"></i>&nbsp;Теоретический
+                        материал</a>
+                </li>
+                <li th:unless="${isCreate}">
+                    <a class="nav-link" href="#" id="linkThemeProblems"><i class="fa fa-tasks"
+                                                                           aria-hidden="true"></i>&nbsp;Задачи</a>
+                </li>
+                <li>
+                    <a class="nav-link " href="#" id="linkThemeSettings"><i class="fa fa-cogs" aria-hidden="true"></i>&nbsp;Параметры</a>
+                </li>
+            </ul>
 
 
-                <div class="container" id="containerOfTabs">
+            <div class="container" id="containerOfTabs">
 
-                    <div id="tmOfChapter" th:unless="${isCreate}" class="col-align-centered">
+                <div id="tmOfChapter" th:unless="${isCreate}" class="col-align-centered">
 
+                    <div class="row row-table table-header">
+                        <div class="col">
+                            Наименование
+                        </div>
+                        <div class="col-2">
+                            Управление
+                        </div>
+                    </div>
+
+                    <div th:if="${#lists.isEmpty(theories)}" class="alert alert-warning" role="alert">
+                        Тема пока не содержит ни одного теоретического материала
+                    </div>
+
+                    <div class="row row-table" th:each="theory : ${theories}">
+                        <div class="col">
+                            <a href="javascript://" th:attr="onclick=|loadFileByPath('${theory.source}')|"><i class="fa fa-book fa-fw" aria-hidden="true"></i>&nbsp;
+                                [[ ${theory.name} ]]
+                            </a>
+                        </div>
+                        <div class="col-2">
+                            <a class="btn btn-danger" th:href="@{'/teacher/course/'+${course_id}+'/delete-tm/'+${chapter.id}+'/'+${theory.id}}">
+                                <i class="fa fa-trash-o fa-lg"></i></a>
+                        </div>
+                    </div>
+
+
+                    <div class="row row-margin-top">
+                        <div class="col">
+                            <a class="btn btn-success" data-toggle="modal" data-target="#exampleModal"
+                               data-whatever="@mdo">
+                                <i class="fa fa-plus" aria-hidden="true"></i>&nbsp;Добавить новый теоретический материал
+                            </a>
+
+                            <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog"
+                                 aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <form th:action="@{'/teacher/course/'+${course_id}+'/chapter/'+${chapter_id}+'/add-theory'}"
+                                              th:object="${theoryMaterialForm}"
+                                              method="POST"
+                                              enctype="multipart/form-data">
+
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="exampleModalLabel">Новый теоретический
+                                                    материал</h5>
+                                                <button type="button" class="close" data-dismiss="modal"
+                                                        aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="form-group">
+                                                    <label for="recipient-name"
+                                                           class="col-form-label">Наименование</label>
+                                                    <input type="text" th:field="*{name}" class="form-control"
+                                                           id="recipient-name">
+                                                </div>
+                                                <div class="form-group" id="sourceTM1">
+                                                    <label for="source-text1" class="col-form-label">Источник</label>
+                                                    <input type="file" th:field="*{multipartFile}" class="form-control" id="source-text1" name="file">
+                                                </div>
+                                                <div class="form-group" id="sourceTM2">
+                                                    <label for="source-text2" class="col-form-label">Источник</label>
+                                                    <input type="text" th:field="*{link}" class="form-control" id="source-text2">
+                                                </div>
+                                                <input type="radio" id="sourceFile" name="chooseSource" checked="checked">
+                                                <label for="sourceFile">Файл</label>
+                                                <input type="radio" id="sourceLink" name="chooseSource">
+                                                <label for="sourceLink">Ссылка</label>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                                                    Закрыть
+                                                </button>
+                                                <button type="submit" class="btn btn-primary" id="loadTheoryFile">
+                                                    Сохранить
+                                                </button>
+                                            </div>
+
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </div>
+                        <div class="col"></div>
+                    </div>
+                </div>
+
+                <div id="problemsOfTheme" th:unless="${isCreate}" style="display: none;">
+                    <!--<div class="alert alert-warning" role="alert">-->
+                    <!--К теме пока не прикреплена ни одна задача-->
+                    <!--</div>-->
+                    <!--<div class="alert alert-danger" role="alert">-->
+                    <!--Прикрепляемая вами задача уже прикреплена к теме-->
+                    <!--</div>-->
+
+                    <div class="col-align-centered">
                         <div class="row row-table table-header">
                             <div class="col">
-                                Наименование темы
+                                <i class="fa fa-tasks" aria-hidden="true"></i>&nbsp; Задача
                             </div>
-                            <div class="col-2">
+                            <div class="col">
+                                <i class="fa fa-wrench" aria-hidden="true"></i>&nbsp; Сложность
+                            </div>
+                            <div class="col">
+                                <i class="fa fa-tags" aria-hidden="true"></i>&nbsp; Теги
+                            </div>
+                            <div class="col-3">
                                 Управление
                             </div>
                         </div>
 
-                        <div th:if="${#lists.isEmpty(chapter.chapterTheories)}" class="alert alert-warning" role="alert">
-                            Тема пока не содержит ни одного теоретического материала
-                        </div>
-
-                        <div class="row row-table" th:each="theory : ${chapter.chapterTheories}">
+                        <div class="row row-table">
                             <div class="col">
-                                <a href="#"><i class="fa fa-book fa-fw" aria-hidden="true"></i>&nbsp;
-                                    [[ ${theory.name} ]]
+                                <a th:href="@{'/teacher/problem'}">
+                                    Задача 1
                                 </a>
                             </div>
-                            <div class="col-2">
-                                <a class="btn btn-danger" href="#">
-                                    <i class="fa fa-trash-o fa-lg"></i></a>
+                            <div class="col">
+                                Высокая
+                            </div>
+                            <div class="col">
+                                <a href="#">
+                                    <i class="fa fa-tag" aria-hidden="true"></i>&nbsp; Тег 1
+                                </a>
+                                &nbsp;
+                                <a href="#">
+                                    <i class="fa fa-tag" aria-hidden="true"></i>&nbsp; Тег 2
+                                </a>
+                            </div>
+                            <div class="col-3">
+                                <a class="btn btn-danger" href="#"><i class="fa fa-trash-o fa-lg"></i>&nbsp;
+                                    Открепить от темы
+                                </a>
                             </div>
                         </div>
 
-
-                        <div class="row row-margin-top">
+                        <div class="row row-table dark-row">
                             <div class="col">
-                                <a class="btn btn-success" >
-                                    <i class="fa fa-plus" aria-hidden="true"></i>&nbsp;Добавить новый теоретический материал
+                                <a th:href="@{'/teacher/problem'}">
+                                    Задача 2
                                 </a>
                             </div>
-                            <div class="col"></div>
+                            <div class="col">
+                                Средняя
+                            </div>
+                            <div class="col">
+                                <a href="#">
+                                    <i class="fa fa-tag" aria-hidden="true"></i>&nbsp; Тег 4
+                                </a>
+                            </div>
+                            <div class="col-3">
+                                <a class="btn btn-danger" href="#"><i class="fa fa-trash-o fa-lg"></i>&nbsp;
+                                    Открепить от темы
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="row row-table">
+                            <div class="col">
+                                <a th:href="@{'/teacher/problem'}">
+                                    Задача 3
+                                </a>
+                            </div>
+                            <div class="col">
+                                Средняя
+                            </div>
+                            <div class="col">
+                                <a href="#">
+                                    <i class="fa fa-tag" aria-hidden="true"></i>&nbsp; Тег 5
+                                </a>
+                            </div>
+                            <div class="col-3">
+                                <a class="btn btn-danger" href="#"><i class="fa fa-trash-o fa-lg"></i>&nbsp;
+                                    Открепить от темы
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="row row-table dark-row">
+                            <div class="col">
+                                <a th:href="@{'/teacher/problem'}">
+                                    Задача 4
+                                </a>
+                            </div>
+                            <div class="col">
+                                Средняя
+                            </div>
+                            <div class="col">
+                                <a href="#">
+                                    <i class="fa fa-tag" aria-hidden="true"></i>&nbsp; Тег 5
+                                </a>&nbsp;
+                                <a href="#">
+                                    <i class="fa fa-tag" aria-hidden="true"></i>&nbsp; Тег 6
+                                </a>
+                            </div>
+                            <div class="col-3">
+                                <a class="btn btn-danger" href="#"><i class="fa fa-trash-o fa-lg"></i>&nbsp;
+                                    Открепить от темы
+                                </a>
+                            </div>
                         </div>
                     </div>
 
-                    <div id="problemsOfTheme"  th:unless="${isCreate}" >
-                        <!--<div class="alert alert-warning" role="alert">-->
-                            <!--К теме пока не прикреплена ни одна задача-->
-                        <!--</div>-->
-                        <!--<div class="alert alert-danger" role="alert">-->
-                            <!--Прикрепляемая вами задача уже прикреплена к теме-->
-                        <!--</div>-->
 
-                        <div class="col-align-centered">
-                            <div class="row row-table table-header">
-                                <div class="col">
-                                    <i class="fa fa-tasks" aria-hidden="true"></i>&nbsp; Задача
-                                </div>
-                                <div class="col">
-                                    <i class="fa fa-wrench" aria-hidden="true"></i>&nbsp; Сложность
-                                </div>
-                                <div class="col">
-                                    <i class="fa fa-tags" aria-hidden="true"></i>&nbsp; Теги
-                                </div>
-                                <div class="col-3">
-                                    Управление
-                                </div>
-                            </div>
+                    <div class="row row-margin-top">
+                        <h6><i class="fa fa-paperclip" aria-hidden="true"></i>&nbsp;Прикрепить задачу к теме</h6>
+                    </div>
+                    <form>
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col">
+                                            <input type="radio" name="typeAddProblem" id="typeAddSelect"
+                                                   checked="checked">
+                                            <label for="typeAddSelect">Выбрать задачу из существующих</label>
+                                        </div>
 
-                            <div class="row row-table">
-                                <div class="col">
-                                    <a th:href="@{'/teacher/problem'}">
-                                        Задача 1
-                                    </a>
-                                </div>
-                                <div class="col">
-                                    Высокая
-                                </div>
-                                <div class="col">
-                                    <a href="#">
-                                        <i class="fa fa-tag" aria-hidden="true"></i>&nbsp; Тег 1
-                                    </a>
-                                    &nbsp;
-                                    <a href="#">
-                                        <i class="fa fa-tag" aria-hidden="true"></i>&nbsp; Тег 2
-                                    </a>
-                                </div>
-                                <div class="col-3">
-                                    <a class="btn btn-danger" href="#"><i class="fa fa-trash-o fa-lg"></i>&nbsp;
-                                        Открепить от темы
-                                    </a>
-                                </div>
-                            </div>
-
-                            <div class="row row-table dark-row">
-                                <div class="col">
-                                    <a th:href="@{'/teacher/problem'}">
-                                        Задача 2
-                                    </a>
-                                </div>
-                                <div class="col">
-                                    Средняя
-                                </div>
-                                <div class="col">
-                                    <a href="#">
-                                        <i class="fa fa-tag" aria-hidden="true"></i>&nbsp; Тег 4
-                                    </a>
-                                </div>
-                                <div class="col-3">
-                                    <a class="btn btn-danger" href="#"><i class="fa fa-trash-o fa-lg"></i>&nbsp;
-                                        Открепить от темы
-                                    </a>
-                                </div>
-                            </div>
-
-                            <div class="row row-table">
-                                <div class="col">
-                                    <a th:href="@{'/teacher/problem'}">
-                                        Задача 3
-                                    </a>
-                                </div>
-                                <div class="col">
-                                    Средняя
-                                </div>
-                                <div class="col">
-                                    <a href="#">
-                                        <i class="fa fa-tag" aria-hidden="true"></i>&nbsp; Тег 5
-                                    </a>
-                                </div>
-                                <div class="col-3">
-                                    <a class="btn btn-danger" href="#"><i class="fa fa-trash-o fa-lg"></i>&nbsp;
-                                        Открепить от темы
-                                    </a>
-                                </div>
-                            </div>
-
-                            <div class="row row-table dark-row">
-                                <div class="col">
-                                    <a th:href="@{'/teacher/problem'}">
-                                        Задача 4
-                                    </a>
-                                </div>
-                                <div class="col">
-                                    Средняя
-                                </div>
-                                <div class="col">
-                                    <a href="#">
-                                        <i class="fa fa-tag" aria-hidden="true"></i>&nbsp; Тег 5
-                                    </a>&nbsp;
-                                    <a href="#">
-                                        <i class="fa fa-tag" aria-hidden="true"></i>&nbsp; Тег 6
-                                    </a>
-                                </div>
-                                <div class="col-3">
-                                    <a class="btn btn-danger" href="#"><i class="fa fa-trash-o fa-lg"></i>&nbsp;
-                                        Открепить от темы
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-
-
-                        <div class="row row-margin-top">
-                            <h6 ><i class="fa fa-paperclip" aria-hidden="true"></i>&nbsp;Прикрепить задачу к теме</h6 >
-                        </div>
-                        <form>
-                            <div class="row">
-                                <div class="col">
-                                    <div class="form-group">
-                                        <div class="row">
-                                            <div class="col">
-                                                <input type="radio" name="typeAddProblem" id="typeAddSelect" checked="checked">
-                                                <label for="typeAddSelect">Выбрать задачу из существующих</label>
-                                            </div>
-
-                                            <div class="col">
-                                                <select class="form-control" id="selectProblems">
-                                                    <option>Задача 1</option>
-                                                    <option>Задача 2</option>
-                                                    <option>Задача 3</option>
-                                                    <option>Задача 4</option>
-                                                    <option>Задача 5</option>
-                                                    <option>Задача 6</option>
-                                                </select>
-                                            </div>
+                                        <div class="col">
+                                            <select class="form-control" id="selectProblems">
+                                                <option>Задача 1</option>
+                                                <option>Задача 2</option>
+                                                <option>Задача 3</option>
+                                                <option>Задача 4</option>
+                                                <option>Задача 5</option>
+                                                <option>Задача 6</option>
+                                            </select>
                                         </div>
                                     </div>
-                                    <div class="form-group">
-                                        <input type="radio" name="typeAddProblem" id="typeAddNew">
-                                        <label for="typeAddNew">Создать новую задачу и прикрепить её к теме</label>
-                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <input type="radio" name="typeAddProblem" id="typeAddNew">
+                                    <label for="typeAddNew">Создать новую задачу и прикрепить её к теме</label>
                                 </div>
                             </div>
-                            <div class="row">
-                                <button class="btn btn-success" type="submit"><i class="fa fa-paperclip" aria-hidden="true"></i>&nbsp;Прикрепить</button>
-                            </div>
-                        </form>
-                    </div>
-
-                    <div id="themeSettings" style="display: none;">
-                        <form class="needs-validation" novalidate th:action="${isCreate}? @{'/teacher/course/'+${course_id}+'/chapter-create'} : @{'/teacher/course/'+${course_id}+'/chapter/' + ${chapter.id}}"
-                              th:object="${chapter}" method="POST">
-                            <div class="row row-margin-top">
-                                <div class="col-3 col-align-center">
-                                    <label for="nameOfTheme">Наименование темы</label>
-                                </div>
-                                <div class="col">
-                                    <input type="text" id="nameOfTheme" class="form-control" th:field="*{name}" >
-                                    <!--<div class="col invalid-tooltip">-->
-                                    <!--Наименование курса не может быть пустым-->
-                                    <!--</div>-->
-                                    <div class="col my-invalid-tooltip" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Некорректное наименование</div>
-                                </div>
-                            </div>
-
-                            <div class="row row-margin-top">
-                                <div class = "col col-align-right">
-                                    <button class="btn btn-primary" type="submit" th:unless="${isCreate}">
-                                        <i class="fa fa-floppy-o" aria-hidden="true"></i>&nbsp;Сохранить
-                                    </button>
-
-                                    <button class="btn btn-primary" type="submit" th:if="${isCreate}">
-                                        <i class="fa fa-plus" aria-hidden="true"></i>&nbsp;Создать
-                                    </button>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
+                        </div>
+                        <div class="row">
+                            <button class="btn btn-success" type="submit"><i class="fa fa-paperclip"
+                                                                             aria-hidden="true"></i>&nbsp;Прикрепить
+                            </button>
+                        </div>
+                    </form>
                 </div>
 
+                <div id="themeSettings" style="display: none;">
+                    <form class="needs-validation" novalidate
+                          th:action="${isCreate}? @{'/teacher/course/'+${course_id}+'/chapter-create'} : @{'/teacher/course/'+${course_id}+'/chapter/' + ${chapter.id}}"
+                          th:object="${chapter}" method="POST">
+                        <div class="row row-margin-top">
+                            <div class="col-3 col-align-center">
+                                <label for="nameOfTheme">Наименование темы</label>
+                            </div>
+                            <div class="col">
+                                <input type="text" id="nameOfTheme" class="form-control" th:field="*{name}">
+                                <!--<div class="col invalid-tooltip">-->
+                                <!--Наименование курса не может быть пустым-->
+                                <!--</div>-->
+                                <div class="col my-invalid-tooltip" th:if="${#fields.hasErrors('name')}"
+                                     th:errors="*{name}">Некорректное наименование
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row row-margin-top">
+                            <div class="col col-align-right">
+                                <button class="btn btn-primary" type="submit" th:unless="${isCreate}">
+                                    <i class="fa fa-floppy-o" aria-hidden="true"></i>&nbsp;Сохранить
+                                </button>
+
+                                <button class="btn btn-primary" type="submit" th:if="${isCreate}">
+                                    <i class="fa fa-plus" aria-hidden="true"></i>&nbsp;Создать
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
             </div>
 
         </div>
+
     </div>
+</div>
 
-    <footer th:replace="base :: footer"></footer>
+<footer th:replace="base :: footer"></footer>
 
-    <script th:if="${isCreate}">
-        //Чтобы при запуске страницы создания активировалась вкладка с настройками
-        $(document).ready(function() {
-            $("#linkThemeSettings").click();
-        });
-    </script>
+<script th:if="${isCreate}">
+    //Чтобы при запуске страницы создания активировалась вкладка с настройками
+    $(document).ready(function () {
+        $("#linkThemeSettings").click();
+    });
+</script>
 
-    <script>
+<script th:if="${pageSubscribes}">
+    //Чтобы при запуске страницы активировалась вкладка с подписчиками
+    $(document).ready(function () {
+        $("#linkTmOfChapter").click();
+    });
+</script>
 
-        //Клик по вкладке Задачи темы
-        $('#linkThemeProblems').click(function(e){
-            $('#linkThemeProblems').addClass('active');
-            $('#problemsOfTheme').show();
-        });
+<script>
 
-        //Клик по вкладке Параметры
-        $('#linkThemeSettings').click(function(e){
-            $('#linkThemeSettings').addClass('active');
-            $('#themeSettings').show();
-        });
+    //Клик по вкладке Теоретический материал
+    $('#linkTmOfChapter').click(function (e) {
+        $('#linkTmOfChapter').addClass('active');
+        $('#tmOfChapter').show();
+    });
 
-        //Клик по вкладке Теоретический материал
-        $('#linkTmOfChapter').click(function(e){
-            $('#linkTmOfChapter').addClass('active');
-            $('#tmOfChapter').show();
-        });
+    //Клик по вкладке Задачи темы
+    $('#linkThemeProblems').click(function (e) {
+        $('#linkThemeProblems').addClass('active');
+        $('#problemsOfTheme').show();
+    });
+
+    //Клик по вкладке Параметры
+    $('#linkThemeSettings').click(function (e) {
+        $('#linkThemeSettings').addClass('active');
+        $('#themeSettings').show();
+    });
 
 
-        //Обработка кликов по радио-кнопкам с выбором типа прикрепления задачи
-        $('#typeAddSelect').click(function(e){
-            $('#selectProblems').attr('disabled', false);
-        });
+    //Обработка кликов по радио-кнопкам с выбором типа прикрепления задачи
+    $('#typeAddSelect').click(function (e) {
+        $('#selectProblems').attr('disabled', false);
+    });
 
-        $('#typeAddNew').click(function(e){
-            $('#selectProblems').attr('disabled', true);
-        });
-    </script>
+    $('#typeAddNew').click(function (e) {
+        $('#selectProblems').attr('disabled', true);
+    });
+</script>
 </body>
 </html>

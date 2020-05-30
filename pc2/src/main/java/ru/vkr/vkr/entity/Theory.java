@@ -14,7 +14,7 @@ public class Theory {
 
     @NotNull
     @Column(nullable = false)
-    @Size(min=5, max=250, message = "Наименование теории должно содержать более 5 и менее 250 символов")
+    @Size(min=2, max=250, message = "Наименование теории должно содержать не менее 2 и не более 250 символов")
     private String name;
 
     @Column(nullable = false)

@@ -1,7 +1,5 @@
 package ru.vkr.vkr.form;
 
-import edu.csus.ecs.pc2.core.model.Language;
-import edu.csus.ecs.pc2.core.model.Problem;
 import org.springframework.web.multipart.MultipartFile;
 
 public class SubmitRunForm {
