@@ -175,6 +175,7 @@ public class TeacherController {
         return "teacher/theme";
     }
 
+    // добавление теоретического материала
     @PostMapping("/teacher/course/{course_id}/chapter/{chapter_id}/add-theory")
     public String addTheoryMaterial(Model model,
                                  @PathVariable Long course_id,

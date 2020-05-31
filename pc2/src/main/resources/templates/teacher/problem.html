@@ -157,11 +157,77 @@
                     </div>
 
                     <div id="statementProblem"  style="display:none;" th:unless="${isCreate}">
-                        <!--<div class="alert alert-warning" role="alert">-->
-                            <!--Курс пока не содержит ни одной темы.-->
-                        <!--</div>-->
 
-                        <embed th:src="@{'/problems/sample problem.pdf'}" width="800px" height="1000px" />
+                        <div th:if="${problem.pathToTextProblem == null}" class="alert alert-warning" role="alert">
+                            Добавьте, пожалуйста, условие.
+                        </div>
+
+                        <div class="row row-table" th:unless="${problem.pathToTextProblem == null}">
+                            <div class="col">
+                                <a href="javascript://" ><i class="fa fa-book fa-fw" aria-hidden="true"></i>&nbsp;
+                                    [[ ${problem.nameOfTextProblem} ]]
+                                </a>
+                            </div>
+
+                            <div class="col-2">
+                                <a class="btn btn-danger" th:href="@{'/teacher/problem/'+${problemId}+'/delete-statement'}">
+                                    <i class="fa fa-trash-o fa-lg"></i></a>
+                            </div>
+                        </div>
+
+                        <div class="row row-margin-top" th:if="${problem.pathToTextProblem == null}">
+                            <div class="col">
+                                <a class="btn btn-success" data-toggle="modal" data-target="#modalLoadFileStatement"
+                                   data-whatever="@mdo">
+                                    <i class="fa fa-plus" aria-hidden="true"></i>&nbsp;Добавить условие к задаче
+                                </a>
+
+                                <div class="modal fade" id="modalLoadFileStatement" tabindex="-1" role="dialog"
+                                     aria-labelledby="modalLoadFileStatementLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <form th:action="@{'/teacher/problem/'+${problem.id}+'/add-statement'}"
+                                                  th:object="${theoryMaterialForm}"
+                                                  method="POST"
+                                                  enctype="multipart/form-data">
+
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="modalLoadFileStatementLabel">Условие задачи</h5>
+                                                    <button type="button" class="close" data-dismiss="modal"
+                                                            aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <div class="form-group">
+                                                        <label for="recipient-name"
+                                                               class="col-form-label">Наименование</label>
+                                                        <input type="text" th:field="*{name}" class="form-control"
+                                                               id="recipient-name">
+                                                    </div>
+                                                    <div class="form-group" id="sourceTM1">
+                                                        <label for="source-text1" class="col-form-label">Источник</label>
+                                                        <input type="file" th:field="*{multipartFile}" class="form-control" id="source-text1" name="file">
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                                                        Закрыть
+                                                    </button>
+                                                    <button type="submit" class="btn btn-primary" id="loadTheoryFile">
+                                                        Сохранить
+                                                    </button>
+                                                </div>
+
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                            <div class="col"></div>
+                        </div>
 
 
                     </div>

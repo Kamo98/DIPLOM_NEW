@@ -16,6 +16,7 @@ import ru.vkr.vkr.entity.Problem;
 import ru.vkr.vkr.facade.ProblemFacade;
 import ru.vkr.vkr.form.CheckerSettingsForm;
 import ru.vkr.vkr.form.LoadTestsForm;
+import ru.vkr.vkr.form.TheoryMaterialForm;
 import ru.vkr.vkr.service.CourseService;
 import ru.vkr.vkr.service.GroupService;
 import ru.vkr.vkr.service.HashTagService;
@@ -46,6 +47,9 @@ public class ProblemController {
         Collection<Course> teacherCourses = courseService.getCoursesByCurrentTeacher();
         Collection<Group> teacherGroups = groupService.getGroupsByCurrentTeacher();
         Collection<Problem> teacherProblems = problemService.getProblemsByCurrentTeacher();
+        TheoryMaterialForm theoryMaterialForm = new TheoryMaterialForm();
+
+        model.addAttribute("theoryMaterialForm", theoryMaterialForm);
         model.addAttribute("teacherCourses", teacherCourses);
         model.addAttribute("teacherGroups", teacherGroups);
         model.addAttribute("teacherProblems", teacherProblems);
@@ -143,10 +147,6 @@ public class ProblemController {
         return "redirect:/teacher/problem/" + problem.getId();
     }
 
-
-
-
-
     @GetMapping("/teacher/tags")
     public String getAllTags(Model model) {
         Collection<HashTag> hashTags = hashTagService.getAllTags();
@@ -154,4 +154,20 @@ public class ProblemController {
         return "/teacher/tags";
     }
 
+    // добавление условия к задачи
+    @PostMapping("/teacher/problem/{problemId}/add-statement")
+    public String addStatementMaterial(Model model,
+                                    @PathVariable Long problemId,
+                                    @ModelAttribute("theoryMaterialForm") TheoryMaterialForm theoryMaterialForm) {
+        problemService.loadStatement(problemService.getProblemById(problemId), theoryMaterialForm);
+        return "redirect:/teacher/problem/" + problemId;
+    }
+
+    //Удаление условия задачи
+    @GetMapping("/teacher/problem/{problemId}/delete-statement")
+    public String deleteChapter(Model model,
+                                @PathVariable Long problemId) {
+        problemService.deleteStatement(problemService.getProblemById(problemId));
+        return "redirect:/teacher/problem/" + problemId;
+    }
 }

@@ -24,7 +24,10 @@ public class Problem {
     @Column(nullable = false)
     private Integer memoryLimit;
 
-    @Column(nullable = false)
+    @Column
+    private String nameOfTextProblem;
+
+    @Column
     private String pathToTextProblem;
 
     @Column
@@ -37,6 +40,28 @@ public class Problem {
     @ManyToMany(mappedBy = "chapterProblems", fetch = FetchType.LAZY)
     private Set<Chapter> chapters;
 
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name="t_tag_problem",
+            joinColumns = @JoinColumn(name = "problem_id"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id"))
+    private Set<HashTag> hashTags;
+
+    public String getNameOfTextProblem() {
+        return nameOfTextProblem;
+    }
+
+    public void setNameOfTextProblem(String nameOfTextProblem) {
+        this.nameOfTextProblem = nameOfTextProblem;
+    }
+
+    public String getPathToTextProblem() {
+        return pathToTextProblem;
+    }
+
+    public void setPathToTextProblem(String pathToTextProblem) {
+        this.pathToTextProblem = pathToTextProblem;
+    }
+
 
     public Set<Chapter> getChapters() {
         return chapters;
@@ -45,12 +70,6 @@ public class Problem {
     public void setChapters(Set<Chapter> chapters) {
         this.chapters = chapters;
     }
-
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name="t_tag_problem",
-            joinColumns = @JoinColumn(name = "problem_id"),
-            inverseJoinColumns = @JoinColumn(name = "tag_id"))
-    private Set<HashTag> hashTags;
 
     public String getName() {
         return name;

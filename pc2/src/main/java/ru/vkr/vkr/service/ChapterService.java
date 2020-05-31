@@ -67,7 +67,6 @@ public class ChapterService {
         return resultBuild.toString();
     }
 
-
     private String convertFileToString(MultipartFile file) {
         if (file != null && !file.getOriginalFilename().isEmpty()) {
             String newLocation = location + "theory" + "\\" + UUID.randomUUID().toString();
