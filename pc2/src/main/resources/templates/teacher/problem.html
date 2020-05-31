@@ -164,7 +164,8 @@
 
                         <div class="row row-table" th:unless="${problem.pathToTextProblem == null}">
                             <div class="col">
-                                <a href="javascript://" ><i class="fa fa-book fa-fw" aria-hidden="true"></i>&nbsp;
+                                <a href="javascript://" th:attr="onclick=|loadFileByPath('${problem.pathToTextProblem}')|" >
+                                    <i class="fa fa-book fa-fw" aria-hidden="true"></i>&nbsp;
                                     [[ ${problem.nameOfTextProblem} ]]
                                 </a>
                             </div>

@@ -14,6 +14,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import ru.vkr.vkr.domain.FileManager;
 import ru.vkr.vkr.domain.RunSubmitDto;
 
 import java.io.File;
@@ -26,53 +27,26 @@ import java.util.concurrent.Future;
 @Service
 public class SubmitRunService {
     private static Logger logger = LoggerFactory.getLogger(SubmitRunService.class);
-
     SerializedFile[] otherFiles = null;
-
-    @Value("${spring.servlet.multipart.location}")
-    private String location;
-
+    private final String nameOfFolder = "submition";
     private boolean serverReplied;
-
-
     @Autowired
     ApplicationContext applicationContext;
 
-    private boolean fileExists(String fileName) {
-        File file = new File(fileName);
-        return file.isFile();
-    }
 
     private ElementId getElementIdRun(int index) {
         InternalController internalController = (InternalController) applicationContext.getBean("getInternalController");
         return internalController.getContest().getRuns()[index].getElementId();
     }
 
-    String convertFileToString(MultipartFile file) {
-        if (file != null && !file.getOriginalFilename().isEmpty()) {
-            String newLocation = location + UUID.randomUUID().toString();
-            File uploadDir = new File(newLocation);
-            if (!uploadDir.exists()) {
-                uploadDir.mkdir();
-            }
-            String resultFilename = newLocation + "\\" + file.getOriginalFilename();
-            try {
-                file.transferTo(new File(resultFilename));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return resultFilename;
-        }
-        return "";
-    }
 
     public void submitRun(int problemIndex, int languageIndex, MultipartFile file) {
         InternalController internalController = (InternalController) applicationContext.getBean("getInternalController");
         Problem problem = internalController.getContest().getProblems()[problemIndex];
         Language language = internalController.getContest().getLanguages()[languageIndex];
 
-        String fileName = convertFileToString(file);
-        if (!fileExists(fileName)) {
+        String fileName = FileManager.loadFileToServer(file, nameOfFolder);
+        if (!FileManager.fileExists(fileName)) {
             File curdir = new File(".");
             String message = fileName + " not found";
             try {
