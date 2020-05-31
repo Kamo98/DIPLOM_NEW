@@ -94,12 +94,12 @@
                             </div>
 
                             <div class="row">
-                                <div class="col" th:if="${#lists.isEmpty(problem.hashTags)}">
+                                <div class="col" th:if="${#lists.isEmpty(problem.getHashTagsVisible())}">
                                     <div  class="alert alert-warning" role="alert">
                                         Прикрепите теги к задаче, чтобы облегчить её поиск в пуле задач
                                     </div>
                                 </div>
-                                <div class="col-4" th:each="pTag : ${problem.hashTags}">
+                                <div class="col-4" th:each="pTag : ${problem.getHashTagsVisible()}">
                                     <a th:href="@{'/teacher/pool-problems/' + ${pTag.id}}">#[[ ${pTag.name} ]]</a>
                                     <!--&nbsp;&nbsp;-->
                                     <!--<a href="#" class="hash-tag-remove"><i class="fa fa-times" aria-hidden="true"></i></a>-->

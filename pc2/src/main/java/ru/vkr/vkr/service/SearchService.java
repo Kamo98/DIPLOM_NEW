@@ -46,7 +46,7 @@ public class SearchService {
 
 
     //Непосредстванно фильтрация задач
-    //Ищет как по подному тегу selectedTagId, так и по списку тегов из searchProblemForm
+    //Ищет как по одному тегу selectedTagId, так и по списку тегов из searchProblemForm
     private void filterProblemsByTags(Model model, SearchProblemForm searchProblemForm, List<HashTag> hashTags, Long selectedTagId) {
         Set<Problem> problems = new HashSet<>();
         for (int i = 0; i < searchProblemForm.getTagList().size(); i++) {

@@ -3,8 +3,7 @@ package ru.vkr.vkr.entity;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.Set;
-import java.util.List;
+import java.util.*;
 
 @Entity
 @Table(name = "t_problem")
@@ -47,11 +46,13 @@ public class Problem {
         this.chapters = chapters;
     }
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name="t_tag_problem",
-            joinColumns = @JoinColumn(name = "problem_id"),
-            inverseJoinColumns = @JoinColumn(name = "tag_id"))
-    private Set<HashTag> hashTags;
+//    @ManyToMany(fetch = FetchType.LAZY)
+//    @JoinTable(name="t_tag_problem",
+//            joinColumns = @JoinColumn(name = "problem_id"),
+//            inverseJoinColumns = @JoinColumn(name = "tag_id"))
+//    private Set<HashTag> hashTags;
+    @OneToMany(mappedBy = "problem", fetch = FetchType.LAZY)
+    private Set<TagProblem> tagProblems;
 
     public String getName() {
         return name;
@@ -103,11 +104,32 @@ public class Problem {
         this.teacherAuthor = teacherAuthor;
     }
 
+    public Set<TagProblem> getTagProblems() {
+        return tagProblems;
+    }
+
+    public void setTagProblems(Set<TagProblem> tagProblems) {
+        this.tagProblems = tagProblems;
+    }
+
     public Set<HashTag> getHashTags() {
+        Set<HashTag> hashTags = new HashSet<>();
+        for(TagProblem tagProblem : tagProblems)
+            hashTags.add(tagProblem.getHashTag());
         return hashTags;
     }
 
-    public void setHashTags(Set<HashTag> hashTags) {
-        this.hashTags = hashTags;
+    //Для вывода тегов пользователю
+    public Set<HashTag> getHashTagsVisible() {
+        Set<HashTag> hashTags = new HashSet<>();
+        for(TagProblem tagProblem : tagProblems)
+            if (tagProblem.isVisible())
+                hashTags.add(tagProblem.getHashTag());
+        return hashTags;
+    }
+
+
+    public void setHashTags(Set<TagProblem> tagProblems) {
+        this.tagProblems = tagProblems;
     }
 }

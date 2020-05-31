@@ -4,6 +4,7 @@ import com.sun.naming.internal.FactoryEnumeration;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.List;
@@ -32,8 +33,10 @@ public class HashTag {
 //    private Set<HashTag> children;
 
     //Задачи, к которым прикреплён
-    @ManyToMany(mappedBy = "hashTags", fetch = FetchType.LAZY)
-    private List<Problem> problems;
+//    @ManyToMany(mappedBy = "hashTags", fetch = FetchType.LAZY)
+//    private List<Problem> problems;
+    @OneToMany(mappedBy = "hashTag", fetch = FetchType.LAZY)
+    private Set<TagProblem> tagProblems;
 
     public Long getId() {
         return id;
@@ -70,13 +73,21 @@ public class HashTag {
         this.level = level;
     }
 
-    public List<Problem> getProblems() {
-        return problems;
+    public Set<TagProblem> getTagProblems() {
+        return tagProblems;
     }
 
-    public void setProblems(List<Problem> problems) {
-        this.problems = problems;
+    public void setTagProblems(Set<TagProblem> tagProblems) {
+        this.tagProblems = tagProblems;
     }
+
+    public List<Problem> getProblems() {
+        List<Problem> problems = new ArrayList<>();
+        for(TagProblem tagProblem : tagProblems)
+            problems.add(tagProblem.getProblem());
+        return  problems;
+    }
+
 
     //Связь с задачей
 }

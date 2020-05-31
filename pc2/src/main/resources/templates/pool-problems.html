@@ -84,7 +84,7 @@
                                     Высокая
                                 </div>
                                 <div class="col">
-                                    <span th:each="tag : ${problem.hashTags}">
+                                    <span th:each="tag : ${problem.getHashTagsVisible()}">
                                         <a th:href="${isTeacher} ? @{'/teacher/pool-problems/' + ${tag.id}} : (${isStudent} ? @{'/student/pool-problems/' + ${tag.id}} : @{'#'})">
                                             #[[ ${tag.name} ]]
                                         </a>

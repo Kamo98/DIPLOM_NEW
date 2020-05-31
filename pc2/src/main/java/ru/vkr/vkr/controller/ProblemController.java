@@ -9,10 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import ru.vkr.vkr.entity.Course;
-import ru.vkr.vkr.entity.Group;
-import ru.vkr.vkr.entity.HashTag;
-import ru.vkr.vkr.entity.Problem;
+import ru.vkr.vkr.entity.*;
 import ru.vkr.vkr.facade.ProblemFacade;
 import ru.vkr.vkr.form.CheckerSettingsForm;
 import ru.vkr.vkr.form.ChoiceTagsForm;
@@ -77,7 +74,7 @@ public class ProblemController {
         ChoiceTagsForm choiceTagsForm = new ChoiceTagsForm();
         //choiceTagsForm.setTagList(problem.getHashTags());
 
-        Set<HashTag> hashTagList = problem.getHashTags();
+        Set<HashTag> hashTagList = problem.getHashTagsVisible();
 
         //todo: костыли в студию, но это быстрее, чем то, как thymeleaf формировал checkbox из объектов HashTag
         for (int i = 0; i < hashTags.size(); i++)
@@ -112,11 +109,14 @@ public class ProblemController {
         Problem problem = problemService.getProblemById(problemId);
         //todo: это очень плохо (передавать теги по индексу), но по другому не получается
         List<HashTag> hashTags = hashTagService.getAllTags();
-        Set<HashTag> hashTagsProblem = new HashSet<>();
+        Set<HashTag> tagsFromUser = new HashSet<>();
         for (int i = 0; i < choiceTagsForm.getTagList().size(); i++)
             if (choiceTagsForm.getTagList().get(i) != null && choiceTagsForm.getTagList().get(i))
-                hashTagsProblem.add(hashTags.get(i));
-        problem.setHashTags(hashTagsProblem);
+                tagsFromUser.add(hashTags.get(i));
+
+        //Формируем список тегов для базы
+        Map<HashTag, Boolean> hashTagVisibleMap = hashTagService.checkAndAddParents(tagsFromUser);
+        problem.setHashTags(problemService.setHashTagsToProblem(problem, hashTagVisibleMap));
         problemService.save(problem);
         return "redirect:/teacher/problem/" + problemId;
     }
