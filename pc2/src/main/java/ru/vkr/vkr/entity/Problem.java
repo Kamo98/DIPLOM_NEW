@@ -41,11 +41,11 @@ public class Problem {
     @ManyToMany(mappedBy = "chapterProblems", fetch = FetchType.LAZY)
     private Set<Chapter> chapters;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name="t_tag_problem",
-            joinColumns = @JoinColumn(name = "problem_id"),
-            inverseJoinColumns = @JoinColumn(name = "tag_id"))
-    private Set<HashTag> hashTags;
+//    @ManyToMany(fetch = FetchType.LAZY)
+//    @JoinTable(name="t_tag_problem",
+//            joinColumns = @JoinColumn(name = "problem_id"),
+//            inverseJoinColumns = @JoinColumn(name = "tag_id"))
+//    private Set<HashTag> hashTags;
 
     @OneToMany(mappedBy = "problem", fetch = FetchType.LAZY)
     private Set<TagProblem> tagProblems;
