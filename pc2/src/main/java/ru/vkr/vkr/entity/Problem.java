@@ -3,6 +3,7 @@ package ru.vkr.vkr.entity;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -46,30 +47,9 @@ public class Problem {
             inverseJoinColumns = @JoinColumn(name = "tag_id"))
     private Set<HashTag> hashTags;
 
-    public String getNameOfTextProblem() {
-        return nameOfTextProblem;
-    }
+    @OneToMany(mappedBy = "problem", fetch = FetchType.LAZY)
+    private Set<TagProblem> tagProblems;
 
-    public void setNameOfTextProblem(String nameOfTextProblem) {
-        this.nameOfTextProblem = nameOfTextProblem;
-    }
-
-    public String getPathToTextProblem() {
-        return pathToTextProblem;
-    }
-
-    public void setPathToTextProblem(String pathToTextProblem) {
-        this.pathToTextProblem = pathToTextProblem;
-    }
-
-
-    public Set<Chapter> getChapters() {
-        return chapters;
-    }
-
-    public void setChapters(Set<Chapter> chapters) {
-        this.chapters = chapters;
-    }
 
     public String getName() {
         return name;
@@ -96,6 +76,29 @@ public class Problem {
         this.memoryLimit = memoryLimit;
     }
 
+    public String getNameOfTextProblem() {
+        return nameOfTextProblem;
+    }
+
+    public void setNameOfTextProblem(String nameOfTextProblem) {
+        this.nameOfTextProblem = nameOfTextProblem;
+    }
+
+    public String getPathToTextProblem() {
+        return pathToTextProblem;
+    }
+
+    public void setPathToTextProblem(String pathToTextProblem) {
+        this.pathToTextProblem = pathToTextProblem;
+    }
+
+    public Set<Chapter> getChapters() {
+        return chapters;
+    }
+
+    public void setChapters(Set<Chapter> chapters) {
+        this.chapters = chapters;
+    }
 
     public Long getId() {
         return id;
@@ -121,11 +124,32 @@ public class Problem {
         this.teacherAuthor = teacherAuthor;
     }
 
+    public Set<TagProblem> getTagProblems() {
+        return tagProblems;
+    }
+
+    public void setTagProblems(Set<TagProblem> tagProblems) {
+        this.tagProblems = tagProblems;
+    }
+
     public Set<HashTag> getHashTags() {
+        Set<HashTag> hashTags = new HashSet<>();
+        for(TagProblem tagProblem : tagProblems)
+            hashTags.add(tagProblem.getHashTag());
         return hashTags;
     }
 
-    public void setHashTags(Set<HashTag> hashTags) {
-        this.hashTags = hashTags;
+    //Для вывода тегов пользователю
+    public Set<HashTag> getHashTagsVisible() {
+        Set<HashTag> hashTags = new HashSet<>();
+        for(TagProblem tagProblem : tagProblems)
+            if (tagProblem.isVisible())
+                hashTags.add(tagProblem.getHashTag());
+        return hashTags;
+    }
+
+
+    public void setHashTags(Set<TagProblem> tagProblems) {
+        this.tagProblems = tagProblems;
     }
 }

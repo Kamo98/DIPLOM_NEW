@@ -15,6 +15,7 @@ import ru.vkr.vkr.entity.HashTag;
 import ru.vkr.vkr.entity.Problem;
 import ru.vkr.vkr.facade.ProblemFacade;
 import ru.vkr.vkr.form.CheckerSettingsForm;
+import ru.vkr.vkr.form.ChoiceTagsForm;
 import ru.vkr.vkr.form.LoadTestsForm;
 import ru.vkr.vkr.form.TheoryMaterialForm;
 import ru.vkr.vkr.service.CourseService;
@@ -23,11 +24,11 @@ import ru.vkr.vkr.service.HashTagService;
 import ru.vkr.vkr.service.ProblemService;
 
 import java.io.IOException;
-import java.util.Collection;
+import java.util.*;
 
 @Controller
 public class ProblemController {
-    private static Logger logger = LoggerFactory.getLogger(AdminController.class);
+    private static Logger logger = LoggerFactory.getLogger(ProblemController.class);
 
     @Autowired
     private CourseService courseService;
@@ -53,6 +54,7 @@ public class ProblemController {
         model.addAttribute("teacherCourses", teacherCourses);
         model.addAttribute("teacherGroups", teacherGroups);
         model.addAttribute("teacherProblems", teacherProblems);
+        model.addAttribute("isTeacher", true);
     }
 
     @GetMapping("/teacher/problem/{problemId}")
@@ -73,8 +75,23 @@ public class ProblemController {
         model.addAttribute("checkerSettingsForm", checkerSettingsForm);
 
         //Теги
-        Collection<HashTag> hashTags = hashTagService.getAllTags();
+        List<HashTag> hashTags = hashTagService.getAllTags();
         model.addAttribute("hashTags", hashTags);
+        ChoiceTagsForm choiceTagsForm = new ChoiceTagsForm();
+        //choiceTagsForm.setTagList(problem.getHashTags());
+
+        Set<HashTag> hashTagList = problem.getHashTagsVisible();
+
+        //todo: костыли в студию, но это быстрее, чем то, как thymeleaf формировал checkbox из объектов HashTag
+        for (int i = 0; i < hashTags.size(); i++)
+            choiceTagsForm.getTagList().add(hashTagList.contains(hashTags.get(i)));
+
+//        for (int i = 0; i < hashTags.size(); i++)
+//            if (hashTagList.contains(hashTags.get(i)))
+//                choiceTagsForm.getTagList().add(hashTags.get(i).getId());
+//            else
+//                choiceTagsForm.getTagList().add(null);
+        model.addAttribute("choiceTagsForm", choiceTagsForm);
 
         return "teacher/problem";
     }
@@ -92,6 +109,23 @@ public class ProblemController {
         return "redirect:/teacher/problem/" + problemId;
     }
 
+
+    @PostMapping("/teacher/problem/{problemId}/update-tags")
+    public String updateHashTagsPrbolem(@PathVariable Long problemId, ChoiceTagsForm choiceTagsForm) {
+        Problem problem = problemService.getProblemById(problemId);
+        //todo: это очень плохо (передавать теги по индексу), но по другому не получается
+        List<HashTag> hashTags = hashTagService.getAllTags();
+        Set<HashTag> tagsFromUser = new HashSet<>();
+        for (int i = 0; i < choiceTagsForm.getTagList().size(); i++)
+            if (choiceTagsForm.getTagList().get(i) != null && choiceTagsForm.getTagList().get(i))
+                tagsFromUser.add(hashTags.get(i));
+
+        //Формируем список тегов для базы
+        Map<HashTag, Boolean> hashTagVisibleMap = hashTagService.checkAndAddParents(tagsFromUser);
+        problem.setHashTags(problemService.setHashTagsToProblem(problem, hashTagVisibleMap));
+        problemService.save(problem);
+        return "redirect:/teacher/problem/" + problemId;
+    }
 
 
     //Загрузка тестов

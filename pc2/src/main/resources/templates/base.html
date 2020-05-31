@@ -12,11 +12,9 @@
 
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 
-        <!--<link rel="stylesheet" th:href="@{/css/bootstrap-3.3.2.min.css}"/>-->
         <link rel="stylesheet" th:href="@{/css/font-awesome.min.css}"/>
         <link rel="stylesheet" th:href="@{/css/main.css}"/>
         <link rel="stylesheet" th:href="@{/css/signin.css}"/>
-        <link rel="stylesheet" th:href="@{/css/bootstrap-multiselect.css}"/>
     </head>
 
 
@@ -37,7 +35,9 @@
                                 <a class="nav-link" href="#"><i class="fa fa-home fa-fw" aria-hidden="true"></i>&nbsp;Главная</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="#"><i class="fa fa-tasks" aria-hidden="true"></i>&nbsp;Пул задач</a>
+                                <a class="nav-link" th:href="${isTeacher} ? @{'/teacher/pool-problems'} : (${isStudent} ? @{'/student/pool-problems'} : @{'#'})">
+                                    <i class="fa fa-tasks" aria-hidden="true"></i>&nbsp;Пул задач
+                                </a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="#"><i class="fa fa-book fa-fw" aria-hidden="true"></i>&nbsp;Пул тем</a>
@@ -151,7 +151,6 @@
             <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
             <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
             <script th:src="@{/js/main.js}"></script>
-            <script type="text/javascript" th:src="@{/js/bootstrap-multiselect.js}"></script>
         </footer>
 
     </body>

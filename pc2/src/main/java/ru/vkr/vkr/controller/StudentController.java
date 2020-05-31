@@ -7,7 +7,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ru.vkr.vkr.entity.Course;
+import ru.vkr.vkr.form.SearchProblemForm;
 import ru.vkr.vkr.form.SubmitRunForm;
+import ru.vkr.vkr.service.SearchService;
 import ru.vkr.vkr.service.StudentService;
 import ru.vkr.vkr.service.SubmitRunService;
 
@@ -27,11 +29,14 @@ public class StudentController {
     private StudentService studentService;
     @Autowired
     private ApplicationContext applicationContext;
+    @Autowired
+    private SearchService searchService;
 
     @ModelAttribute
     public void addAttributes(Model model) {
         List<Course> studentCourses = new ArrayList<>();
         model.addAttribute("studentCourses", studentCourses);
+        model.addAttribute("isStudent", true);
     }
 
     @GetMapping("/student/course")
@@ -97,4 +102,27 @@ public class StudentController {
     }
 
 
+
+    /**
+     * Пул задач
+     * ********************************************
+     */
+
+    @GetMapping("/student/pool-problems")
+    public String poolProblems(Model model) {
+        searchService.poolProblemsGet(model);
+        return "/pool-problems";
+    }
+
+    @PostMapping("/student/pool-problems")
+    public String poolSearchProblems(Model model, SearchProblemForm searchProblemForm) {
+        searchService.poolSearchProblems(model, searchProblemForm);
+        return "/pool-problems";
+    }
+
+    @GetMapping("/student/pool-problems/{hashTagId}")
+    public String poolProblemOneHashtag(@PathVariable("hashTagId") Long hashTagId, Model model) {
+        searchService.poolSearchProblems(model, hashTagId);
+        return "/pool-problems";
+    }
 }
