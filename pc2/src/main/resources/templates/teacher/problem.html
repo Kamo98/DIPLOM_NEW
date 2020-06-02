@@ -164,11 +164,11 @@
 
                     <div id="statementProblem"  style="display:none;" th:unless="${isCreate}">
 
-                        <div th:if="${problem.pathToTextProblem == null}" class="alert alert-warning" role="alert">
+                        <div th:unless="${statement}" class="alert alert-warning" role="alert">
                             Добавьте, пожалуйста, условие.
                         </div>
 
-                        <div class="row row-table" th:unless="${problem.pathToTextProblem == null}">
+                        <div class="row row-table" th:if="${statement}">
                             <div class="col">
                                 <a href="javascript://" th:attr="onclick=|loadFileByPath('${problem.pathToTextProblem}')|" >
                                     <i class="fa fa-book fa-fw" aria-hidden="true"></i>&nbsp;
@@ -182,7 +182,7 @@
                             </div>
                         </div>
 
-                        <div class="row row-margin-top" th:if="${problem.pathToTextProblem == null}">
+                        <div class="row row-margin-top" th:unless="${statement}">
                             <div class="col">
                                 <a class="btn btn-success" data-toggle="modal" data-target="#modalLoadFileStatement"
                                    data-whatever="@mdo">
