@@ -6,15 +6,20 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import ru.vkr.vkr.entity.Chapter;
 import ru.vkr.vkr.entity.Course;
+import ru.vkr.vkr.entity.Problem;
+import ru.vkr.vkr.entity.Theory;
 import ru.vkr.vkr.form.SearchProblemForm;
 import ru.vkr.vkr.form.SubmitRunForm;
+import ru.vkr.vkr.service.ChapterService;
 import ru.vkr.vkr.service.SearchService;
 import ru.vkr.vkr.service.StudentService;
 import ru.vkr.vkr.service.SubmitRunService;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -31,6 +36,8 @@ public class StudentController {
     private ApplicationContext applicationContext;
     @Autowired
     private SearchService searchService;
+    @Autowired
+    private ChapterService chapterService;
 
     @ModelAttribute
     public void addAttributes(Model model) {
@@ -46,8 +53,11 @@ public class StudentController {
         return "student/course";
     }
 
-    @GetMapping("/student/theme")
-    public String getTheme(Model model) {
+    @GetMapping("/student/chapter/{chapterId}")
+    public String readChapter(Model model,
+                           @PathVariable Long chapterId) {
+        Chapter chapter = chapterService.getChapterById(chapterId);
+        model.addAttribute("chapter", chapter);
         return "student/theme";
     }
 
@@ -66,9 +76,9 @@ public class StudentController {
     @PostMapping("/student/submit")
     public String sendFileSubmit(Model model,
                                  @ModelAttribute("submitRunForm") SubmitRunForm submitRunForm) {
-        submitRunService.submitRun(submitRunForm.getProblem(), submitRunForm.getLanguage(),
+       /* submitRunService.submitRun(submitRunForm.getProblem(), submitRunForm.getLanguage(),
                 submitRunForm.getMultipartFile());
-
+*/
         return "redirect:/student/problem";
     }
 

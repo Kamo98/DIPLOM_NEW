@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.vkr.vkr.domain.FileManager;
 import ru.vkr.vkr.domain.RunSubmitDto;
+import ru.vkr.vkr.facade.ProblemFacade;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,7 +32,7 @@ public class SubmitRunService {
     private final String nameOfFolder = "submition";
     private boolean serverReplied;
     @Autowired
-    ApplicationContext applicationContext;
+    private ApplicationContext applicationContext;
 
 
     private ElementId getElementIdRun(int index) {
@@ -40,10 +41,10 @@ public class SubmitRunService {
     }
 
 
-    public void submitRun(int problemIndex, int languageIndex, MultipartFile file) {
+    public void submitRun(Problem problem, int languageIndex, MultipartFile file) {
         InternalController internalController = (InternalController) applicationContext.getBean("getInternalController");
-        Problem problem = internalController.getContest().getProblems()[problemIndex];
         Language language = internalController.getContest().getLanguages()[languageIndex];
+
 
         String fileName = FileManager.loadFileToServer(file, nameOfFolder);
         if (!FileManager.fileExists(fileName)) {

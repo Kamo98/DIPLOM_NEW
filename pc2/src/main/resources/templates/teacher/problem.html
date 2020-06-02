@@ -366,27 +366,34 @@
                     </div>
 
                     <div id="sendProblem" style="display:none;" th:unless="${isCreate}">
-                        <form>
+                        <form th:action="@{'/teacher/submit/'+${problem.id}}"
+                              th:object="${submitRunForm}"
+                              method="POST"
+                              enctype="multipart/form-data">
+
                             <div class="row row-margin-top">
                                 <div class="col-3 col-align-center">
-                                   <label for="compilerSend">Компилятор:</label>
+                                    <label for="compilerSend">Компилятор:</label>
                                 </div>
                                 <div class="col">
-                                    <select class="form-control" id="compilerSend">
-                                        <option>Visual C++ 2019</option>
-                                        <option>GNU C++</option>
-                                        <option>Java</option>
+                                    <select id="compilerSend" class="form-control" th:field="*{language}">
+                                        <option th:each="lang, state : ${langs}"
+                                                th:value="${state.index}"
+                                                th:text="${lang.displayName}"/>
                                     </select>
                                 </div>
                             </div>
                             <div class="row row-margin-top">
                                 <div class="col-3 col-align-center">
-                                    <label for="fileSolutionSend">Выберите файл:</label>
+                                    <label for="file">Выберите файл:</label>
                                 </div>
                                 <div class="col">
-                                    <input type="file" class="form-control" id="fileSolutionSend">
+                                    <input type="file" th:field="*{multipartFile}" class="form-control" id="file"
+                                           name="file">
                                 </div>
                             </div>
+
+
                             <div class="row row-margin-top">
                                 <div class="col-3 col-align-center">
                                     <label for="codeSolutionSend">Или вставье код:</label>

@@ -1,8 +1,10 @@
 package ru.vkr.vkr.controller;
 
+import edu.csus.ecs.pc2.core.InternalController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,14 +16,8 @@ import ru.vkr.vkr.entity.Group;
 import ru.vkr.vkr.entity.HashTag;
 import ru.vkr.vkr.entity.Problem;
 import ru.vkr.vkr.facade.ProblemFacade;
-import ru.vkr.vkr.form.CheckerSettingsForm;
-import ru.vkr.vkr.form.ChoiceTagsForm;
-import ru.vkr.vkr.form.LoadTestsForm;
-import ru.vkr.vkr.form.TheoryMaterialForm;
-import ru.vkr.vkr.service.CourseService;
-import ru.vkr.vkr.service.GroupService;
-import ru.vkr.vkr.service.HashTagService;
-import ru.vkr.vkr.service.ProblemService;
+import ru.vkr.vkr.form.*;
+import ru.vkr.vkr.service.*;
 
 import java.io.IOException;
 import java.util.*;
@@ -40,6 +36,10 @@ public class ProblemController {
     private ProblemService problemService;
     @Autowired
     private HashTagService hashTagService;
+    @Autowired
+    private SubmitRunService submitRunService;
+    @Autowired
+    private ApplicationContext applicationContext;
 
 
     //todo: в этом методе отчасти дублируется код из такого же в TeacherController, а это не хорошо
@@ -49,12 +49,17 @@ public class ProblemController {
         Collection<Group> teacherGroups = groupService.getGroupsByCurrentTeacher();
         Collection<Problem> teacherProblems = problemService.getProblemsByCurrentTeacher();
         TheoryMaterialForm theoryMaterialForm = new TheoryMaterialForm();
+        SubmitRunForm submitRunForm = new SubmitRunForm();
+        InternalController internalController = (InternalController) applicationContext.getBean("getInternalController");
+
 
         model.addAttribute("theoryMaterialForm", theoryMaterialForm);
         model.addAttribute("teacherCourses", teacherCourses);
         model.addAttribute("teacherGroups", teacherGroups);
         model.addAttribute("teacherProblems", teacherProblems);
         model.addAttribute("isTeacher", true);
+        model.addAttribute("langs", internalController.getContest().getLanguages());
+        model.addAttribute("submitRunForm", submitRunForm);
     }
 
     @GetMapping("/teacher/problem/{problemId}")
@@ -191,8 +196,8 @@ public class ProblemController {
     // добавление условия к задачи
     @PostMapping("/teacher/problem/{problemId}/add-statement")
     public String addStatementMaterial(Model model,
-                                    @PathVariable Long problemId,
-                                    @ModelAttribute("theoryMaterialForm") TheoryMaterialForm theoryMaterialForm) {
+                                       @PathVariable Long problemId,
+                                       @ModelAttribute("theoryMaterialForm") TheoryMaterialForm theoryMaterialForm) {
         problemService.loadStatement(problemService.getProblemById(problemId), theoryMaterialForm);
         return "redirect:/teacher/problem/" + problemId;
     }
@@ -202,6 +207,16 @@ public class ProblemController {
     public String deleteChapter(Model model,
                                 @PathVariable Long problemId) {
         problemService.deleteStatement(problemService.getProblemById(problemId));
+        return "redirect:/teacher/problem/" + problemId;
+    }
+
+    @PostMapping("/teacher/submit/{problemId}")
+    public String sendFileSubmit(Model model,
+                                 @ModelAttribute("submitRunForm") SubmitRunForm submitRunForm,
+                                 @PathVariable Long problemId) {
+        submitRunService.submitRun(problemFacade.findProblemInPC2(problemService.getProblemById(problemId)),
+                submitRunForm.getLanguage(),
+                submitRunForm.getMultipartFile());
         return "redirect:/teacher/problem/" + problemId;
     }
 }
