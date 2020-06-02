@@ -67,6 +67,13 @@ public class ProblemController {
         Problem problem = problemService.getProblemById(problemId);
         model.addAttribute("problem", problem);
 
+        // Для условия
+        if (problem.getPathToTextProblem() == null || problem.getPathToTextProblem().equals("")) {
+            model.addAttribute("statement", false);
+        } else {
+            model.addAttribute("statement", true);
+        }
+
         //Для тестов
         LoadTestsForm loadTestsForm = new LoadTestsForm();
         model.addAttribute("loadTestsForm", loadTestsForm);
