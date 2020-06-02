@@ -285,6 +285,14 @@ public class ProblemFacade {
         return internalController.getContest().getProblem(elementId);
     }
 
+    //Ищет задачу в PC2 по сущности из БД
+    public Problem findProblemInPC2(ru.vkr.vkr.entity.Problem problemDb) {
+        InternalController internalController = (InternalController) applicationContext.getBean("getInternalController");
+        ElementId elementId = new ElementId(problemDb.getName());
+        elementId.setNum(problemDb.getNumElementId());
+        return internalController.getContest().getProblem(elementId);
+    }
+
     private ProblemDataFiles loadDataFiles(Problem aProblem, ProblemDataFiles files, String dataFileBaseDirectory, String dataExtension, String answerExtension, boolean externalDataFiles) {
 
         if (files == null) {
