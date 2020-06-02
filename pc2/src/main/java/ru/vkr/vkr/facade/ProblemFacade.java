@@ -156,17 +156,21 @@ public class ProblemFacade {
         //Ищем задачу
         Problem problem = findProblemInPC2(internalController, problemDb);
 
-        if (problem.getValidatorType() == Problem.VALIDATOR_TYPE.CLICSVALIDATOR) {
-            checkerSettingsForm.setClicsValidator(true);
+        if (problem != null) {
+            if (problem.getValidatorType() == Problem.VALIDATOR_TYPE.CLICSVALIDATOR) {
+                checkerSettingsForm.setClicsValidator(true);
 
-            ClicsValidatorSettings clicsValidatorSettings = problem.getClicsValidatorSettings();
+                ClicsValidatorSettings clicsValidatorSettings = problem.getClicsValidatorSettings();
 
-            checkerSettingsForm.setFloatAbsoluteTolerance(clicsValidatorSettings.isFloatAbsoluteToleranceSpecified());
-            checkerSettingsForm.setAbsoluteTolerance(clicsValidatorSettings.getFloatAbsoluteTolerance());
-            checkerSettingsForm.setFloatRelativeTolerance(clicsValidatorSettings.isFloatRelativeToleranceSpecified());
-            checkerSettingsForm.setRelativeTolerance(clicsValidatorSettings.getFloatRelativeTolerance());
-            checkerSettingsForm.setCaseSensitive(clicsValidatorSettings.isCaseSensitive());
-            checkerSettingsForm.setSpaceSensitive(clicsValidatorSettings.isSpaceSensitive());
+                checkerSettingsForm.setFloatAbsoluteTolerance(clicsValidatorSettings.isFloatAbsoluteToleranceSpecified());
+                checkerSettingsForm.setAbsoluteTolerance(clicsValidatorSettings.getFloatAbsoluteTolerance());
+                checkerSettingsForm.setFloatRelativeTolerance(clicsValidatorSettings.isFloatRelativeToleranceSpecified());
+                checkerSettingsForm.setRelativeTolerance(clicsValidatorSettings.getFloatRelativeTolerance());
+                checkerSettingsForm.setCaseSensitive(clicsValidatorSettings.isCaseSensitive());
+                checkerSettingsForm.setSpaceSensitive(clicsValidatorSettings.isSpaceSensitive());
+            }
+        } else {
+            //todo: задачу из базы не нашли в pc2
         }
     }
 

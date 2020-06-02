@@ -54,10 +54,8 @@ public class TeacherController {
     @ModelAttribute
     public void addAttributes(Model model) {
         Collection<Course> teacherCourses = courseService.getCoursesByCurrentTeacher();
-        Collection<Group> teacherGroups = groupService.getGroupsByCurrentTeacher();
         Collection<Problem> teacherProblems = problemService.getProblemsByCurrentTeacher();
         model.addAttribute("teacherCourses", teacherCourses);
-        model.addAttribute("teacherGroups", teacherGroups);
         model.addAttribute("teacherProblems", teacherProblems);
         model.addAttribute("isTeacher", true);
         model.addAttribute(pageTabAttribute, true);

@@ -313,8 +313,8 @@
                         <form th:action="@{'/teacher/problem/'+ ${problem.id} +'/checker-settings'}" th:object="${checkerSettingsForm}" method="post" enctype="multipart/form-data">
                             <div class="row row-margin-top">
                                 <div class="col">
-                                    <input type="radio" name="typeChecker" id="clicsValidator" checked="checked" th:value="true" th:field="*{clicsValidator}">
-                                    <label for="clicsValidator">Использовать встроенный чекер</label>
+                                    <input type="hidden" name="typeChecker" id="clicsValidator" th:value="true" th:field="*{clicsValidator}">
+                                    <!--<label for="clicsValidator">Использовать встроенный чекер</label>-->
                                 </div>
                             </div>
                             <div class="row row-margin-top">
@@ -333,7 +333,7 @@
                                     <label for="floatAbsoluteTolerance">Установаить допустимую абсолютную погрешность</label>
                                 </div>
                                 <div class="col">
-                                    <input type="text" class="form-control" th:field="*{absoluteTolerance}">
+                                    <input id="absoluteTolerance" type="text" disabled="disabled" class="form-control" th:field="*{absoluteTolerance}">
                                 </div>
                             </div>
 
@@ -343,7 +343,7 @@
                                     <label for="floatRelativeTolerance">Установаить допустимую относительную погрешность</label>
                                 </div>
                                 <div class="col">
-                                    <input type="text" class="form-control" th:field="*{relativeTolerance}">
+                                    <input id="relativeTolerance" type="text" disabled="disabled" class="form-control" th:field="*{relativeTolerance}">
                                 </div>
                             </div>
 
@@ -441,6 +441,26 @@
         $('#linkSendProblem').click(function(e){
             $('#linkSendProblem').addClass('active');
             $('#sendProblem').show();
+        });
+
+
+
+        //События кликов в настройках чекера
+
+        $('#floatAbsoluteTolerance').click(function(e){
+            if ($(this).is(':checked')) {
+                $('#absoluteTolerance').prop('disabled', false);
+            } else {
+                $('#absoluteTolerance').prop('disabled', true);
+            }
+        });
+
+         $('#floatRelativeTolerance').click(function(e){
+            if ($(this).is(':checked')) {
+                $('#relativeTolerance').prop('disabled', false);
+            } else {
+                $('#relativeTolerance').prop('disabled', true);
+            }
         });
 
     </script>

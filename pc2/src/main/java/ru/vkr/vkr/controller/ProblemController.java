@@ -46,13 +46,11 @@ public class ProblemController {
     @ModelAttribute
     public void addAttributes(Model model) {
         Collection<Course> teacherCourses = courseService.getCoursesByCurrentTeacher();
-        Collection<Group> teacherGroups = groupService.getGroupsByCurrentTeacher();
         Collection<Problem> teacherProblems = problemService.getProblemsByCurrentTeacher();
         TheoryMaterialForm theoryMaterialForm = new TheoryMaterialForm();
 
         model.addAttribute("theoryMaterialForm", theoryMaterialForm);
         model.addAttribute("teacherCourses", teacherCourses);
-        model.addAttribute("teacherGroups", teacherGroups);
         model.addAttribute("teacherProblems", teacherProblems);
         model.addAttribute("isTeacher", true);
     }
