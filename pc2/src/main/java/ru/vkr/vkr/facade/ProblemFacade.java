@@ -88,6 +88,9 @@ public class ProblemFacade {
         problem.setManualReview(false);
         problem.setShowCompareWindow(true);
 
+        //Стандартный чекер
+        problem.setValidatorType(Problem.VALIDATOR_TYPE.CLICSVALIDATOR);
+
 
         //Добавить в списки автосудий задачу
         //todo: не совмем уверен что в список clientSettingsList будут попадать все автосудьи, которые есть в системе
@@ -104,6 +107,20 @@ public class ProblemFacade {
         internalController.addNewProblem(problem, problemDataFiles);
 
         return problem.getElementId().getNum();
+    }
+
+    public void updateMainParams(String newName, ru.vkr.vkr.entity.Problem problemDb) {
+        InternalController internalController = (InternalController) applicationContext.getBean("getInternalController");
+
+        //Ищем задачу
+        Problem problem = findProblemInPC2(internalController, problemDb);
+        if (problem != null) {
+            //todo: после изменения имени задача перстаёт искаться
+            //problem.setDisplayName(newName);
+            problem.setTimeOutInSeconds(problemDb.getTimeLimit());
+
+            internalController.updateProblem(problem);
+        }
     }
 
 
@@ -146,7 +163,6 @@ public class ProblemFacade {
         }
 
         problem.setShowValidationToJudges(true);
-
         internalController.updateProblem(problem);
     }
 
@@ -233,6 +249,7 @@ public class ProblemFacade {
         final boolean externalFiles = true;
         problem.setUsingExternalDataFiles(externalFiles);
         problem.setExternalDataFileLocation(baseDirectoryName);
+
 //        problem.addTestCaseFilenames("01.in", "01.ans");
 //        problem.addTestCaseFilenames("02.in", "02.ans");
 //        problem.addTestCaseFilenames("03.in", "03.ans");
@@ -322,6 +339,9 @@ public class ProblemFacade {
             throw new RuntimeException("Mismatch: expecting the same number of  '" + dataExtension + "'  and  '" + answerExtension + "'  files in " + dataFileBaseDirectory + "\n (found "
                     + inputFileNames.length + "  '" + dataExtension + "'  files vs. " + answerFileNames.length + "  '" + answerExtension + "'  files)");
         }
+
+        aProblem.setDataFileName(inputFileNames[0]);
+        aProblem.setAnswerFileName(answerFileNames[0]);
 
         SerializedFile[] inputFiles = Utilities.createSerializedFiles(dataFileBaseDirectory, inputFileNames, externalDataFiles);
         SerializedFile[] answertFiles = Utilities.createSerializedFiles(dataFileBaseDirectory, answerFileNames, externalDataFiles);

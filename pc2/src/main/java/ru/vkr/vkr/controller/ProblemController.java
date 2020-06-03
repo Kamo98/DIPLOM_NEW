@@ -112,9 +112,11 @@ public class ProblemController {
     public String postProblem(@PathVariable Long problemId, Problem newProblem) {
         //todo: нужна валидация данных
         Problem problem = problemService.getProblemById(problemId);
-        problem.setName(newProblem.getName());
         problem.setMemoryLimit(newProblem.getMemoryLimit());
         problem.setTimeLimit(newProblem.getTimeLimit());
+        problemFacade.updateMainParams(newProblem.getName(), problem);
+
+        //problem.setName(newProblem.getName());
         problemService.save(problem);
         return "redirect:/teacher/problem/" + problemId;
     }

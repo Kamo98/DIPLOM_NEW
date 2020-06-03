@@ -1,15 +1,20 @@
 package ru.vkr.vkr.form;
 
 public class CheckerSettingsForm {
-    private boolean clicsValidator;
+
+    public static final Integer exactMatch = 0;
+    public static final Integer floatAbsoluteTolerance = 1;
+    public static final Integer floatRelativeTolerance = 2;
+
+    private boolean clicsValidator = true;
     private boolean caseSensitive;
     private boolean spaceSensitive;
 
-    private boolean floatAbsoluteTolerance;
     private double absoluteTolerance;
 
-    private boolean floatRelativeTolerance;
     private double relativeTolerance;
+
+    private Integer typeOfClicsChecker = exactMatch;
 
 
     public boolean isCaseSensitive() {
@@ -36,13 +41,30 @@ public class CheckerSettingsForm {
         this.clicsValidator = clicsValidator;
     }
 
-
     public boolean isFloatAbsoluteTolerance() {
-        return floatAbsoluteTolerance;
+        return typeOfClicsChecker.equals(floatAbsoluteTolerance);
     }
 
-    public void setFloatAbsoluteTolerance(boolean floatAbsoluteTolerance) {
-        this.floatAbsoluteTolerance = floatAbsoluteTolerance;
+    public void setFloatAbsoluteTolerance(boolean param) {
+        if (param)
+            typeOfClicsChecker = floatAbsoluteTolerance;
+    }
+
+    public boolean isFloatRelativeTolerance() {
+        return typeOfClicsChecker.equals(floatRelativeTolerance);
+    }
+
+    public void setFloatRelativeTolerance(boolean param) {
+        if (param)
+            typeOfClicsChecker = floatRelativeTolerance;
+    }
+
+    public boolean isExactMatch() {
+        return typeOfClicsChecker.equals(exactMatch);
+    }
+
+    public void setExactMatch() {
+        typeOfClicsChecker = exactMatch;
     }
 
     public double getAbsoluteTolerance() {
@@ -53,13 +75,6 @@ public class CheckerSettingsForm {
         this.absoluteTolerance = absoluteTolerance;
     }
 
-    public boolean isFloatRelativeTolerance() {
-        return floatRelativeTolerance;
-    }
-
-    public void setFloatRelativeTolerance(boolean floatRelativeTolerance) {
-        this.floatRelativeTolerance = floatRelativeTolerance;
-    }
 
     public double getRelativeTolerance() {
         return relativeTolerance;
@@ -67,5 +82,13 @@ public class CheckerSettingsForm {
 
     public void setRelativeTolerance(double relativeTolerance) {
         this.relativeTolerance = relativeTolerance;
+    }
+
+    public Integer getTypeOfClicsChecker() {
+        return typeOfClicsChecker;
+    }
+
+    public void setTypeOfClicsChecker(Integer typeOfClicsChecker) {
+        this.typeOfClicsChecker = typeOfClicsChecker;
     }
 }
