@@ -29,10 +29,6 @@
                                                                                  aria-hidden="true"></i>&nbsp;Темы курса</a>
                 </li>
                 <li th:unless="${isCreate}">
-                    <a class="nav-link " href="" id="linkProblemsOfCourse"><i class="fa fa-tasks"
-                                                                              aria-hidden="true"></i>&nbsp;Задачи курса</a>
-                </li>
-                <li th:unless="${isCreate}">
                     <a class="nav-link " href="" id="linkSubscribeOfCourse"><i class="fa fa-users"
                                                                                aria-hidden="true"></i>&nbsp;Подписчики
                         курса</a>
@@ -202,11 +198,6 @@
     $('#linkThemeOfCourse').click(function (e) {
         $('#linkThemeOfCourse').addClass('active');
         $('#themesOfCourse').show();
-    });
-
-    //Клик по вкладке Задачи курса
-    $('#linkProblemsOfCourse').click(function (e) {
-        $('#linkProblemsOfCourse').addClass('active');
     });
 
     //Клик по вкладке Подписчики курса

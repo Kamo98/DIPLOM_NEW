@@ -147,6 +147,35 @@
 
                         </div>
 
+                        <div class="row row-margin-top">
+                            <h6><i class="fa fa-paperclip" aria-hidden="true"></i>&nbsp;Прикрепить задачу к теме</h6>
+                        </div>
+                        <form th:action="@{'/teacher/problem/' + ${problem.id} + '/attach-to-chapter'}" th:object="${attachProblemForm}" method="post">
+                            <div class="row">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <div class="row">
+                                            <div class="col">
+                                                <label for="selectThemes">Выберите тему: </label>
+                                            </div>
+                                            <div class="col">
+                                                <select class="form-control" id="selectThemes" th:field="*{chapter}">
+                                                    <option th:each="chapter : ${chapters}" th:text="${chapter.name}"
+                                                            th:value="${chapter.id}">Задача 1</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <button class="btn btn-success" type="submit"><i class="fa fa-paperclip"
+                                                                                 aria-hidden="true"></i>&nbsp;Прикрепить
+                                </button>
+                            </div>
+                        </form>
+
+
                         <hr class="row row-margin-top" th:unless="${isCreate}">
                         <div class="row row-margin-top" th:unless="${isCreate}">
                             <div class = "col">
