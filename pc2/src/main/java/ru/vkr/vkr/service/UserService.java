@@ -175,7 +175,7 @@ public class UserService implements UserDetailsService {
         List<Pair<String, String>> listLoginPasswordBeforeAddAccount = getListLoginPasswordAccount();
         internalController.generateNewAccounts(role.getRolePc2(), 1, 1, 1, true);
         int count = 0;
-        while (count < 100 && internalController.getContest().getAccounts().length == listLoginPasswordBeforeAddAccount.size()) {
+        while (count < 10000 && internalController.getContest().getAccounts().length == listLoginPasswordBeforeAddAccount.size()) {
             try {
                 Thread.sleep(100);
                 count++;
