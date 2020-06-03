@@ -36,14 +36,6 @@ public class Chapter {
             inverseJoinColumns = @JoinColumn(name = "theory_id"))
     private Set<Theory> chapterTheories;
 
-    public Set<Problem> getChapterProblems() {
-        return chapterProblems;
-    }
-
-    public void setChapterProblems(Set<Problem> chapterProblems) {
-        this.chapterProblems = chapterProblems;
-    }
-
     public Set<Theory> getChapterTheories() {
         return chapterTheories;
     }

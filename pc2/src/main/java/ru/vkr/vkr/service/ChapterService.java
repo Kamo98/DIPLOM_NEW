@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import ru.vkr.vkr.domain.FileManager;
 import ru.vkr.vkr.entity.Chapter;
 import ru.vkr.vkr.entity.Course;
+import ru.vkr.vkr.entity.Problem;
 import ru.vkr.vkr.entity.Theory;
 import ru.vkr.vkr.form.TheoryMaterialForm;
 import ru.vkr.vkr.repository.ChapterRepository;
@@ -86,5 +87,16 @@ public class ChapterService {
     public void deleteChapter(Chapter chapter) {
         logger.info("delete chapter " + chapter.getName());
         chapterRepository.delete(chapter);
+    }
+
+
+    public void attachProblem(Chapter chapter, Problem problem) {
+        chapter.getProblems().add(problem);
+        chapterRepository.save(chapter);
+    }
+
+    public void dettachProblem(Chapter chapter, Problem problem) {
+        chapter.getProblems().remove(problem);
+        chapterRepository.save(chapter);
     }
 }

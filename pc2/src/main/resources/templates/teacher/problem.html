@@ -147,6 +147,35 @@
 
                         </div>
 
+                        <div class="row row-margin-top">
+                            <h6><i class="fa fa-paperclip" aria-hidden="true"></i>&nbsp;Прикрепить задачу к теме</h6>
+                        </div>
+                        <form th:action="@{'/teacher/problem/' + ${problem.id} + '/attach-to-chapter'}" th:object="${attachProblemForm}" method="post">
+                            <div class="row">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <div class="row">
+                                            <div class="col">
+                                                <label for="selectThemes">Выберите тему: </label>
+                                            </div>
+                                            <div class="col">
+                                                <select class="form-control" id="selectThemes" th:field="*{chapter}">
+                                                    <option th:each="chapter : ${chapters}" th:text="${chapter.name}"
+                                                            th:value="${chapter.id}">Задача 1</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <button class="btn btn-success" type="submit"><i class="fa fa-paperclip"
+                                                                                 aria-hidden="true"></i>&nbsp;Прикрепить
+                                </button>
+                            </div>
+                        </form>
+
+
                         <hr class="row row-margin-top" th:unless="${isCreate}">
                         <div class="row row-margin-top" th:unless="${isCreate}">
                             <div class = "col">
@@ -311,12 +340,40 @@
 
                     <div id="checkerProblem" style="display:none;" th:unless="${isCreate}">
                         <form th:action="@{'/teacher/problem/'+ ${problem.id} +'/checker-settings'}" th:object="${checkerSettingsForm}" method="post" enctype="multipart/form-data">
-                            <div class="row row-margin-top">
+                            <div class="row">
                                 <div class="col">
-                                    <input type="radio" name="typeChecker" id="clicsValidator" checked="checked" th:value="true" th:field="*{clicsValidator}">
-                                    <label for="clicsValidator">Использовать встроенный чекер</label>
+                                    <input type="hidden" name="typeChecker" id="clicsValidator" th:value="true" th:field="*{clicsValidator}">
+                                    <!--<label for="clicsValidator">Использовать встроенный чекер</label>-->
                                 </div>
                             </div>
+
+                            <div class="row row-margin-top">
+                                <div class="col">
+                                    <input type="radio" id="exactMatch" th:field="*{typeOfClicsChecker}" value="0">
+                                    <label for="exactMatch">Точное совпадение</label>
+                                </div>
+                            </div>
+
+                            <div class="row row-margin-top">
+                                <div class="col">
+                                    <input type="radio" id="floatAbsoluteTolerance" th:field="*{typeOfClicsChecker}"  value="1">
+                                    <label for="floatAbsoluteTolerance">Установаить допустимую абсолютную погрешность</label>
+                                </div>
+                                <div class="col">
+                                    <input id="absoluteTolerance" type="text" disabled="disabled" class="form-control" th:field="*{absoluteTolerance}">
+                                </div>
+                            </div>
+
+                            <div class="row row-margin-top">
+                                <div class="col">
+                                    <input type="radio" id="floatRelativeTolerance" th:field="*{typeOfClicsChecker}" value="2">
+                                    <label for="floatRelativeTolerance">Установаить допустимую относительную погрешность</label>
+                                </div>
+                                <div class="col">
+                                    <input id="relativeTolerance" type="text" disabled="disabled" class="form-control" th:field="*{relativeTolerance}">
+                                </div>
+                            </div>
+
                             <div class="row row-margin-top">
                                 <div class="col">
                                     <input type="checkbox" id="caseSensitive" th:field="*{caseSensitive}">
@@ -325,25 +382,6 @@
                                 <div class="col">
                                     <input type="checkbox" id="spaceSensitive" th:field="*{spaceSensitive}">
                                     <label for="spaceSensitive">Чувствительный к пробелам</label>
-                                </div>
-                            </div>
-                            <div class="row row-margin-top">
-                                <div class="col">
-                                    <input type="checkbox" id="floatAbsoluteTolerance" th:field="*{floatAbsoluteTolerance}">
-                                    <label for="floatAbsoluteTolerance">Установаить допустимую абсолютную погрешность</label>
-                                </div>
-                                <div class="col">
-                                    <input type="text" class="form-control" th:field="*{absoluteTolerance}">
-                                </div>
-                            </div>
-
-                            <div class="row row-margin-top">
-                                <div class="col">
-                                    <input type="checkbox" id="floatRelativeTolerance" th:field="*{floatRelativeTolerance}">
-                                    <label for="floatRelativeTolerance">Установаить допустимую относительную погрешность</label>
-                                </div>
-                                <div class="col">
-                                    <input type="text" class="form-control" th:field="*{relativeTolerance}">
                                 </div>
                             </div>
 
@@ -448,6 +486,31 @@
         $('#linkSendProblem').click(function(e){
             $('#linkSendProblem').addClass('active');
             $('#sendProblem').show();
+        });
+
+
+
+        //События кликов в настройках чекера
+
+        $('#exactMatch').click(function(e){
+            if ($(this).is(':checked')) {
+                $('#absoluteTolerance').prop('disabled', true);
+                $('#relativeTolerance').prop('disabled', true);
+            }
+        });
+
+        $('#floatAbsoluteTolerance').click(function(e){
+            if ($(this).is(':checked')) {
+                $('#absoluteTolerance').prop('disabled', false);
+                $('#relativeTolerance').prop('disabled', true);
+            }
+        });
+
+         $('#floatRelativeTolerance').click(function(e){
+            if ($(this).is(':checked')) {
+                $('#relativeTolerance').prop('disabled', false);
+                $('#absoluteTolerance').prop('disabled', true);
+            }
         });
 
     </script>

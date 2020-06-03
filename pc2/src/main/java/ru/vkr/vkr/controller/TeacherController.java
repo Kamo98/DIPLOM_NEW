@@ -10,11 +10,7 @@ import ru.vkr.vkr.domain.ROLE;
 import ru.vkr.vkr.entity.*;
 import ru.vkr.vkr.facade.AdminFacade;
 import ru.vkr.vkr.facade.TeacherFacade;
-import ru.vkr.vkr.form.SubmitRunForm;
-import ru.vkr.vkr.form.SearchProblemForm;
-import ru.vkr.vkr.form.SubscriptionForm;
-import ru.vkr.vkr.form.TheoryMaterialForm;
-import ru.vkr.vkr.form.UserForm;
+import ru.vkr.vkr.form.*;
 import ru.vkr.vkr.repository.StudentRepository;
 import ru.vkr.vkr.service.*;
 
@@ -54,10 +50,8 @@ public class TeacherController {
     @ModelAttribute
     public void addAttributes(Model model) {
         Collection<Course> teacherCourses = courseService.getCoursesByCurrentTeacher();
-        Collection<Group> teacherGroups = groupService.getGroupsByCurrentTeacher();
         Collection<Problem> teacherProblems = problemService.getProblemsByCurrentTeacher();
         model.addAttribute("teacherCourses", teacherCourses);
-        model.addAttribute("teacherGroups", teacherGroups);
         model.addAttribute("teacherProblems", teacherProblems);
         model.addAttribute("isTeacher", true);
         model.addAttribute(pageTabAttribute, true);
@@ -177,6 +171,29 @@ public class TeacherController {
         model.addAttribute("isCreate", false);
         return "teacher/theme";
     }
+
+
+    //Пикрепление задачи к теме
+    @PostMapping("/teacher/problem/{problemId}/attach-to-chapter")
+    public String attachProblemToChapter(Model model,
+                                         AttachProblemForm attachProblemForm,
+                                         @PathVariable Long problemId) {
+        Problem problem = problemService.getProblemById(problemId);
+        chapterService.attachProblem(attachProblemForm.getChapter(), problem);
+        return "redirect:/teacher/problem/" + problemId;
+    }
+
+    //Открепление задачи от темы
+    @GetMapping("/teacher/chapter/{chapterId}/dettach-problem/{problemId}")
+    public String dettachProblemToChapter(Model model,
+                                          @PathVariable Long chapterId,
+                                         @PathVariable Long problemId) {
+        Problem problem = problemService.getProblemById(problemId);
+        Chapter chapter = chapterService.getChapterById(chapterId);
+        chapterService.dettachProblem(chapter, problem);
+        return "redirect:/teacher/course/" + chapter.getCourseChapters().getId() + "/chapter/" + chapterId;
+    }
+
 
     // добавление теоретического материала
     @PostMapping("/teacher/course/{course_id}/chapter/{chapter_id}/add-theory")

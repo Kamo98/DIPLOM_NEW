@@ -50,8 +50,12 @@
                         </div>
                     </div>
 
-                    <div th:if="${#lists.isEmpty(theories)}" class="alert alert-warning" role="alert">
-                        Тема пока не содержит ни одного теоретического материала
+                    <div class="row row-margin-top">
+                        <div class="col">
+                            <div th:if="${#lists.isEmpty(theories)}" class="alert alert-warning" role="alert">
+                                Тема пока не содержит ни одного теоретического материала
+                            </div>
+                        </div>
                     </div>
 
                     <div class="row row-table" th:each="theory : ${theories}">
@@ -158,137 +162,40 @@
                             </div>
                         </div>
 
-                        <div class="row row-table">
+                        <div class="row row-margin-top" th:if="${#lists.isEmpty(chapter.getProblems())}">
                             <div class="col">
-                                <a th:href="@{'/teacher/problem'}">
-                                    Задача 1
+                                <div  class="alert alert-info" role="alert">
+                                    Прикрепите задачи к теме на страницах задач
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row row-table" th:each="problem : ${chapter.getProblems()}">
+                            <div class="col">
+                                <a th:href="@{'/teacher/problem/' + ${problem.id}}" th:text="${problem.name}">
+                                    Задача
                                 </a>
                             </div>
                             <div class="col">
                                 Высокая
                             </div>
                             <div class="col">
-                                <a href="#">
-                                    <i class="fa fa-tag" aria-hidden="true"></i>&nbsp; Тег 1
-                                </a>
-                                &nbsp;
-                                <a href="#">
-                                    <i class="fa fa-tag" aria-hidden="true"></i>&nbsp; Тег 2
-                                </a>
+                                <span th:each="tag : ${problem.getHashTagsVisible()}">
+                                    <a th:href="@{'/teacher/pool-problems/' + ${tag.id}}">
+                                        #[[ ${tag.name} ]]
+                                    </a>
+                                    &nbsp;
+                                </span>
                             </div>
                             <div class="col-3">
-                                <a class="btn btn-danger" href="#"><i class="fa fa-trash-o fa-lg"></i>&nbsp;
-                                    Открепить от темы
-                                </a>
-                            </div>
-                        </div>
-
-                        <div class="row row-table dark-row">
-                            <div class="col">
-                                <a th:href="@{'/teacher/problem'}">
-                                    Задача 2
-                                </a>
-                            </div>
-                            <div class="col">
-                                Средняя
-                            </div>
-                            <div class="col">
-                                <a href="#">
-                                    <i class="fa fa-tag" aria-hidden="true"></i>&nbsp; Тег 4
-                                </a>
-                            </div>
-                            <div class="col-3">
-                                <a class="btn btn-danger" href="#"><i class="fa fa-trash-o fa-lg"></i>&nbsp;
-                                    Открепить от темы
-                                </a>
-                            </div>
-                        </div>
-
-                        <div class="row row-table">
-                            <div class="col">
-                                <a th:href="@{'/teacher/problem'}">
-                                    Задача 3
-                                </a>
-                            </div>
-                            <div class="col">
-                                Средняя
-                            </div>
-                            <div class="col">
-                                <a href="#">
-                                    <i class="fa fa-tag" aria-hidden="true"></i>&nbsp; Тег 5
-                                </a>
-                            </div>
-                            <div class="col-3">
-                                <a class="btn btn-danger" href="#"><i class="fa fa-trash-o fa-lg"></i>&nbsp;
-                                    Открепить от темы
-                                </a>
-                            </div>
-                        </div>
-
-                        <div class="row row-table dark-row">
-                            <div class="col">
-                                <a th:href="@{'/teacher/problem'}">
-                                    Задача 4
-                                </a>
-                            </div>
-                            <div class="col">
-                                Средняя
-                            </div>
-                            <div class="col">
-                                <a href="#">
-                                    <i class="fa fa-tag" aria-hidden="true"></i>&nbsp; Тег 5
-                                </a>&nbsp;
-                                <a href="#">
-                                    <i class="fa fa-tag" aria-hidden="true"></i>&nbsp; Тег 6
-                                </a>
-                            </div>
-                            <div class="col-3">
-                                <a class="btn btn-danger" href="#"><i class="fa fa-trash-o fa-lg"></i>&nbsp;
+                                <a class="btn btn-danger"
+                                   th:href="@{'/teacher/chapter/' + ${chapter.id} + '/dettach-problem/' + ${problem.id}}">
+                                    <i class="fa fa-trash-o fa-lg"></i>&nbsp;
                                     Открепить от темы
                                 </a>
                             </div>
                         </div>
                     </div>
-
-
-                    <div class="row row-margin-top">
-                        <h6><i class="fa fa-paperclip" aria-hidden="true"></i>&nbsp;Прикрепить задачу к теме</h6>
-                    </div>
-                    <form>
-                        <div class="row">
-                            <div class="col">
-                                <div class="form-group">
-                                    <div class="row">
-                                        <div class="col">
-                                            <input type="radio" name="typeAddProblem" id="typeAddSelect"
-                                                   checked="checked">
-                                            <label for="typeAddSelect">Выбрать задачу из существующих</label>
-                                        </div>
-
-                                        <div class="col">
-                                            <select class="form-control" id="selectProblems">
-                                                <option>Задача 1</option>
-                                                <option>Задача 2</option>
-                                                <option>Задача 3</option>
-                                                <option>Задача 4</option>
-                                                <option>Задача 5</option>
-                                                <option>Задача 6</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <input type="radio" name="typeAddProblem" id="typeAddNew">
-                                    <label for="typeAddNew">Создать новую задачу и прикрепить её к теме</label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <button class="btn btn-success" type="submit"><i class="fa fa-paperclip"
-                                                                             aria-hidden="true"></i>&nbsp;Прикрепить
-                            </button>
-                        </div>
-                    </form>
                 </div>
 
                 <div id="themeSettings" style="display: none;">

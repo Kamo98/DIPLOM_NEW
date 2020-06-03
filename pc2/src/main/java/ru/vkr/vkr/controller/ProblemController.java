@@ -11,10 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import ru.vkr.vkr.entity.Course;
-import ru.vkr.vkr.entity.Group;
-import ru.vkr.vkr.entity.HashTag;
-import ru.vkr.vkr.entity.Problem;
+import ru.vkr.vkr.entity.*;
 import ru.vkr.vkr.facade.ProblemFacade;
 import ru.vkr.vkr.form.*;
 import ru.vkr.vkr.service.*;
@@ -46,7 +43,6 @@ public class ProblemController {
     @ModelAttribute
     public void addAttributes(Model model) {
         Collection<Course> teacherCourses = courseService.getCoursesByCurrentTeacher();
-        Collection<Group> teacherGroups = groupService.getGroupsByCurrentTeacher();
         Collection<Problem> teacherProblems = problemService.getProblemsByCurrentTeacher();
         TheoryMaterialForm theoryMaterialForm = new TheoryMaterialForm();
         SubmitRunForm submitRunForm = new SubmitRunForm();
@@ -55,7 +51,6 @@ public class ProblemController {
 
         model.addAttribute("theoryMaterialForm", theoryMaterialForm);
         model.addAttribute("teacherCourses", teacherCourses);
-        model.addAttribute("teacherGroups", teacherGroups);
         model.addAttribute("teacherProblems", teacherProblems);
         model.addAttribute("isTeacher", true);
         model.addAttribute("langs", internalController.getContest().getLanguages());
@@ -105,6 +100,16 @@ public class ProblemController {
 //                choiceTagsForm.getTagList().add(null);
         model.addAttribute("choiceTagsForm", choiceTagsForm);
 
+
+        //Темы
+        Set<Chapter> chapters = new HashSet<>();
+        Collection<Course> teacherCourses = courseService.getCoursesByCurrentTeacher();
+        for (Course course : teacherCourses)
+            chapters.addAll(course.getChapters());
+        model.addAttribute("chapters", chapters);
+        AttachProblemForm attachProblemForm = new AttachProblemForm();
+        model.addAttribute("attachProblemForm", attachProblemForm);
+
         return "teacher/problem";
     }
 
@@ -114,9 +119,11 @@ public class ProblemController {
     public String postProblem(@PathVariable Long problemId, Problem newProblem) {
         //todo: нужна валидация данных
         Problem problem = problemService.getProblemById(problemId);
-        problem.setName(newProblem.getName());
         problem.setMemoryLimit(newProblem.getMemoryLimit());
         problem.setTimeLimit(newProblem.getTimeLimit());
+        problemFacade.updateMainParams(newProblem.getName(), problem);
+
+        //problem.setName(newProblem.getName());
         problemService.save(problem);
         return "redirect:/teacher/problem/" + problemId;
     }
@@ -226,4 +233,5 @@ public class ProblemController {
                 submitRunForm.getMultipartFile());
         return "redirect:/teacher/problem/" + problemId;
     }
+
 }
