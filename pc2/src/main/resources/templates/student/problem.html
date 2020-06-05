@@ -40,17 +40,29 @@
 
 
                 <div id="statementProblem">
-                    <!--<div class="alert alert-warning" role="alert">-->
-                    <!--Курс пока не содержит ни одной темы.-->
-                    <!--</div>-->
 
-                    <embed th:src="@{'/problems/sample problem.pdf'}" width="800px" height="1000px"/>
+                    <div th:unless="${statement}" class="alert alert-warning" role="alert">
+                        Условий нет.
+                    </div>
 
+                    <div class="row row-table" th:if="${statement}">
+                        <div class="col">
+                            <a href="javascript://" th:attr="onclick=|loadFileByPath('${problem.pathToTextProblem}')|" >
+                                <i class="fa fa-book fa-fw" aria-hidden="true"></i>&nbsp;
+                                [[ ${problem.nameOfTextProblem} ]]
+                            </a>
+                        </div>
+
+                        <div class="col-2">
+                            <a class="btn btn-danger" th:href="@{'/teacher/problem/'+${problemId}+'/delete-statement'}">
+                                <i class="fa fa-trash-o fa-lg"></i></a>
+                        </div>
+                    </div>
 
                 </div>
 
                 <div id="sendProblem" style="display:none;">
-                    <form th:action="@{/student/submit}"
+                    <form th:action="@{'/student/submit/'+${problem.id}}"
                           th:object="${submitRunForm}"
                           method="POST"
                           enctype="multipart/form-data">
@@ -64,19 +76,6 @@
                                     <option th:each="lang, state : ${langs}"
                                             th:value="${state.index}"
                                             th:text="${lang.displayName}"/>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="row row-margin-top">
-                            <div class="col-3 col-align-center">
-                                <label for="task">Задача:</label>
-                            </div>
-                            <div class="col">
-                                <select id="task" class="form-control" th:field="*{problem}">
-                                    <option th:each="problm, state : ${problems}"
-                                            th:value="${state.index}"
-                                            th:utext="${problm.displayName}"/>
                                 </select>
                             </div>
                         </div>

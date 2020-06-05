@@ -91,12 +91,12 @@ public class ChapterService {
 
 
     public void attachProblem(Chapter chapter, Problem problem) {
-        chapter.getProblems().add(problem);
+        chapter.getChapterProblems().add(problem);
         chapterRepository.save(chapter);
     }
 
     public void dettachProblem(Chapter chapter, Problem problem) {
-        chapter.getProblems().remove(problem);
+        chapter.getChapterProblems().remove(problem);
         chapterRepository.save(chapter);
     }
 }

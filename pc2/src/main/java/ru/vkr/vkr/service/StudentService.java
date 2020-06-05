@@ -7,7 +7,6 @@ import ru.vkr.vkr.facade.AuthenticationFacade;
 import ru.vkr.vkr.repository.CourseRepository;
 import ru.vkr.vkr.repository.StudentRepository;
 
-import java.util.List;
 import java.util.Set;
 
 @Service
@@ -25,7 +24,7 @@ public class StudentService {
     }
 
     public Set<Problem> getProblemByChapter(Chapter chapter) {
-        return chapter.getProblems();
+        return chapter.getChapterProblems();
     }
 
     public Set<Theory> getTheoryByChapter(Chapter chapter) {
