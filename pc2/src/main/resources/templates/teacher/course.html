@@ -54,18 +54,18 @@
                         </div>
                     </div>
 
-                    <div th:if="${#lists.isEmpty(course.chapters)}" class="alert alert-warning" role="alert">
+                    <div th:if="${#lists.isEmpty(course.getChapters())}" class="alert alert-warning" role="alert">
                         Курс пока не содержит ни одной темы
                     </div>
 
-                    <div th:class="'row row-table ' + ((${iState.index} % 2 == 1) ? 'dark-row' : '')" th:each="chapter, iState : ${course.chapters}" th:id="'teacher_'+${chapter.id}">
+                    <div th:class="'row row-table ' + ((${iState.index} % 2 == 1) ? 'dark-row' : '')" th:each="chapter, iState : ${course.getChapters()}" th:id="'teacher_'+${chapter.id}">
                         <div class="col">
                             <a th:href="@{'/teacher/course/'+${course.id}+'/chapter/'+${chapter.id}}">
                                 [[ ${chapter.name} ]]
                             </a>
                         </div>
                         <div class="col-2">
-                            [[ ${chapter.getProblems().size()} ]]
+                            [[ ${chapter.getChapterProblems().size()} ]]
                         </div>
                         <div class="col-2">
                             <a class="btn btn-danger" th:href="@{'/teacher/course/'+${course.id}+'/delete-chapter/'+${chapter.id}}">
