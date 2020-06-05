@@ -142,4 +142,10 @@ public class StudentController {
         searchService.poolSearchProblems(model, hashTagId);
         return "/pool-problems";
     }
+
+    @GetMapping("/student/submitions")
+    public String showSubmitions(Model model) {
+        model.addAttribute("runs", submitRunService.getRunSummit());
+        return "/submitions";
+    }
 }

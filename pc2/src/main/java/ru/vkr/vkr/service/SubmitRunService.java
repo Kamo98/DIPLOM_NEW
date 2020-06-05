@@ -73,6 +73,7 @@ public class SubmitRunService {
         InternalController internalController = (InternalController) applicationContext.getBean("getInternalController");
         IInternalContest contest = internalController.getContest();
         List<RunSubmitDto> runSubmitDtos = new ArrayList<>();
+        // в отсортированном порядке
         for (Run run : internalController.getContest().getRuns()) {
             runSubmitDtos.add(new RunSubmitDto(run.getNumber(),
                     getProblemTitle(contest, run.getProblemId()),

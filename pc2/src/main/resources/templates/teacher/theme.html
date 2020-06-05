@@ -162,7 +162,7 @@
                             </div>
                         </div>
 
-                        <div class="row row-margin-top" th:if="${#lists.isEmpty(chapter.getProblems())}">
+                        <div class="row row-margin-top" th:if="${#lists.isEmpty(chapter.chapterProblems)}">
                             <div class="col">
                                 <div  class="alert alert-info" role="alert">
                                     Прикрепите задачи к теме на страницах задач
@@ -170,7 +170,7 @@
                             </div>
                         </div>
 
-                        <div class="row row-table" th:each="problem : ${chapter.getProblems()}">
+                        <div class="row row-table" th:each="problem : ${chapter.chapterProblems}">
                             <div class="col">
                                 <a th:href="@{'/teacher/problem/' + ${problem.id}}" th:text="${problem.name}">
                                     Задача
