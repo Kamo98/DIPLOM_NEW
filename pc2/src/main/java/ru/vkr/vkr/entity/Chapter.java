@@ -40,6 +40,14 @@ public class Chapter {
         return chapterTheories;
     }
 
+    public Set<Problem> getChapterProblems() {
+        return chapterProblems;
+    }
+
+    public void setChapterProblems(Set<Problem> chapterProblems) {
+        this.chapterProblems = chapterProblems;
+    }
+
     public void setChapterTheories(Set<Theory> chapterTheories) {
         this.chapterTheories = chapterTheories;
     }
@@ -66,14 +74,6 @@ public class Chapter {
 
     public void setCourseChapters(Course courseChapters) {
         this.courseChapters = courseChapters;
-    }
-
-    public Set<Problem> getProblems() {
-        return chapterProblems;
-    }
-
-    public void setProblems(Set<Problem> problems) {
-        this.chapterProblems = problems;
     }
 }
 

@@ -39,6 +39,9 @@
                     <li th:unless="${isCreate}">
                         <a class="nav-link" href="" id="linkSendProblem">Сдать</a>
                     </li>
+                    <li th:unless="${isCreate}">
+                        <a class="nav-link" href="" id="linkViewRunsProblem">Посылки</a>
+                    </li>
 
                 </ul>
 
@@ -451,6 +454,35 @@
                         </form>
                     </div>
 
+                    <div id="ViewRunsProblem" style="display:none;">
+
+                        <table id="ViewRunsUser" class="table table-striped table-bordered table-sm">
+                            <thead class="thead-dark">
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Задача</th>
+                                <th scope="col">Время</th>
+                                <th scope="col">Язык</th>
+                                <th scope="col">Статус</th>
+                                <th scope="col">Исходный код</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+
+                            <tr th:each="run, state : ${runs}">
+                                <th scope="row" th:text="${run.number}"></th>
+                                <td th:text="${run.displayName}"></td>
+                                <td th:text="${run.time}"></td>
+                                <td th:text="${run.langauge}"></td>
+                                <td th:text="${run.status}"></td>
+                                <td><a class="btn btn-primary" th:href="@{'/student/source/' + ${state.index}}" target="_blank">Исходный код</a>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+
+                    </div>
+
                 </div>
             </div>
 
@@ -489,6 +521,11 @@
         $('#linkSendProblem').click(function(e){
             $('#linkSendProblem').addClass('active');
             $('#sendProblem').show();
+        });
+
+        $('#linkViewRunsProblem').click(function (e) {
+            $('#linkViewRunsProblem').addClass('active');
+            $('#ViewRunsProblem').show();
         });
 
 

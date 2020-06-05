@@ -22,6 +22,8 @@ import javax.validation.Valid;
 public class TeacherController {
 
     @Autowired
+    private SubmitRunService submitRunService;
+    @Autowired
     private CourseService courseService;
     @Autowired
     private GroupService groupService;
@@ -397,6 +399,12 @@ public class TeacherController {
     public String genTags() {
         searchService.genTags();
         return "redirect:/teacher/pool-problems";
+    }
+
+    @GetMapping("/teacher/submitions")
+    public String showSubmitions(Model model) {
+        model.addAttribute("runs", submitRunService.getRunSummit());
+        return "/submitions";
     }
 
 }

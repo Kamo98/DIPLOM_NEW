@@ -48,7 +48,7 @@ public class ProblemController {
         SubmitRunForm submitRunForm = new SubmitRunForm();
         InternalController internalController = (InternalController) applicationContext.getBean("getInternalController");
 
-
+        model.addAttribute("runs", submitRunService.getRunSummit());
         model.addAttribute("theoryMaterialForm", theoryMaterialForm);
         model.addAttribute("teacherCourses", teacherCourses);
         model.addAttribute("teacherProblems", teacherProblems);

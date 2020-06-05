@@ -9,17 +9,13 @@ import org.springframework.web.bind.annotation.*;
 import ru.vkr.vkr.entity.Chapter;
 import ru.vkr.vkr.entity.Course;
 import ru.vkr.vkr.entity.Problem;
-import ru.vkr.vkr.entity.Theory;
+import ru.vkr.vkr.facade.ProblemFacade;
 import ru.vkr.vkr.form.SearchProblemForm;
 import ru.vkr.vkr.form.SubmitRunForm;
-import ru.vkr.vkr.service.ChapterService;
-import ru.vkr.vkr.service.SearchService;
-import ru.vkr.vkr.service.StudentService;
-import ru.vkr.vkr.service.SubmitRunService;
+import ru.vkr.vkr.service.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -38,6 +34,10 @@ public class StudentController {
     private SearchService searchService;
     @Autowired
     private ChapterService chapterService;
+    @Autowired
+    private ProblemService problemService;
+    @Autowired
+    private ProblemFacade problemFacade;
 
     @ModelAttribute
     public void addAttributes(Model model) {
@@ -62,24 +62,31 @@ public class StudentController {
     }
 
 
-    @GetMapping("/student/problem")
-    public String getProblem(Model model) {
+    @GetMapping("/student/problem/{problemId}")
+    public String getProblem(Model model, @PathVariable Long problemId) {
         InternalController internalController = (InternalController) applicationContext.getBean("getInternalController");
         SubmitRunForm submitRunForm = new SubmitRunForm();
+        Problem problem = problemService.getProblemById(problemId);
+        if (problem.getPathToTextProblem() == null || problem.getPathToTextProblem().equals("")) {
+            model.addAttribute("statement", false);
+        } else {
+            model.addAttribute("statement", true);
+        }
+        model.addAttribute("problem", problem);
         model.addAttribute("runs", submitRunService.getRunSummit());
         model.addAttribute("langs", internalController.getContest().getLanguages());
-        model.addAttribute("problems", internalController.getContest().getProblems());
         model.addAttribute("submitRunForm", submitRunForm);
         return "student/problem";
     }
 
-    @PostMapping("/student/submit")
+    @PostMapping("/student/submit/{problemId}")
     public String sendFileSubmit(Model model,
-                                 @ModelAttribute("submitRunForm") SubmitRunForm submitRunForm) {
-       /* submitRunService.submitRun(submitRunForm.getProblem(), submitRunForm.getLanguage(),
+                                 @ModelAttribute("submitRunForm") SubmitRunForm submitRunForm,
+                                 @PathVariable Long problemId) {
+        submitRunService.submitRun(problemFacade.findProblemInPC2(problemService.getProblemById(problemId)),
+                submitRunForm.getLanguage(),
                 submitRunForm.getMultipartFile());
-*/
-        return "redirect:/student/problem";
+        return "redirect:/student/problem/" + problemId;
     }
 
     @GetMapping("/student/source/{indexRun}")
@@ -134,5 +141,11 @@ public class StudentController {
     public String poolProblemOneHashtag(@PathVariable("hashTagId") Long hashTagId, Model model) {
         searchService.poolSearchProblems(model, hashTagId);
         return "/pool-problems";
+    }
+
+    @GetMapping("/student/submitions")
+    public String showSubmitions(Model model) {
+        model.addAttribute("runs", submitRunService.getRunSummit());
+        return "/submitions";
     }
 }

@@ -7,6 +7,9 @@ $('.tabs-menu a').click(function (e) {
 });
 
 $(document).ready(function () {
+    $('#ViewRunsUser').DataTable();
+    $('.dataTables_length').addClass('bs-select');
+
     $('#sourceTM2').hide();
 
     $("#submit").click(function () {
