@@ -155,12 +155,20 @@ public class ProblemController {
 
         Problem problem = problemService.getProblemById(problemId);
 
-        problemFacade.loadTestFiles(loadTestsForm, problem);
+        //problemFacade.loadTestFiles(loadTestsForm, problem);
         problemFacade.addTestsToProblem(problem);
 
         return "redirect:/teacher/problem/" + problemId;
     }
 
+
+    //Костыльная загрузка тестов через диск
+    @GetMapping("/teacher/problem/{problemId}/tests-upload/pc2")
+    public String uploadProblemTestsToPC2(@PathVariable Long problemId) throws IOException {
+        Problem problem = problemService.getProblemById(problemId);
+        problemFacade.addTestsToProblem(problem);
+        return "redirect:/teacher/problem/" + problemId;
+    }
 
     @GetMapping("/teacher/problem/{problemId}/test-delete/{testName}")
     public String deleteProblemTest(@PathVariable Long problemId, @PathVariable String testName) {

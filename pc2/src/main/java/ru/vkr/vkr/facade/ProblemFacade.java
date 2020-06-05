@@ -38,33 +38,33 @@ public class ProblemFacade {
 
     //todo: надо разделить на несколько методов, чтобы вызывать отдельные там где требуется та или иная папка
     private void makeDirectory (Long problemId) {
-        File pathTests = new File(uploadPath + "/tests");
-        if (!pathTests.exists())
-            pathTests.mkdir();
+//        File pathTests = new File(uploadPath + "/tests");
+//        if (!pathTests.exists())
+//            pathTests.mkdir();
 
         String dirTests = uploadPath + "/tests/problem-" + problemId;
         File fileTests = new File(dirTests);
         if (!fileTests.exists())
             fileTests.mkdir();
 
-        File pathChecker = new File(uploadPath + "/checkers");
-        if (!pathChecker.exists())
-            pathChecker.mkdir();
+//        File pathChecker = new File(uploadPath + "/checkers");
+//        if (!pathChecker.exists())
+//            pathChecker.mkdir();
 
-        String dirChecker = uploadPath + "/checkers/problem-" + problemId;
-        File fileChecker = new File(dirChecker);
-        if (!fileChecker.exists())
-            fileChecker.mkdir();
+//        String dirChecker = uploadPath + "/checkers/problem-" + problemId;
+//        File fileChecker = new File(dirChecker);
+//        if (!fileChecker.exists())
+//            fileChecker.mkdir();
 
 
-        File pathStatement = new File(uploadPath + "/statements");
-        if (!pathStatement.exists())
-            pathStatement.mkdir();
-
-        String dirStatement = uploadPath + "/statements/problem-" + problemId;
-        File fileStatement = new File(dirStatement);
-        if (!fileStatement.exists())
-            fileStatement.mkdir();
+//        File pathStatement = new File(uploadPath + "/statement");
+//        if (!pathStatement.exists())
+//            pathStatement.mkdir();
+//
+//        String dirStatement = uploadPath + "/statements/problem-" + problemId;
+//        File fileStatement = new File(dirStatement);
+//        if (!fileStatement.exists())
+//            fileStatement.mkdir();
     }
 
 

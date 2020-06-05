@@ -29,8 +29,7 @@
                                                                                  aria-hidden="true"></i>&nbsp;Темы курса</a>
                 </li>
                 <li th:unless="${isCreate}">
-                    <a class="nav-link " href="" id="linkSubscribeOfCourse"><i class="fa fa-users"
-                                                                               aria-hidden="true"></i>&nbsp;Подписчики
+                    <a class="nav-link " href="" id="linkSubscribeOfCourse"><i class="fa fa-users"aria-hidden="true"></i>&nbsp;Подписчики
                         курса</a>
                 </li>
                 <li>
@@ -45,13 +44,13 @@
 
                     <div class="row row-table table-header">
                         <div class="col">
-                            Наименование темы
+                            <i class="fa fa-book fa-fw" aria-hidden="true"></i>&nbsp;Наименование темы
                         </div>
                         <div class="col-2">
-                            Дата создания
+                            <i class="fa fa-tasks"aria-hidden="true"></i>&nbsp;Количество задач
                         </div>
                         <div class="col-2">
-                            Управление
+                            <i class="fa fa-cogs" aria-hidden="true"></i>&nbsp;Управление
                         </div>
                     </div>
 
@@ -59,16 +58,14 @@
                         Курс пока не содержит ни одной темы
                     </div>
 
-                    <div class="row row-table" th:each="chapter : ${course.chapters}" th:id="'teacher_'+${chapter.id}">
+                    <div th:class="'row row-table ' + ((${iState.index} % 2 == 1) ? 'dark-row' : '')" th:each="chapter, iState : ${course.chapters}" th:id="'teacher_'+${chapter.id}">
                         <div class="col">
-                            <a th:href="@{'/teacher/course/'+${course.id}+'/chapter/'+${chapter.id}}"><i
-                                    class="fa fa-book fa-fw" aria-hidden="true"></i>&nbsp;
+                            <a th:href="@{'/teacher/course/'+${course.id}+'/chapter/'+${chapter.id}}">
                                 [[ ${chapter.name} ]]
                             </a>
                         </div>
                         <div class="col-2">
-                            <i class="fa fa-calendar" aria-hidden="true"></i>&nbsp;
-                            06/11/2020
+                            [[ ${chapter.getProblems().size()} ]]
                         </div>
                         <div class="col-2">
                             <a class="btn btn-danger" th:href="@{'/teacher/course/'+${course.id}+'/delete-chapter/'+${chapter.id}}">
@@ -90,13 +87,13 @@
                 <div id="subscribesOfCourse" th:unless="${isCreate}" class="col-align-centered" style="display: none;">
                     <div class="row row-table table-header">
                         <div class="col">
-                            Группа
+                            <i class="fa fa-users"aria-hidden="true"></i>&nbsp;Группа
                         </div>
                         <div class="col-2">
-                            Количество участников
+                            <i class="fa fa-users"aria-hidden="true"></i>&nbsp;Количество участников
                         </div>
                         <div class="col-2">
-                            Управление
+                            <i class="fa fa-cogs" aria-hidden="true"></i>&nbsp;Управление
                         </div>
                     </div>
 
@@ -104,15 +101,13 @@
                         Курс пока не содержит ни одной группы
                     </div>
 
-                    <div class="row row-table" th:each="subscriber : ${course.subscribers}">
+                    <div th:class="'row row-table ' + ((${iState.index} % 2 == 1) ? 'dark-row' : '')" th:each="subscriber, iState : ${course.subscribers}">
                         <div class="col">
-                            <a th:href="@{'/teacher/course/'+${course.id}+'/group/'+${subscriber.id}}"><i
-                                    class="fa fa-book fa-fw" aria-hidden="true"></i>&nbsp;
+                            <a th:href="@{'/teacher/course/'+${course.id}+'/group/'+${subscriber.id}}">
                                 [[ ${subscriber.name} ]]
                             </a>
                         </div>
                         <div class="col-2">
-                            <i class="fa fa-calendar" aria-hidden="true"></i>&nbsp;
                             [[ ${#lists.size(subscriber.students)} ]]
                         </div>
                         <div class="col-2">

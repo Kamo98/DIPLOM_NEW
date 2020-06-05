@@ -19,7 +19,7 @@
 
         <div class="main-content col-9 border rounded-lg">
             <h5 class="centered green-h" th:unless="${isCreate}">Тема "[[ ${chapter.name} ]]"</h5>
-            <h5 class="centered green-h" th:if="${isCreate}">Курс "Новая тема"</h5>
+            <h5 class="centered green-h" th:if="${isCreate}">Тема "Новая тема"</h5>
 
             <ul class="nav nav-pills tabs-menu">
                 <li th:unless="${isCreate}">
@@ -28,8 +28,9 @@
                         материал</a>
                 </li>
                 <li th:unless="${isCreate}">
-                    <a class="nav-link" href="#" id="linkThemeProblems"><i class="fa fa-tasks"
-                                                                           aria-hidden="true"></i>&nbsp;Задачи</a>
+                    <a class="nav-link" href="#" id="linkThemeProblems">
+                        <i class="fa fa-tasks"aria-hidden="true"></i>&nbsp;Задачи
+                    </a>
                 </li>
                 <li>
                     <a class="nav-link " href="#" id="linkThemeSettings"><i class="fa fa-cogs" aria-hidden="true"></i>&nbsp;Параметры</a>
@@ -43,28 +44,29 @@
 
                     <div class="row row-table table-header">
                         <div class="col">
-                            Наименование
+                            <i class="fa fa-book fa-fw" aria-hidden="true"></i>&nbsp;Материал
                         </div>
                         <div class="col-2">
+                            <i class="fa fa-cogs" aria-hidden="true"></i>&nbsp;
                             Управление
                         </div>
                     </div>
 
-                    <div class="row row-margin-top">
+                    <div class="row row-margin-top" th:if="${#lists.isEmpty(theories)}">
                         <div class="col">
-                            <div th:if="${#lists.isEmpty(theories)}" class="alert alert-warning" role="alert">
+                            <div  class="alert alert-warning" role="alert">
                                 Тема пока не содержит ни одного теоретического материала
                             </div>
                         </div>
                     </div>
 
-                    <div class="row row-table" th:each="theory : ${theories}">
+                    <div th:class="'row row-table ' + ((${iState.index} % 2 == 1) ? 'dark-row' : '')" th:each="theory, iState : ${theories}">
                         <div class="col">
-                            <a th:unless="${theory.file}" th:href="${theory.source}" target="_blank"><i class="fa fa-book fa-fw" aria-hidden="true"></i>&nbsp;
-                                [[ ${theory.name} ]]
+                            <a th:unless="${theory.file}" th:href="${theory.source}" target="_blank">
+                                <i class="fa fa-link" aria-hidden="true"></i>&nbsp;[[ ${theory.name} ]]
                             </a>
-                            <a th:if="${theory.file}" href="javascript://" th:attr="onclick=|loadFileByPath('${theory.source}')|"><i class="fa fa-book fa-fw" aria-hidden="true"></i>&nbsp;
-                                [[ ${theory.name} ]]
+                            <a th:if="${theory.file}" href="javascript://" th:attr="onclick=|loadFileByPath('${theory.source}')|">
+                                <i class="fa fa-file" aria-hidden="true"></i>&nbsp;[[ ${theory.name} ]]
                             </a>
                         </div>
                         <div class="col-2">
@@ -170,7 +172,7 @@
                             </div>
                         </div>
 
-                        <div class="row row-table" th:each="problem : ${chapter.getProblems()}">
+                        <div th:class="'row row-table ' + ((${iState.index} % 2 == 1) ? 'dark-row' : '')" th:each="problem, iState : ${chapter.getProblems()}">
                             <div class="col">
                                 <a th:href="@{'/teacher/problem/' + ${problem.id}}" th:text="${problem.name}">
                                     Задача
