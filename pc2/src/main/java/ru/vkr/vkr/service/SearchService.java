@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import ru.vkr.vkr.entity.HashTag;
 import ru.vkr.vkr.entity.Problem;
+import ru.vkr.vkr.facade.ProblemFacade;
 import ru.vkr.vkr.form.SearchProblemForm;
 
 import java.io.*;
@@ -19,6 +20,8 @@ public class SearchService {
     private ProblemService problemService;
     @Autowired
     private HashTagService hashTagService;
+    @Autowired
+    private ProblemFacade problemFacade;
 
 
     //Для страницы пула задач с пустым списком задач
@@ -57,6 +60,8 @@ public class SearchService {
                 problems.addAll(hashTags.get(i).getProblems());
         }
 
+
+        problemFacade.getStatisticForProblems(problems);
         model.addAttribute("problems", problems);
         SearchProblemForm searchProblemForm_ = new SearchProblemForm(hashTags.size(), searchProblemForm);
         model.addAttribute("searchProblemForm", searchProblemForm_);

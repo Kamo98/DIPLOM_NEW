@@ -44,7 +44,10 @@ public class ProblemController {
     @ModelAttribute
     public void addAttributes(Model model) {
         Collection<Course> teacherCourses = courseService.getCoursesByCurrentTeacher();
-        Collection<Problem> teacherProblems = problemService.getProblemsByCurrentTeacher();
+        List<Problem> teacherProblems_ = problemService.getProblemsByCurrentTeacher();
+        Collection<Problem> teacherProblems = new ArrayList<>();
+        for (int i = 0; i < 5; i++)
+            teacherProblems.add(teacherProblems_.get(i));
         TheoryMaterialForm theoryMaterialForm = new TheoryMaterialForm();
         SubmitRunForm submitRunForm = new SubmitRunForm();
         InternalController internalController = (InternalController) applicationContext.getBean("getInternalController");

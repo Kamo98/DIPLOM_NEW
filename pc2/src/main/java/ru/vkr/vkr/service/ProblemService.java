@@ -68,7 +68,7 @@ public class ProblemService {
         problem.setTeacherAuthor(authenticationFacade.getCurrentTeacher());
     }
 
-    public Collection<Problem> getProblemsByCurrentTeacher() {
+    public List<Problem> getProblemsByCurrentTeacher() {
         return problemRepository.findByTeacherAuthor_id(authenticationFacade.getCurrentTeacher().getId());
     }
 
