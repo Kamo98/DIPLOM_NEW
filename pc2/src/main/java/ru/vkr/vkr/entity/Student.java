@@ -2,6 +2,7 @@ package ru.vkr.vkr.entity;
 
 import javax.persistence.*;
 import javax.validation.constraints.Null;
+import java.security.PublicKey;
 
 @Entity
 @Table(name = "t_student")
@@ -72,5 +73,11 @@ public class Student {
 
     public void setGroup(Group group) {
         this.group = group;
+    }
+
+
+    @Override
+    public String toString() {
+        return surname + " " + name + " " + middleName;
     }
 }

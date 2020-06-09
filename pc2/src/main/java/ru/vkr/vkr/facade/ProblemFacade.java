@@ -1,25 +1,35 @@
 package ru.vkr.vkr.facade;
 
 import ch.qos.logback.core.net.server.Client;
+import com.sun.tracing.Probe;
 import edu.csus.ecs.pc2.core.InternalController;
 import edu.csus.ecs.pc2.core.Utilities;
+import edu.csus.ecs.pc2.core.exception.IllegalContestState;
 import edu.csus.ecs.pc2.core.model.*;
+import edu.csus.ecs.pc2.core.scoring.NewScoringAlgorithm;
+import edu.csus.ecs.pc2.core.scoring.ProblemSummaryInfo;
+import edu.csus.ecs.pc2.core.scoring.StandingsRecord;
 import edu.csus.ecs.pc2.ui.MultipleDataSetPane;
 import edu.csus.ecs.pc2.validator.clicsValidator.ClicsValidatorSettings;
 import edu.csus.ecs.pc2.validator.customValidator.CustomValidatorSettings;
 import edu.csus.ecs.pc2.validator.pc2Validator.PC2ValidatorSettings;
 import org.antlr.v4.runtime.misc.Array2DHashSet;
+import org.antlr.v4.runtime.misc.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
+import ru.vkr.vkr.domain.MonitorData;
+import ru.vkr.vkr.entity.Student;
 import ru.vkr.vkr.form.CheckerSettingsForm;
 import ru.vkr.vkr.form.LoadTestsForm;
 
+import javax.xml.crypto.dsig.keyinfo.KeyValue;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.*;
 
 @Component
@@ -79,6 +89,7 @@ public class ProblemFacade {
         Problem problem = new Problem(problemDb.getName());
         problem.setShortName("problem-" + problemDb.getId());
         problem.setTimeOutInSeconds(problemDb.getTimeLimit());
+        problem.setStopOnFirstFailedTestCase(true);
 
         //Поток для чтения
         problem.setReadInputDataFromSTDIN(true);
@@ -349,6 +360,51 @@ public class ProblemFacade {
         files.setJudgesAnswerFiles(answertFiles);
 
         return files;
+    }
+
+
+
+    public MonitorData getMonitor(Set<Student> students, ArrayList<ru.vkr.vkr.entity.Problem> problems) {
+        InternalController internalController = (InternalController) applicationContext.getBean("getInternalController");
+        NewScoringAlgorithm newScoringAlgorithm = new NewScoringAlgorithm();
+        MonitorData monitorData = new MonitorData();
+        try {
+            //Формируем сет логинов в PC2
+            HashSet<String> loginPC2Users = new HashSet<>();
+            for (Student st : students)
+                loginPC2Users.add(st.getUser().getLoginPC2());
+            HashMap<String, Student> loginPC2Student = new HashMap<>();
+            for (Student st : students)
+                loginPC2Student.put(st.getUser().getLoginPC2(), st);
+
+            Problem[] problemsPC2 = new Problem[problems.size()];
+            for(int i = 0; i < problems.size(); i++)
+                problemsPC2[i] = findProblemInPC2(internalController, problems.get(i));
+
+            //Получаем монитор от PC2
+            StandingsRecord[] standingsRecords = newScoringAlgorithm.getStandingsRecords(internalController.getContest(),
+                    new Properties(), false,
+                    loginPC2Users, problemsPC2
+                    );
+            //Формируем данные для вывода
+            for (StandingsRecord rec : standingsRecords) {
+                //Заполняем строку монитора
+                ClientId clientId = rec.getClientId();
+                ArrayList<ProblemSummaryInfo> problemSummaryInfos = new ArrayList<>();
+                Integer[] keysP = rec.getSummaryRow().getSortedKeys();
+                for (int k : keysP) {
+                    ProblemSummaryInfo problemSummaryInfo = rec.getSummaryRow().get(k);
+                    problemSummaryInfos.add(problemSummaryInfo);
+                }
+
+                monitorData.addRecord(loginPC2Student.get(clientId.getName()),
+                        rec, problemSummaryInfos);
+            }
+        } catch (IllegalContestState illegalContestState) {
+            illegalContestState.printStackTrace();
+        }
+
+        return monitorData;
     }
 }
 

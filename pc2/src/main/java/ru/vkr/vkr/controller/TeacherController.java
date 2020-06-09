@@ -1,14 +1,18 @@
 package ru.vkr.vkr.controller;
 
 import com.sun.org.apache.xpath.internal.operations.Mod;
+import edu.csus.ecs.pc2.core.scoring.ProblemSummaryInfo;
+import org.antlr.v4.runtime.misc.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import ru.vkr.vkr.domain.MonitorData;
 import ru.vkr.vkr.domain.ROLE;
 import ru.vkr.vkr.entity.*;
 import ru.vkr.vkr.facade.AdminFacade;
+import ru.vkr.vkr.facade.ProblemFacade;
 import ru.vkr.vkr.facade.TeacherFacade;
 import ru.vkr.vkr.form.*;
 import ru.vkr.vkr.repository.StudentRepository;
@@ -31,6 +35,8 @@ public class TeacherController {
     private UserService userService;
     @Autowired
     private ProblemService problemService;
+    @Autowired
+    private ProblemFacade problemFacade;
     @Autowired
     private ChapterService chapterService;
     @Autowired
@@ -275,10 +281,20 @@ public class TeacherController {
                             @PathVariable Long groupId) {
         //todo: нужен контроль доступа к группе (только владелец имеет доступ)
         Group group = groupService.getGroupById(groupId);
+        Course course = courseService.getCourseById(courseId);
         UserForm userForm = new UserForm();
         model.addAttribute("course_id", courseId);
         model.addAttribute("group", group);
         model.addAttribute("userForm", userForm);
+
+
+        //Загрузка монитора
+        ArrayList<Problem> problems = new ArrayList<>();
+        for (Chapter chapter : course.getChapters())
+            problems.addAll(chapter.getChapterProblems());
+        MonitorData monitor = problemFacade.getMonitor(group.getStudents(), problems);
+        model.addAttribute("monitor", monitor);
+        model.addAttribute("problems", problems);
         return "teacher/group";
     }
 
@@ -295,6 +311,14 @@ public class TeacherController {
         groupService.saveGroup(group);
         return "redirect:/teacher/course/" + courseId + "/group/" + groupId;
     }
+
+    //Загрузка монитора
+//    @PostMapping("/teacher/course/{courseId}/group/{groupId}/monitor")
+//    public String getMonitor(Model model,
+//                             @PathVariable Long courseId,
+//                             @PathVariable Long groupId) {
+//
+//    }
 
 
     //Удаление группы

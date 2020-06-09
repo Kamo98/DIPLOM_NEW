@@ -264,7 +264,12 @@ hr {
     font-weight: 700;
 }
 
-
+.col-task {
+    align-self: center;
+    text-align: center;
+    padding: 0rem 0.3rem;
+    width: 1.6rem;
+}
 
 /***************/
 

@@ -1,10 +1,7 @@
 package edu.csus.ecs.pc2.core.scoring;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.Properties;
-import java.util.Vector;
+import java.util.*;
 
 import edu.csus.ecs.pc2.VersionInfo;
 import edu.csus.ecs.pc2.core.PermissionGroup;
@@ -151,12 +148,70 @@ public class NewScoringAlgorithm extends Plugin implements INewScoringAlgorithm 
      * @throws IllegalContestState
      */
 
-    public StandingsRecord[] getStandingsRecords(IInternalContest contest, Properties properties, boolean honorScoreboardFreeze) throws IllegalContestState {
+    public StandingsRecord[] getStandingsRecords(IInternalContest contest, Properties properties, boolean honorScoreboardFreeze,
+                                                 /*Добавил два параметра: сет логинов юзеров в PC2 и список задач*/
+                                                 HashSet<String> loginUsers, Problem[] problems
+                                                    ) throws IllegalContestState {
         
         if (contest == null){
             throw new IllegalArgumentException("contest is null");
         }
         
+        setContest(contest);
+
+        Vector<Account> accountVector_ = getContest().getAccounts(Type.TEAM);
+
+        /***************
+         * Вставил фильтрацию по юзерам*/
+
+        Vector<Account> accountVector = new Vector<>();
+        for (Account acc : accountVector_)
+            if (loginUsers.contains(acc.getDisplayName()))
+                accountVector.add(acc);
+
+        /***************/
+
+        Account[] accounts = (Account[]) accountVector.toArray(new Account[accountVector.size()]);
+
+        // Kludge for DefaultStandingsRecordComparator
+        AccountList accountList = new AccountList();
+        for (Account account : accounts) {
+            accountList.add(account);
+        }
+        comparator.setCachedAccountList(accountList);
+
+        Run[] runs = getContest().getRuns();
+
+        respectEOC = isAllowed(getContest(), getContest().getClientId(), Permission.Type.RESPECT_EOC_SUPPRESSION);
+
+        if (respectEOC) {
+            runs = filterRunsbyEOC(getContest(), runs);
+        }
+        if(honorScoreboardFreeze) {
+            runs = filterRunsByScoreboardFreeze(getContest(), runs);
+        }
+
+        StandingsRecord[] standings = computeStandingStandingsRecords(runs, accounts, properties, problems);
+
+        Arrays.sort(standings, comparator);
+
+        if (blockRanking) {
+            assignRanksBlock(standings);
+        } else {
+            assignRanks(standings);
+        }
+
+        assignGroupRanks(getContest(), standings);
+
+        return standings;
+    }
+
+    public StandingsRecord[] getStandingsRecords(IInternalContest contest, Properties properties, boolean honorScoreboardFreeze) throws IllegalContestState {
+
+        if (contest == null){
+            throw new IllegalArgumentException("contest is null");
+        }
+
         setContest(contest);
 
         Vector<Account> accountVector = getContest().getAccounts(Type.TEAM);
