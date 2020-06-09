@@ -30,12 +30,17 @@
                             <!--Курс пока не содержит ни одной темы.-->
                         <!--</div>-->
 
+
+
                         <div class="row row-table table-header">
                             <div class="col">
-                                Наименование темы
+                                <i class="fa fa-book fa-fw" aria-hidden="true"></i>&nbsp;Наименование темы
                             </div>
                             <div class="col-2">
-                                Дедлайн
+                                <i class="fa fa-tasks"aria-hidden="true"></i>&nbsp;Количество задач
+                            </div>
+                            <div class="col-2">
+                                <i class="fa fa-book fa-fw" aria-hidden="true"></i>&nbsp;Количество материалов
                             </div>
                         </div>
 
@@ -43,15 +48,17 @@
                             Курс пока не содержит ни одной темы
                         </div>
 
-                        <div class="row row-table" th:each="chapter : ${course.chapters}">
+                        <div th:class="'row row-table ' + ((${iState.index} % 2 == 1) ? 'dark-row' : '')" th:each="chapter, iState : ${course.getChapters()}">
                             <div class="col">
-                                <a th:href="@{'/student/chapter/'+${chapter.id}}"><i class="fa fa-book fa-fw" aria-hidden="true"></i>&nbsp;
+                                <a th:href="@{'/student/chapter/'+${chapter.id}}">
                                     [[ ${chapter.name} ]]
                                 </a>
                             </div>
                             <div class="col-2">
-                                <i class="fa fa-calendar" aria-hidden="true"></i>&nbsp;
-                                06/11/2020
+                                [[ ${chapter.getChapterProblems().size()} ]]
+                            </div>
+                            <div class="col-2">
+                                [[ ${chapter.getChapterTheories().size()} ]]
                             </div>
                         </div>
                     </div>

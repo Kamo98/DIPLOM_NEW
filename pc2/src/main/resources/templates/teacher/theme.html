@@ -157,6 +157,9 @@
                                 <i class="fa fa-wrench" aria-hidden="true"></i>&nbsp; Сложность
                             </div>
                             <div class="col">
+                                <i class="fa fa-wrench" aria-hidden="true"></i>&nbsp; Решаемость
+                            </div>
+                            <div class="col">
                                 <i class="fa fa-tags" aria-hidden="true"></i>&nbsp; Теги
                             </div>
                             <div class="col-3">
@@ -180,6 +183,9 @@
                             </div>
                             <div class="col">
                                 Средняя
+                            </div>
+                            <div class="col">
+                                [[ ${problem.countAccepted} ]]&nbsp; / [[ ${problem.totalSubmit} ]]
                             </div>
                             <div class="col">
                                 <span th:each="tag : ${problem.getHashTagsVisible()}">

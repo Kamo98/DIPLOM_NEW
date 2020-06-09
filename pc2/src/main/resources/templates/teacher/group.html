@@ -29,9 +29,9 @@
                     <li th:unless="${isCreate}">
                         <a class="nav-link " href="#" id="linkGroupResults"><i class="fa fa-table" aria-hidden="true"></i>&nbsp;Результаты группы</a>
                     </li>
-                    <li th:unless="${isCreate}">
-                        <a class="nav-link " href="#" id="linkGroupProblems"> <i class="fa fa-tasks" aria-hidden="true"></i>&nbsp;Задание группе</a>
-                    </li>
+                    <!--<li th:unless="${isCreate}">-->
+                        <!--<a class="nav-link " href="#" id="linkGroupProblems"> <i class="fa fa-tasks" aria-hidden="true"></i>&nbsp;Задание группе</a>-->
+                    <!--</li>-->
                     <li>
                         <a class="nav-link " href="#" id="linkGroupSettings"> <i class="fa fa-cogs" aria-hidden="true"></i>&nbsp;Параметры</a>
                     </li>
@@ -94,31 +94,31 @@
                     </div >
 
                     <div id="groupResult" style="display: none;" th:unless="${isCreate}">
-                        <h6><i class="fa fa-filter" aria-hidden="true"></i>&nbsp;Фильтраия задач по теме</h6>
+                        <!--<h6><i class="fa fa-filter" aria-hidden="true"></i>&nbsp;Фильтраия задач по теме</h6>-->
 
-                        <form>
-                            <div class="row">
-                                <div class="col">
-                                    <select class="form-control">
-                                        <option>Тема 1</option>
-                                        <option>Тема 2</option>
-                                        <option>Тема 3</option>
-                                        <option>Тема 4</option>
-                                        <option>Тема 5</option>
-                                        <option>Тема 6</option>
-                                        <option>Тема 7</option>
-                                        <option>Тема 8</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="row row-margin-top">
-                                <div class="col">
-                                    <button class="btn btn-primary" type="submit">
-                                        Показать монитор
-                                    </button>
-                                </div>
-                            </div>
-                        </form>
+                        <!--<form>-->
+                            <!--<div class="row">-->
+                                <!--<div class="col">-->
+                                    <!--<select class="form-control">-->
+                                        <!--<option>Тема 1</option>-->
+                                        <!--<option>Тема 2</option>-->
+                                        <!--<option>Тема 3</option>-->
+                                        <!--<option>Тема 4</option>-->
+                                        <!--<option>Тема 5</option>-->
+                                        <!--<option>Тема 6</option>-->
+                                        <!--<option>Тема 7</option>-->
+                                        <!--<option>Тема 8</option>-->
+                                    <!--</select>-->
+                                <!--</div>-->
+                            <!--</div>-->
+                            <!--<div class="row row-margin-top">-->
+                                <!--<div class="col">-->
+                                    <!--<button class="btn btn-primary" type="submit">-->
+                                        <!--Показать монитор-->
+                                    <!--</button>-->
+                                <!--</div>-->
+                            <!--</div>-->
+                        <!--</form>-->
 
 
                         <div class="container row-margin-top  col-align-centered" id="monitorOfGroup">
@@ -144,10 +144,10 @@
                                     </span>
                                     <span th:unless="${problemInfo.getNumberSubmitted()} == 0">
                                         <span th:if="${problemInfo.isSolved()}" class="cell-task-plus">
-                                            +[[ ${problemInfo.getNumberSubmitted()} ]]
+                                            +[[ (${problemInfo.getNumberSubmitted() - 1}) != 0 ? ${problemInfo.getNumberSubmitted() - 1} : '' ]]
                                         </span>
                                         <span th:unless="${problemInfo.isSolved()}" class="cell-task-minus">
-                                            -[[ ${problemInfo.getNumberSubmitted()} ]]
+                                            -[[ (${problemInfo.getNumberSubmitted() - 1}) != 0 ? ${problemInfo.getNumberSubmitted() - 1} : '' ]]
                                         </span>
                                     </span>
                                 </div>

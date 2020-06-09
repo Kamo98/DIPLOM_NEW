@@ -54,9 +54,9 @@ public class Problem {
     * Поля для статистики
      * Не из БД*/
     //Отношение кол-ва усепшных сдач к общему (%)
-    transient private Integer acceptedToTotal = 0;
-    //Отношение кол-ва успешных студентов к общему (%)
-    transient private Integer acceptStudentToTotal = 0;
+    transient private Long countAccepted = 0L;
+    transient private Long totalSubmit = 0L;
+
 
     public String getName() {
         return name;
@@ -160,20 +160,23 @@ public class Problem {
         this.tagProblems = tagProblems;
     }
 
+
     @Transient
-    public Integer getAcceptedToTotal() {
-        return acceptedToTotal;
+    public Long getCountAccepted() {
+        return countAccepted;
     }
     @Transient
-    public void setAcceptedToTotal(Integer acceptedToTotal) {
-        this.acceptedToTotal = acceptedToTotal;
+    public void setCountAccepted(Long countAccepted) {
+        this.countAccepted = countAccepted;
     }
+
     @Transient
-    public Integer getAcceptStudentToTotal() {
-        return acceptStudentToTotal;
+    public Long getTotalSubmit() {
+        return totalSubmit;
     }
+
     @Transient
-    public void setAcceptStudentToTotal(Integer acceptStudentToTotal) {
-        this.acceptStudentToTotal = acceptStudentToTotal;
+    public void setTotalSubmit(Long totalSubmit) {
+        this.totalSubmit = totalSubmit;
     }
 }

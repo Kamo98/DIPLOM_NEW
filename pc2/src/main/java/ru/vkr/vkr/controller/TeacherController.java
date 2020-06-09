@@ -72,7 +72,8 @@ public class TeacherController {
 
     @GetMapping("/teacher")
     public String mainTeacher() {
-        return "teacher/main";
+        //return "teacher/main";
+        return "redirect:/teacher/course/304";
     }
 
     //Страница с курсом
@@ -293,7 +294,7 @@ public class TeacherController {
 
 
         //Загрузка монитора
-        ArrayList<Problem> problems = new ArrayList<>();
+        Set<Problem> problems = new HashSet<>();
         for (Chapter chapter : course.getChapters())
             problems.addAll(chapter.getChapterProblems());
         MonitorData monitor = problemFacade.getMonitor(group.getStudents(), problems);

@@ -366,7 +366,7 @@ public class ProblemFacade {
 
 
 
-    public MonitorData getMonitor(Set<Student> students, ArrayList<ru.vkr.vkr.entity.Problem> problems) {
+    public MonitorData getMonitor(Set<Student> students, Set<ru.vkr.vkr.entity.Problem> problems) {
         InternalController internalController = (InternalController) applicationContext.getBean("getInternalController");
         NewScoringAlgorithm newScoringAlgorithm = new NewScoringAlgorithm();
         MonitorData monitorData = new MonitorData();
@@ -380,8 +380,11 @@ public class ProblemFacade {
                 loginPC2Student.put(st.getUser().getLoginPC2(), st);
 
             Problem[] problemsPC2 = new Problem[problems.size()];
-            for(int i = 0; i < problems.size(); i++)
-                problemsPC2[i] = findProblemInPC2(internalController, problems.get(i));
+//            for(int i = 0; i < problems.size(); i++)
+//                problemsPC2[i] = findProblemInPC2(internalController, problems.get(i));
+            int i = 0;
+            for(ru.vkr.vkr.entity.Problem pr : problems)
+                problemsPC2[i++] = findProblemInPC2(internalController, pr);
 
             //Получаем монитор от PC2
             StandingsRecord[] standingsRecords = newScoringAlgorithm.getStandingsRecords(internalController.getContest(),
@@ -417,8 +420,8 @@ public class ProblemFacade {
         for(ru.vkr.vkr.entity.Problem pr : problemsDb) {
             if (statisticOfTask.containsKey(pr.getNumElementId())) {
                 RunStatistic.StatisticOfTask stat = statisticOfTask.get(pr.getNumElementId());
-                Integer acceptedToTotal = Math.round(stat.getCountYes() / stat.getCount());
-                pr.setAcceptedToTotal(acceptedToTotal);
+                pr.setCountAccepted(stat.getCountYes());
+                pr.setTotalSubmit(stat.getCount());
             }
         }
     }

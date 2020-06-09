@@ -44,10 +44,11 @@
 
                         <div class="row row-table" th:each="theory : ${chapter.chapterTheories}">
                             <div class="col">
-                                <a th:unless="${theory.file}" th:href="${theory.source}" target="_blank"><i class="fa fa-book fa-fw" aria-hidden="true"></i>&nbsp;
-                                    [[ ${theory.name} ]]
+                                <a th:unless="${theory.file}" th:href="${theory.source}" target="_blank">
+                                    <i class="fa fa-link" aria-hidden="true"></i>&nbsp;[[ ${theory.name} ]]
                                 </a>
-                                <a th:if="${theory.file}" href="javascript://" th:attr="onclick=|loadFileByPath('${theory.source}')|"><i class="fa fa-book fa-fw" aria-hidden="true"></i>&nbsp;
+                                <a th:if="${theory.file}" href="javascript://" th:attr="onclick=|loadFileByPath('${theory.source}')|">
+                                    <i class="fa fa-file" aria-hidden="true"></i>&nbsp;
                                     [[ ${theory.name} ]]
                                 </a>
                             </div>
@@ -86,7 +87,7 @@
                                     Средняя
                                 </div>
                                 <div class="col">
-                                    [[ ${problem.acceptedToTotal} ]]&nbsp; %
+                                    [[ ${problem.countAccepted} ]]&nbsp; / [[ ${problem.totalSubmit} ]]
                                 </div>
                                 <div class="col">
                                    <span th:each="tag : ${problem.getHashTagsVisible()}">
