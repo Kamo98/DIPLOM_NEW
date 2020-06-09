@@ -32,6 +32,7 @@ import edu.csus.ecs.pc2.profile.ProfileCloneSettings;
 import edu.csus.ecs.pc2.profile.ProfileManager;
 import edu.csus.ecs.pc2.ui.*;
 import org.springframework.stereotype.Component;
+import ru.vkr.vkr.domain.RunStatistic;
 
 import java.io.*;
 import java.lang.management.ManagementFactory;
@@ -279,6 +280,8 @@ public class InternalController implements IInternalController, ITwoToOne, IBtoA
 
     private IStartupContestDialog startDialog;
 
+    private RunStatistic runStatistic;
+
     /**
      * Security Level for Server.
      */
@@ -312,6 +315,14 @@ public class InternalController implements IInternalController, ITwoToOne, IBtoA
     public InternalController(IInternalContest contest) {
         super();
         setContest(contest);
+    }
+
+    public void setRunStatistic(RunStatistic runStatistic) {
+        this.runStatistic = runStatistic;
+    }
+
+    public RunStatistic getRunStatistic() {
+        return this.runStatistic;
     }
 
     public void sendToLocalServer(Packet packet) {
