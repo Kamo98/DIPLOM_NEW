@@ -147,7 +147,7 @@ public interface IInternalController {
      */
     void start(String[] stringArray);
 
-    void start(String[] stringArray, String loginName, String password);
+    void start(String[] stringArray, String loginName);
 
 
     /**

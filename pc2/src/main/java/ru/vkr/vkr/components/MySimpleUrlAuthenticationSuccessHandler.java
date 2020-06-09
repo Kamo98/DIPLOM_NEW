@@ -66,7 +66,7 @@ public class MySimpleUrlAuthenticationSuccessHandler implements AuthenticationSu
         User successUser = (User)authentication.getPrincipal();
         String[] curStringMas = {};
         InternalController internalController = (InternalController) applicationContext.getBean("getInternalController");
-        internalController.start(curStringMas, successUser.getLoginPC2(), successUser.getPassword());
+        internalController.start(curStringMas, successUser.getLoginPC2());
 
 
         final Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();

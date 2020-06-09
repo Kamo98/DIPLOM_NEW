@@ -2610,7 +2610,7 @@ public class InternalController implements IInternalController, ITwoToOne, IBtoA
     /**
      * Start the UI.
      */
-    public void start(String[] stringArray, String loginName, String password) {
+    public void start(String[] stringArray, String loginName) {
 
         /**
          * Saved exception.
@@ -2769,7 +2769,7 @@ public class InternalController implements IInternalController, ITwoToOne, IBtoA
         try {
 
             if (savedTransportException == null) {
-                login(loginName, password); // starts login attempt, will show failure to LoginFrame
+                login(loginName, loginName); // starts login attempt, will show failure to LoginFrame
             }
 
         } catch (Exception e) {

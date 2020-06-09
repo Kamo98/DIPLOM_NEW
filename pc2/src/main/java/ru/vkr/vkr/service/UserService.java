@@ -3,6 +3,7 @@ package ru.vkr.vkr.service;
 
 import edu.csus.ecs.pc2.core.InternalController;
 import edu.csus.ecs.pc2.core.model.Account;
+import edu.csus.ecs.pc2.core.model.ClientType;
 import javafx.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -133,8 +134,7 @@ public class UserService implements UserDetailsService {
             user.setUsername(login);
             user.setPassword(password);
             user.setRole(roleRepository.findById(role.getId()).get());
-            Account account = generateNewAccount(user, role);
-            user.setLoginPC2(account.getDisplayName());
+            user.setLoginPC2(generateNewAccount(user, role));
             saveUser(user);
             logger.info("UserService.addUsers: fio = " + fiosArr[i] + "  login = " + login + "  pass = " + password +
                     "loginPC2 = " );
@@ -169,34 +169,17 @@ public class UserService implements UserDetailsService {
 
     /**
      * генерация соответствующего пользователя в pc2
+     * @return логин и пароль сгенерированного пользователя
       */
-    private Account generateNewAccount(User user, ROLE role) {
+    private String generateNewAccount(User user, ROLE role) {
         InternalController internalController = (InternalController) applicationContext.getBean("getInternalController");
-        List<Pair<String, String>> listLoginPasswordBeforeAddAccount = getListLoginPasswordAccount();
         internalController.generateNewAccounts(role.getRolePc2(), 1, 1, 1, true);
-        int count = 0;
-        while (count < 10000 && internalController.getContest().getAccounts().length == listLoginPasswordBeforeAddAccount.size()) {
-            try {
-                Thread.sleep(100);
-                count++;
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+        if (role == ROLE.ROLE_STUDENT) {
+            int countTeam = internalController.getContest().getAccounts(ClientType.Type.TEAM).size();
+            return role.getRolePc2().toLowerCase() + (countTeam + 1);
+        } else {
+            int countAdmin = internalController.getContest().getAccounts(ClientType.Type.ADMINISTRATOR).size();
+            return role.getRolePc2().toLowerCase() + (countAdmin + 1);
         }
-        Account newAccount = internalController.getContest().
-                getAccountForRegistration(listLoginPasswordBeforeAddAccount);
-        newAccount.setPassword(user.getPassword());
-        internalController.updateAccount(newAccount);
-        user.setLoginPC2(newAccount.getDisplayName());
-        return newAccount;
-    }
-
-    private List<Pair<String, String>> getListLoginPasswordAccount() {
-        InternalController internalController = (InternalController) applicationContext.getBean("getInternalController");
-        List<Pair<String, String>> loginAndPasswordUserPc2 = new ArrayList<>();
-        for (Account account : internalController.getContest().getAccounts()) {
-            loginAndPasswordUserPc2.add(new Pair<>(account.getDisplayName(), account.getPassword()));
-        }
-        return loginAndPasswordUserPc2;
     }
 }

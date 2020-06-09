@@ -20,11 +20,11 @@ public class AuthenticationFacade implements IAuthenticationFacade {
     @PersistenceContext
     private EntityManager entityManager;
 
-
     @Override
     public Authentication getAuthentication() {
         return SecurityContextHolder.getContext().getAuthentication();
     }
+
 
     //todo: сделал не очень хорошо, но пока так
     public Teacher getCurrentTeacher() {
