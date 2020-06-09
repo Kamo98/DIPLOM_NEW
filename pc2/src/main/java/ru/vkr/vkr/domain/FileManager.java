@@ -1,11 +1,14 @@
 package ru.vkr.vkr.domain;
 
+import edu.csus.ecs.pc2.core.IInternalController;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.UUID;
 
 @Component
@@ -50,5 +53,16 @@ public class FileManager {
             return resultFilename;
         }
         return "";
+    }
+
+    public static void saveRunStatistic(IInternalController internalController) {
+        //создаем 2 потока для сериализации объекта и сохранения его в файл
+        try(FileOutputStream outputStream = new FileOutputStream("Y:\\diplom\\save.ser");
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream)) {
+            // сохраняем статистические данные в файл
+            objectOutputStream.writeObject(internalController.getRunStatistic());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
