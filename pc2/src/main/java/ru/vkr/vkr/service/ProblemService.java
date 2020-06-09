@@ -21,7 +21,7 @@ public class ProblemService {
 
     private static Logger logger = LoggerFactory.getLogger(ProblemService.class);
 
-    private final String nameOfFolder = "statement";
+    private final String nameOfFolder = "statements";
 
     @Autowired
     private ProblemRepository problemRepository;

@@ -81,7 +81,7 @@
                         <hr />
                         <ul>
                             <li th:each="course : ${teacherCourses}">
-                                <a th:href="@{'/teacher/course/' + ${course.id}}" th:text="${course.name}">Курс</a>
+                                <i class="fa fa-arrow-right" aria-hidden="true"></i>&nbsp;<a th:href="@{'/teacher/course/' + ${course.id}}" th:text="${course.name}">Курс</a>
                             </li>
                         </ul>
                         <div class="link-new"><a th:href="@{/teacher/course-create}"><i class="fa fa-plus" aria-hidden="true"></i>&nbsp;Создать курс</a></div>
@@ -94,6 +94,7 @@
                         <hr />
                         <ul>
                             <li th:each="problem : ${teacherProblems}">
+                                <i class="fa fa-arrow-right" aria-hidden="true"></i>&nbsp;
                                 <a th:href="@{'/teacher/problem/' + ${problem.id}}" th:text="${problem.name}">Задача</a>
                             </li>
                             <!--<li><a th:href="@{'/teacher/problem'}"><i class="fa fa-shield fa-rotate-270"></i>&nbsp;Ещё...</a></li>-->
@@ -111,6 +112,7 @@
                         <hr />
                         <ul>
                             <li>
+                                <i class="fa fa-arrow-right" aria-hidden="true"></i>&nbsp;
                                 <a th:href="@{'/student/course/'}">Курс 1</a>
                             </li>
                         </ul>
