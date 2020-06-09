@@ -72,6 +72,20 @@ public class ProblemService {
         return problemRepository.findByTeacherAuthor_id(authenticationFacade.getCurrentTeacher().getId());
     }
 
+    public Collection<Problem> getProblemsByCurrentStudent() {
+        Set<Chapter> chapterSet = authenticationFacade.getCurrentStudent().getGroup().getCourseSubscriptions().getChapters();
+        Set<Problem> problemSet = new HashSet<>();
+        for (Chapter chapter : chapterSet) {
+            for (Problem problem : chapter.getChapterProblems())
+            if (problemSet.size() < 5) {
+                problemSet.add(problem);
+            } else {
+                return problemSet;
+            }
+        }
+        return problemSet;
+    }
+
 
     public List<Problem> getAllProblems() {
         return problemRepository.findAll();
