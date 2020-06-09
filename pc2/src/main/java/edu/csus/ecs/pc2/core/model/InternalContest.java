@@ -382,6 +382,10 @@ public class InternalContest implements IInternalContest {
         runListenerList.addElement(runListener);
     }
 
+    public Vector<IRunListener> getRunListenerList() {
+        return this.runListenerList;
+    }
+
     public void removeRunListener(IRunListener runListener) {
         runListenerList.removeElement(runListener);
     }

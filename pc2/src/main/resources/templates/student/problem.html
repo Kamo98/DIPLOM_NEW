@@ -19,18 +19,16 @@
 
 
         <div class="main-content col-9 border rounded-lg">
-            <h5 class="centered green-h" th:unless="${isCreate}">Задача "Название задачи"</h5>
-            <h5 class="centered green-h" th:if="${isCreate}">Задача "Без названия"</h5>
-
+            <h5 class="centered green-h">Задача "[[${problem.name}]]"</h5>
 
             <ul class="nav nav-pills tabs-menu">
-                <li th:unless="${isCreate}">
+                <li>
                     <a class="nav-link active" href="" id="linkStatementProblem">Условие</a>
                 </li>
-                <li th:unless="${isCreate}">
+                <li>
                     <a class="nav-link" href="" id="linkSendProblem">Сдать</a>
                 </li>
-                <li th:unless="${isCreate}">
+                <li>
                     <a class="nav-link" href="" id="linkViewRuns">Посылки</a>
                 </li>
             </ul>

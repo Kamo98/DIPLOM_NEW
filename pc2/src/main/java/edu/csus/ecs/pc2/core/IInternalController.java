@@ -35,6 +35,7 @@ import edu.csus.ecs.pc2.core.transport.ITransportManager;
 import edu.csus.ecs.pc2.profile.ProfileCloneSettings;
 import edu.csus.ecs.pc2.ui.ILogWindow;
 import edu.csus.ecs.pc2.ui.UIPlugin;
+import ru.vkr.vkr.domain.RunStatistic;
 
 /**
  * Represents functions provided by modules comprising the contest engine.
@@ -68,6 +69,10 @@ import edu.csus.ecs.pc2.ui.UIPlugin;
 
 // $HeadURL$
 public interface IInternalController {
+
+    public void setRunStatistic(RunStatistic runStatistic);
+
+    public RunStatistic getRunStatistic();
 
     /**
      * Submit a run to the server.
@@ -287,6 +292,8 @@ public interface IInternalController {
      * @return
      */
     Log getLog();
+
+    IInternalContest getContest();
 
     /**
      * Send message to server that needs attention/resolution.

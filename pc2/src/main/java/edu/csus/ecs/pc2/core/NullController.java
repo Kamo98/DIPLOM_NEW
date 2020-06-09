@@ -35,6 +35,7 @@ import edu.csus.ecs.pc2.core.transport.ITransportManager;
 import edu.csus.ecs.pc2.profile.ProfileCloneSettings;
 import edu.csus.ecs.pc2.ui.ILogWindow;
 import edu.csus.ecs.pc2.ui.UIPlugin;
+import ru.vkr.vkr.domain.RunStatistic;
 
 /**
  * Null Controller, does nothing, nada, zip.
@@ -153,6 +154,11 @@ public class NullController implements IInternalController {
     }
 
     public Log getLog() {
+        return null;
+    }
+
+    @Override
+    public IInternalContest getContest() {
         return null;
     }
 
@@ -403,6 +409,16 @@ public class NullController implements IInternalController {
 
     public void submitClarificationAnswer(Clarification clarification) {
 
+    }
+
+    @Override
+    public void setRunStatistic(RunStatistic runStatistic) {
+
+    }
+
+    @Override
+    public RunStatistic getRunStatistic() {
+        return null;
     }
 
     public void submitRun(Problem problem, Language language, String filename, SerializedFile[] otherFiles) throws Exception {
