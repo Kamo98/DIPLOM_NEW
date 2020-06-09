@@ -12,7 +12,7 @@ public final class RunStatistic implements Serializable {
 
     private HashMap<Long, StatisticOfTask> statisticOfTaskHashMap;
 
-    class StatisticOfTask implements Serializable {
+    public class StatisticOfTask implements Serializable {
         // количество успешных сдач
         private Long countYes;
         // количество неуспешных сдач
