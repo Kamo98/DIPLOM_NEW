@@ -21,6 +21,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 import ru.vkr.vkr.domain.MonitorData;
+import ru.vkr.vkr.domain.RunStatistic;
 import ru.vkr.vkr.entity.Student;
 import ru.vkr.vkr.form.CheckerSettingsForm;
 import ru.vkr.vkr.form.LoadTestsForm;
@@ -133,6 +134,7 @@ public class ProblemFacade {
             internalController.updateProblem(problem);
         }
     }
+
 
 
     //Установка параметров чекера
@@ -406,6 +408,21 @@ public class ProblemFacade {
 
         return monitorData;
     }
+
+
+    public void getStatisticForProblems(Collection<ru.vkr.vkr.entity.Problem> problemsDb) {
+        InternalController internalController = (InternalController) applicationContext.getBean("getInternalController");
+        HashMap<Long, RunStatistic.StatisticOfTask> statisticOfTask = internalController.getRunStatistic().getStatisticOfTaskHashMap();
+
+        for(ru.vkr.vkr.entity.Problem pr : problemsDb) {
+            if (statisticOfTask.containsKey(pr.getNumElementId())) {
+                RunStatistic.StatisticOfTask stat = statisticOfTask.get(pr.getNumElementId());
+                Integer acceptedToTotal = Math.round(stat.getCountYes() / stat.getCount());
+                pr.setAcceptedToTotal(acceptedToTotal);
+            }
+        }
+    }
+
 }
 
 

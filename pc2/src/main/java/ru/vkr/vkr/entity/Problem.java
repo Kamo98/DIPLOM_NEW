@@ -50,6 +50,13 @@ public class Problem {
     @OneToMany(mappedBy = "problem", fetch = FetchType.LAZY)
     private Set<TagProblem> tagProblems;
 
+    /*****
+    * Поля для статистики
+     * Не из БД*/
+    //Отношение кол-ва усепшных сдач к общему (%)
+    transient private Integer acceptedToTotal = 0;
+    //Отношение кол-ва успешных студентов к общему (%)
+    transient private Integer acceptStudentToTotal = 0;
 
     public String getName() {
         return name;
@@ -151,5 +158,22 @@ public class Problem {
 
     public void setHashTags(Set<TagProblem> tagProblems) {
         this.tagProblems = tagProblems;
+    }
+
+    @Transient
+    public Integer getAcceptedToTotal() {
+        return acceptedToTotal;
+    }
+    @Transient
+    public void setAcceptedToTotal(Integer acceptedToTotal) {
+        this.acceptedToTotal = acceptedToTotal;
+    }
+    @Transient
+    public Integer getAcceptStudentToTotal() {
+        return acceptStudentToTotal;
+    }
+    @Transient
+    public void setAcceptStudentToTotal(Integer acceptStudentToTotal) {
+        this.acceptStudentToTotal = acceptStudentToTotal;
     }
 }

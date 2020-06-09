@@ -172,11 +172,15 @@ public class TeacherController {
         model.addAttribute("theoryMaterialForm", theoryMaterialForm);
 
         Chapter chapter = chapterService.getChapterById(chapter_id);
+        problemFacade.getStatisticForProblems(chapter.getChapterProblems());
         Set<Theory> theories = chapter.getChapterTheories();
         model.addAttribute("theories", theories);
         model.addAttribute("course_id", course_id);
         model.addAttribute("chapter", chapter);
         model.addAttribute("isCreate", false);
+
+
+
         return "teacher/theme";
     }
 

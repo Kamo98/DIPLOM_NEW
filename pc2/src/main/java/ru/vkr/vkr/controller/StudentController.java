@@ -57,6 +57,7 @@ public class StudentController {
     public String readChapter(Model model,
                            @PathVariable Long chapterId) {
         Chapter chapter = chapterService.getChapterById(chapterId);
+        problemFacade.getStatisticForProblems(chapter.getChapterProblems());
         model.addAttribute("chapter", chapter);
         return "student/theme";
     }
