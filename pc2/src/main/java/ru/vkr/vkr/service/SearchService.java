@@ -9,6 +9,7 @@ import ru.vkr.vkr.entity.HashTag;
 import ru.vkr.vkr.entity.Problem;
 import ru.vkr.vkr.form.SearchProblemForm;
 
+import java.io.*;
 import java.util.*;
 
 @Service
@@ -63,39 +64,73 @@ public class SearchService {
 
 
     //Для вставки в бд тегов
-    @GetMapping("/teacher/gen-tags")
     public void genTags() {
-        HashMap<String, Collection<String>> tag2child = new HashMap<>();
+//        HashMap<String, Collection<String>> tag2child = new HashMap<>();
+//
+//        final String structData = "Структуры данных";
+//        final String grafs = "Графы";
+//
+//        tag2child.put(structData, new ArrayList<>());
+//        tag2child.put(grafs, new ArrayList<>());
+//
+//        tag2child.get(structData).add("Элементарные структуры данных");
+//        tag2child.get(structData).add("Хеш-таблицы");
+//        tag2child.get(structData).add("Бинарные деревья поиска");
+//        tag2child.get(structData).add("Красно-чёрные деревья");
+//        tag2child.get(structData).add("Красно-чёрные деревья");
+//
+//        tag2child.get(grafs).add("Минимальный остов");
+//        tag2child.get(grafs).add("Кратчайшие пути");
+//        tag2child.get(grafs).add("Обходы графов");
+//        tag2child.get(grafs).add("Максимальный поток");
+//
+//        for (Map.Entry<String, Collection<String>> unit : tag2child.entrySet()) {
+//            HashTag parent = new HashTag();
+//            parent.setName(unit.getKey());
+//            hashTagService.save(parent);
+//
+//            for(String item : unit.getValue()) {
+//                HashTag tag = new HashTag();
+//                tag.setName(item);
+//                tag.setParent(parent);
+//                hashTagService.save(tag);
+//            }
+//
+//        }
 
-        final String structData = "Структуры данных";
-        final String grafs = "Графы";
+        hashTagService.deleteAll();
+        Map<Integer, HashTag> level2tag = new HashMap<>();
+        try {
+            File file = new File("H:\\Университет\\8 сем - FINISH!!!\\Диплом\\Теги\\теги.txt");
+            //создаем объект FileReader для объекта File
+            FileReader fr = new FileReader(file);
+            //создаем BufferedReader с существующего FileReader для построчного считывания
+            BufferedReader reader = new BufferedReader(fr);
+            // считаем сначала первую строку
+            String line = reader.readLine();
+            int l = 0;
+            while (line.charAt(l) == '\t')
+                l++;
 
-        tag2child.put(structData, new ArrayList<>());
-        tag2child.put(grafs, new ArrayList<>());
-
-        tag2child.get(structData).add("Элементарные структуры данных");
-        tag2child.get(structData).add("Хеш-таблицы");
-        tag2child.get(structData).add("Бинарные деревья поиска");
-        tag2child.get(structData).add("Красно-чёрные деревья");
-        tag2child.get(structData).add("Красно-чёрные деревья");
-
-        tag2child.get(grafs).add("Минимальный остов");
-        tag2child.get(grafs).add("Кратчайшие пути");
-        tag2child.get(grafs).add("Обходы графов");
-        tag2child.get(grafs).add("Максимальный поток");
-
-        for (Map.Entry<String, Collection<String>> unit : tag2child.entrySet()) {
-            HashTag parent = new HashTag();
-            parent.setName(unit.getKey());
-            hashTagService.save(parent);
-
-            for(String item : unit.getValue()) {
+            while (line != null) {
+                String nameTag = line.trim();
                 HashTag tag = new HashTag();
-                tag.setName(item);
-                tag.setParent(parent);
+                tag.setName(nameTag);
+                if (l != 0)
+                    tag.setParent(level2tag.get(l-1));
                 hashTagService.save(tag);
-            }
 
+                line = reader.readLine();
+                int oldL = l;
+                l = 0;
+                while (line.charAt(l) == '\t')
+                    l++;
+                if (l > oldL) {
+                    level2tag.put(oldL, tag);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

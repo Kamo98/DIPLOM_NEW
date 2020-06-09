@@ -150,10 +150,10 @@
 
                         </div>
 
-                        <div class="row row-margin-top">
+                        <div class="row row-margin-top"  th:unless="${isCreate}">
                             <h6><i class="fa fa-paperclip" aria-hidden="true"></i>&nbsp;Прикрепить задачу к теме</h6>
                         </div>
-                        <form th:action="@{'/teacher/problem/' + ${problem.id} + '/attach-to-chapter'}" th:object="${attachProblemForm}" method="post">
+                        <form  th:unless="${isCreate}" th:action="@{'/teacher/problem/' + ${problem.id} + '/attach-to-chapter'}" th:object="${attachProblemForm}" method="post">
                             <div class="row">
                                 <div class="col">
                                     <div class="form-group">
@@ -179,19 +179,19 @@
                         </form>
 
 
-                        <hr class="row row-margin-top" th:unless="${isCreate}">
-                        <div class="row row-margin-top" th:unless="${isCreate}">
-                            <div class = "col">
-                                <a class="btn btn-success">
-                                    <i class="fa fa-arrow-right" aria-hidden="true"></i>&nbsp;Опубликовать задачу
-                                </a>
-                            </div>
-                            <div class = "col col-align-right">
-                                <a class="btn btn-danger">
-                                    <i class="fa fa-trash-o fa-lg"></i>&nbsp;Удалить задачу
-                                </a>
-                            </div>
-                        </div>
+                        <!--<hr class="row row-margin-top" th:unless="${isCreate}">-->
+                        <!--<div class="row row-margin-top" th:unless="${isCreate}">-->
+                            <!--<div class = "col">-->
+                                <!--<a class="btn btn-success">-->
+                                    <!--<i class="fa fa-arrow-right" aria-hidden="true"></i>&nbsp;Опубликовать задачу-->
+                                <!--</a>-->
+                            <!--</div>-->
+                            <!--<div class = "col col-align-right">-->
+                                <!--<a class="btn btn-danger">-->
+                                    <!--<i class="fa fa-trash-o fa-lg"></i>&nbsp;Удалить задачу-->
+                                <!--</a>-->
+                            <!--</div>-->
+                        <!--</div>-->
                     </div>
 
                     <div id="statementProblem"  style="display:none;" th:unless="${isCreate}">
@@ -313,9 +313,9 @@
                                 <div class="col">
                                     <button type="submit" class="btn btn-primary">Загрузить</button>
                                 </div>
-                                <div class="col">
-                                    <a class="btn btn-success" th:href="@{'/teacher/problem/' + ${problem.id} + '/tests-upload/pc2'}">Загрузить тесты в PC2</a>
-                                </div>
+                                <!--<div class="col">-->
+                                    <!--<a class="btn btn-success" th:href="@{'/teacher/problem/' + ${problem.id} + '/tests-upload/pc2'}">Загрузить тесты в PC2</a>-->
+                                <!--</div>-->
                             </div>
                         </form>
 
