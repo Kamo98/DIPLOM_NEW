@@ -26,7 +26,7 @@
         <div th:fragment="navigation">
             <div class="navigation">
                 <nav class="navbar navbar-expand-lg navbar-light bg-light">
-                    <a class="navbar-brand" href="#">ДИПЛОМ</a>
+                    <a class="navbar-brand" th:href="${isTeacher} ? @{'/teacher'} : (${isStudent} ? @{'/student/course'} : @{'#'})">PC2</a>
                     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                         <span class="navbar-toggler-icon"></span>
                     </button>
@@ -34,7 +34,7 @@
                     <div class="collapse navbar-collapse" id="navbarSupportedContent">
                         <ul class="navbar-nav mr-auto">
                             <li class="nav-item">
-                                <a class="nav-link" href="#"><i class="fa fa-home fa-fw" aria-hidden="true"></i>&nbsp;Главная</a>
+                                <a class="nav-link" th:href="${isTeacher} ? @{'/teacher'} : (${isStudent} ? @{'/student/course'} : @{'#'})"><i class="fa fa-home fa-fw" aria-hidden="true"></i>&nbsp;Главная</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" th:href="${isTeacher} ? @{'/teacher/pool-problems'} : (${isStudent} ? @{'/student/pool-problems'} : @{'#'})">
@@ -124,20 +124,9 @@
                         <h5><i class="fa fa-tasks" aria-hidden="true"></i>&nbsp;Задачи</h5>
                         <hr />
                         <ul>
-                            <li>
-                                <a th:href="@{'/student/problem/'}">Задача 1</a>
-                            </li>
-                            <li>
-                                <a th:href="@{'/student/problem/'}">Задача 2</a>
-                            </li>
-                            <li>
-                                <a th:href="@{'/student/problem/'}">Задача 3</a>
-                            </li>
-                            <li>
-                                <a th:href="@{'/student/problem/'}">Задача 4</a>
-                            </li>
-                            <li>
-                                <a th:href="@{'/student/problem/'}">Задача 5</a>
+                            <li th:each="problem : ${studentProblems}">
+                                <i class="fa fa-arrow-right" aria-hidden="true"></i>&nbsp;
+                                <a th:href="@{'/student/problem/' + ${problem.id}}" th:text="${problem.name}">Задача</a>
                             </li>
                         </ul>
                         <div class="link-new"><a th:href="@{'/student/submitions'}">

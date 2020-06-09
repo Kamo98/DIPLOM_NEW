@@ -15,6 +15,7 @@ import ru.vkr.vkr.form.SubmitRunForm;
 import ru.vkr.vkr.service.*;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -42,8 +43,10 @@ public class StudentController {
     @ModelAttribute
     public void addAttributes(Model model) {
         List<Course> studentCourses = new ArrayList<>();
+        Collection<Problem> studentProblems = problemService.getProblemsByCurrentStudent();
         model.addAttribute("studentCourses", studentCourses);
         model.addAttribute("isStudent", true);
+        model.addAttribute("studentProblems", studentProblems);
     }
 
     @GetMapping("/student/course")
