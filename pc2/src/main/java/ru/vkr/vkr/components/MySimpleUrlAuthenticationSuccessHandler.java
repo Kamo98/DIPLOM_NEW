@@ -72,7 +72,7 @@ public class MySimpleUrlAuthenticationSuccessHandler implements AuthenticationSu
 
         RunStatistic runStatistic = null;
 
-        try (FileInputStream fileInputStream = new FileInputStream("Y:\\diplom\\save.ser");
+        try (FileInputStream fileInputStream = new FileInputStream("C:\\diplom\\save.ser");
              ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream)) {
             runStatistic = (RunStatistic) objectInputStream.readObject();
         } catch (IOException | ClassNotFoundException e) {

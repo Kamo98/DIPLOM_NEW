@@ -57,7 +57,7 @@ public class FileManager {
 
     public static void saveRunStatistic(IInternalController internalController) {
         //создаем 2 потока для сериализации объекта и сохранения его в файл
-        try(FileOutputStream outputStream = new FileOutputStream("Y:\\diplom\\save.ser");
+        try(FileOutputStream outputStream = new FileOutputStream("C:\\diplom\\save.ser");
             ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream)) {
             // сохраняем статистические данные в файл
             objectOutputStream.writeObject(internalController.getRunStatistic());

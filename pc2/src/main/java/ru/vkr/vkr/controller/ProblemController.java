@@ -159,7 +159,7 @@ public class ProblemController {
 
         Problem problem = problemService.getProblemById(problemId);
 
-        //problemFacade.loadTestFiles(loadTestsForm, problem);
+        problemFacade.loadTestFiles(loadTestsForm, problem);
         problemFacade.addTestsToProblem(problem);
 
         return "redirect:/teacher/problem/" + problemId;

@@ -53,7 +53,7 @@ public class ProblemFacade {
 //        if (!pathTests.exists())
 //            pathTests.mkdir();
 
-        String dirTests = uploadPath + "/tests/problem-" + problemId;
+        String dirTests = uploadPath + "tests\\problem-" + problemId;
         File fileTests = new File(dirTests);
         if (!fileTests.exists())
             fileTests.mkdir();
@@ -84,7 +84,7 @@ public class ProblemFacade {
 
         InternalController internalController = (InternalController) applicationContext.getBean("getInternalController");
 
-        String baseDirectoryName = uploadPath + "/tests/problem-" + problemDb.getId();
+        String baseDirectoryName = uploadPath + "tests\\problem-" + problemDb.getId();
 
         //Основные параметры задачи
         Problem problem = new Problem(problemDb.getName());
@@ -209,7 +209,7 @@ public class ProblemFacade {
         String extensionIn = loadTestsForm.getExtensionIn();
         String extensionAns = loadTestsForm.getExtensionAns();
 
-        String uloadDirPath = uploadPath + "/tests/problem-" + problemDb.getId();
+        String uloadDirPath = uploadPath + "tests\\problem-" + problemDb.getId();
 
 
         //Изменение расширений файлов с extensionIn и extensionAns на .in и .ans
@@ -253,7 +253,7 @@ public class ProblemFacade {
     public void addTestsToProblem(ru.vkr.vkr.entity.Problem problemDb) {
         InternalController internalController = (InternalController) applicationContext.getBean("getInternalController");
 
-        String baseDirectoryName = uploadPath + "/tests/problem-" + problemDb.getId();
+        String baseDirectoryName = uploadPath + "tests\\problem-" + problemDb.getId();
 
         //Ищем задачу
         Problem problem = findProblemInPC2(internalController, problemDb);
@@ -281,7 +281,7 @@ public class ProblemFacade {
 
     public Collection<String> getAllTestsById (Long problemId) {
         Set<String> filesList = new HashSet<>();
-        File dirFile = new File(uploadPath + "/tests/problem-" + problemId);
+        File dirFile = new File(uploadPath + "tests\\problem-" + problemId);
         if (dirFile.exists()) {
             String[] filesArr = dirFile.list();
             if (filesArr != null) {
@@ -295,7 +295,7 @@ public class ProblemFacade {
     }
 
     public void deleteTestFile(Long problemId, String testName) {
-        String path = uploadPath + "/tests/problem-" + problemId;
+        String path = uploadPath + "tests\\problem-" + problemId;
         File dirFile = new File(path);
         if (dirFile.exists()) {
             File testIn = new File(path + "/" + testName + extensionInStandart);
