@@ -9,6 +9,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.web.authentication.logout.SimpleUrlLogoutSuccessHandler;
 import org.springframework.stereotype.Component;
+import ru.vkr.vkr.domain.BridgePc2;
 import ru.vkr.vkr.entity.User;
 
 import javax.servlet.ServletException;
@@ -27,13 +28,8 @@ public class CustomLogoutSuccessHandler extends
     public void onLogoutSuccess(
             HttpServletRequest request,
             HttpServletResponse response,
-            Authentication authentication)
-            throws IOException, ServletException {
-        InternalController internalController = (InternalController) applicationContext.getBean("getInternalController");
-        User successUser = (User)authentication.getPrincipal();
-        ClientId clientId = InternalController.loginShortcutExpansion(1, successUser.getLoginPC2());
-        internalController.logoffUser(clientId);
-        internalController.setContest(new InternalContest()); // обновление главного контроллера
+            Authentication authentication) throws IOException, ServletException {
+        BridgePc2.logoff();
         super.onLogoutSuccess(request, response, authentication);
     }
 }

@@ -24,24 +24,6 @@ public class AdminController {
     private AdminFacade adminFacade;
     @Autowired
     private TeacherRepository teacherRepository;
-    @Autowired
-    private ApplicationContext applicationContext;
-
-    // вывод текущих аккаунтов
-    @GetMapping("/admin/accounts")
-    public String showAccounts(Model model) {
-        InternalController internalController = (InternalController) applicationContext.getBean("getInternalController");
-        model.addAttribute("accounts", internalController.getContest().getAccounts());
-        return "student";
-    }
-
-    // добавление списка преподавателей
-    @PostMapping("/admin/generateTeam")
-    public String generateAccount(Model model) {
-        InternalController internalController = (InternalController) applicationContext.getBean("getInternalController");
-        internalController.generateNewAccounts("TEAM", 1, 1, 1, true);
-        return "redirect:/admin/accounts";
-    }
 
     // вывод списка всех преподавателей
     @GetMapping("/admin/teachers")

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import ru.vkr.vkr.domain.BridgePc2;
 import ru.vkr.vkr.entity.*;
 import ru.vkr.vkr.facade.ProblemFacade;
 import ru.vkr.vkr.form.*;
@@ -50,14 +51,13 @@ public class ProblemController {
             teacherProblems.add(teacherProblems_.get(i));
         TheoryMaterialForm theoryMaterialForm = new TheoryMaterialForm();
         SubmitRunForm submitRunForm = new SubmitRunForm();
-        InternalController internalController = (InternalController) applicationContext.getBean("getInternalController");
 
         model.addAttribute("runs", submitRunService.getRunSummit());
         model.addAttribute("theoryMaterialForm", theoryMaterialForm);
         model.addAttribute("teacherCourses", teacherCourses);
         model.addAttribute("teacherProblems", teacherProblems);
         model.addAttribute("isTeacher", true);
-        model.addAttribute("langs", internalController.getContest().getLanguages());
+        model.addAttribute("langs", BridgePc2.getInternalContest().getLanguages());
         model.addAttribute("submitRunForm", submitRunForm);
     }
 

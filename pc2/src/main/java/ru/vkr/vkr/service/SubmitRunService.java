@@ -4,25 +4,21 @@ import edu.csus.ecs.pc2.core.InternalController;
 import edu.csus.ecs.pc2.core.log.Log;
 import edu.csus.ecs.pc2.core.model.*;
 import edu.csus.ecs.pc2.core.security.Permission;
-import edu.csus.ecs.pc2.ui.MultipleFileViewer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import ru.vkr.vkr.domain.BridgePc2;
 import ru.vkr.vkr.domain.FileManager;
 import ru.vkr.vkr.domain.RunSubmitDto;
-import ru.vkr.vkr.facade.ProblemFacade;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.Future;
 
 @Service
@@ -36,14 +32,14 @@ public class SubmitRunService {
 
 
     private ElementId getElementIdRun(int index) {
-        InternalController internalController = (InternalController) applicationContext.getBean("getInternalController");
-        return internalController.getContest().getRuns()[index].getElementId();
+        InternalController internalController = BridgePc2.getInternalController();
+        return BridgePc2.getInternalContest().getRuns()[index].getElementId();
     }
 
 
     public void submitRun(Problem problem, int languageIndex, MultipartFile file) {
-        InternalController internalController = (InternalController) applicationContext.getBean("getInternalController");
-        Language language = internalController.getContest().getLanguages()[languageIndex];
+        InternalController internalController = BridgePc2.getInternalController();
+        Language language = BridgePc2.getInternalContest().getLanguages()[languageIndex];
 
 
         String fileName = FileManager.loadFileToServer(file, nameOfFolder);
@@ -70,11 +66,11 @@ public class SubmitRunService {
     }
 
     public List<RunSubmitDto> getRunSummit() {
-        InternalController internalController = (InternalController) applicationContext.getBean("getInternalController");
-        IInternalContest contest = internalController.getContest();
+        InternalController internalController = BridgePc2.getInternalController();
+        IInternalContest contest = BridgePc2.getInternalContest();
         List<RunSubmitDto> runSubmitDtos = new ArrayList<>();
         // в отсортированном порядке
-        for (Run run : internalController.getContest().getRuns()) {
+        for (Run run : BridgePc2.getInternalContest().getRuns()) {
             runSubmitDtos.add(new RunSubmitDto(run.getNumber(),
                     getProblemTitle(contest, run.getProblemId()),
                     new Long(run.getElapsedMins()),
@@ -150,8 +146,8 @@ public class SubmitRunService {
     @Async("threadPoolTaskExecutor")
     public Future<String> showSourceForSelectedRun(int index) {
 
-        InternalController internalController = (InternalController) applicationContext.getBean("getInternalController");
-        IInternalContest contest = internalController.getContest();
+        InternalController internalController = BridgePc2.getInternalController();
+        IInternalContest contest = BridgePc2.getInternalContest();
 
         // make sure we're allowed to fetch a run
         if (!isAllowed(contest, Permission.Type.ALLOWED_TO_FETCH_RUN)) {

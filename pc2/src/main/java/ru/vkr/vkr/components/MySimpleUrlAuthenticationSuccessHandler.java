@@ -1,6 +1,5 @@
 package ru.vkr.vkr.components;
 
-import edu.csus.ecs.pc2.core.InternalController;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,14 +11,13 @@ import org.springframework.security.web.RedirectStrategy;
 import org.springframework.security.web.WebAttributes;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
-import ru.vkr.vkr.domain.RunStatistic;
-import ru.vkr.vkr.domain.RunStatisticListener;
+import ru.vkr.vkr.domain.BridgePc2;
 import ru.vkr.vkr.entity.User;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.io.*;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -65,23 +63,7 @@ public class MySimpleUrlAuthenticationSuccessHandler implements AuthenticationSu
         roleTargetUrlMap.put("ROLE_STUDENT", "/student/course");
 
         User successUser = (User) authentication.getPrincipal();
-        String[] curStringMas = {};
-        InternalController internalController = (InternalController) applicationContext.getBean("getInternalController");
-        internalController.start(curStringMas, successUser.getLoginPC2());
-        RunStatisticListener runStatisticListener = new RunStatisticListener();
-
-        RunStatistic runStatistic = null;
-
-        try (FileInputStream fileInputStream = new FileInputStream("C:\\diplom\\save.ser");
-             ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream)) {
-            runStatistic = (RunStatistic) objectInputStream.readObject();
-        } catch (IOException | ClassNotFoundException e) {
-            runStatistic = new RunStatistic();
-            e.printStackTrace();
-        } finally {
-            internalController.setRunStatistic(runStatistic);
-            runStatisticListener.setController(internalController);
-        }
+        BridgePc2.start(successUser.getLoginPC2());
 
         final Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
         for (final GrantedAuthority grantedAuthority : authorities) {

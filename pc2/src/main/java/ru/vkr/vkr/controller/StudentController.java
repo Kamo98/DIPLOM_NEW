@@ -6,6 +6,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import ru.vkr.vkr.domain.BridgePc2;
 import ru.vkr.vkr.entity.Chapter;
 import ru.vkr.vkr.entity.Course;
 import ru.vkr.vkr.entity.Problem;
@@ -68,7 +69,7 @@ public class StudentController {
 
     @GetMapping("/student/problem/{problemId}")
     public String getProblem(Model model, @PathVariable Long problemId) {
-        InternalController internalController = (InternalController) applicationContext.getBean("getInternalController");
+        InternalController internalController = BridgePc2.getInternalController();
         SubmitRunForm submitRunForm = new SubmitRunForm();
         Problem problem = problemService.getProblemById(problemId);
         if (problem.getPathToTextProblem() == null || problem.getPathToTextProblem().equals("")) {
@@ -78,7 +79,7 @@ public class StudentController {
         }
         model.addAttribute("problem", problem);
         model.addAttribute("runs", submitRunService.getRunSummit());
-        model.addAttribute("langs", internalController.getContest().getLanguages());
+        model.addAttribute("langs", BridgePc2.getInternalContest().getLanguages());
         model.addAttribute("submitRunForm", submitRunForm);
         return "student/problem";
     }

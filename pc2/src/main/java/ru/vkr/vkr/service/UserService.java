@@ -14,6 +14,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import ru.vkr.vkr.domain.BridgePc2;
 import ru.vkr.vkr.domain.ROLE;
 import ru.vkr.vkr.domain.RandomString;
 import ru.vkr.vkr.domain.Translit;
@@ -98,7 +99,7 @@ public class UserService implements UserDetailsService {
     //todo: когда будет интерфейс, нужно будет возвращать его, а не идентификаторы teacher или student
     public List<Long> addUsers(UserForm userForm, ROLE role) {
         List<Long> usersId = new ArrayList<>();
-        InternalController internalController = (InternalController) applicationContext.getBean("getInternalController");
+        InternalController internalController = BridgePc2.getInternalController();
 
 
         String fios = userForm.getFios().trim();
@@ -172,13 +173,13 @@ public class UserService implements UserDetailsService {
      * @return логин и пароль сгенерированного пользователя
       */
     private String generateNewAccount(User user, ROLE role) {
-        InternalController internalController = (InternalController) applicationContext.getBean("getInternalController");
+        InternalController internalController = BridgePc2.getInternalController();
         internalController.generateNewAccounts(role.getRolePc2(), 1, 1, 1, true);
         if (role == ROLE.ROLE_STUDENT) {
-            int countTeam = internalController.getContest().getAccounts(ClientType.Type.TEAM).size();
+            int countTeam = BridgePc2.getInternalContest().getAccounts(ClientType.Type.TEAM).size();
             return role.getRolePc2().toLowerCase() + (countTeam + 1);
         } else {
-            int countAdmin = internalController.getContest().getAccounts(ClientType.Type.ADMINISTRATOR).size();
+            int countAdmin = BridgePc2.getInternalContest().getAccounts(ClientType.Type.ADMINISTRATOR).size();
             return role.getRolePc2().toLowerCase() + (countAdmin + 1);
         }
     }

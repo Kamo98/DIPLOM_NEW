@@ -1,7 +1,5 @@
 package ru.vkr.vkr.facade;
 
-import ch.qos.logback.core.net.server.Client;
-import com.sun.tracing.Probe;
 import edu.csus.ecs.pc2.core.InternalController;
 import edu.csus.ecs.pc2.core.Utilities;
 import edu.csus.ecs.pc2.core.exception.IllegalContestState;
@@ -9,28 +7,22 @@ import edu.csus.ecs.pc2.core.model.*;
 import edu.csus.ecs.pc2.core.scoring.NewScoringAlgorithm;
 import edu.csus.ecs.pc2.core.scoring.ProblemSummaryInfo;
 import edu.csus.ecs.pc2.core.scoring.StandingsRecord;
-import edu.csus.ecs.pc2.ui.MultipleDataSetPane;
 import edu.csus.ecs.pc2.validator.clicsValidator.ClicsValidatorSettings;
 import edu.csus.ecs.pc2.validator.customValidator.CustomValidatorSettings;
-import edu.csus.ecs.pc2.validator.pc2Validator.PC2ValidatorSettings;
-import org.antlr.v4.runtime.misc.Array2DHashSet;
-import org.antlr.v4.runtime.misc.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
+import ru.vkr.vkr.domain.BridgePc2;
 import ru.vkr.vkr.domain.MonitorData;
-import ru.vkr.vkr.domain.RunStatistic;
 import ru.vkr.vkr.entity.Student;
 import ru.vkr.vkr.form.CheckerSettingsForm;
 import ru.vkr.vkr.form.LoadTestsForm;
 
-import javax.xml.crypto.dsig.keyinfo.KeyValue;
-import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Array;
+import java.lang.reflect.Field;
 import java.util.*;
 
 @Component
@@ -82,7 +74,7 @@ public class ProblemFacade {
     public Long initProblem(ru.vkr.vkr.entity.Problem problemDb) {
         makeDirectory(problemDb.getId());
 
-        InternalController internalController = (InternalController) applicationContext.getBean("getInternalController");
+        InternalController internalController = BridgePc2.getInternalController();
 
         String baseDirectoryName = uploadPath + "tests\\problem-" + problemDb.getId();
 
@@ -106,7 +98,7 @@ public class ProblemFacade {
 
         //Добавить в списки автосудий задачу
         //todo: не совмем уверен что в список clientSettingsList будут попадать все автосудьи, которые есть в системе
-        ClientSettings clientSettingsList[] = internalController.getContest().getClientSettingsList();
+        ClientSettings clientSettingsList[] = BridgePc2.getInternalContest().getClientSettingsList();
         for (int i = 0; i < clientSettingsList.length; i++) {
            if (clientSettingsList[i].isAutoJudging()) {
                Filter filter = clientSettingsList[i].getAutoJudgeFilter();
@@ -118,11 +110,22 @@ public class ProblemFacade {
         ProblemDataFiles problemDataFiles = new ProblemDataFiles(problem);
         internalController.addNewProblem(problem, problemDataFiles);
 
-        return problem.getElementId().getNum();
+
+        try{
+            ElementId elementId = problem.getElementId();
+            Class elementIdClass = elementId.getClass();
+            Field elementIdField = elementIdClass.getDeclaredField("num");
+            return elementIdField.getLong(elementIdField.get(elementId));
+        } catch (IllegalAccessException | NoSuchFieldException e) {
+            e.printStackTrace();
+        }
+
+
+        return 1L;
     }
 
     public void updateMainParams(String newName, ru.vkr.vkr.entity.Problem problemDb) {
-        InternalController internalController = (InternalController) applicationContext.getBean("getInternalController");
+        InternalController internalController = BridgePc2.getInternalController();
 
         //Ищем задачу
         Problem problem = findProblemInPC2(internalController, problemDb);
@@ -139,7 +142,7 @@ public class ProblemFacade {
 
     //Установка параметров чекера
     public void setParamsOfChecker(ru.vkr.vkr.entity.Problem problemDb, CheckerSettingsForm checkerSettingsForm) {
-        InternalController internalController = (InternalController) applicationContext.getBean("getInternalController");
+        InternalController internalController = BridgePc2.getInternalController();
 
         //Ищем задачу
         Problem problem = findProblemInPC2(internalController, problemDb);
@@ -181,7 +184,7 @@ public class ProblemFacade {
 
 
     public void setCheckerParamsToForm(CheckerSettingsForm checkerSettingsForm, ru.vkr.vkr.entity.Problem problemDb) {
-        InternalController internalController = (InternalController) applicationContext.getBean("getInternalController");
+        InternalController internalController = BridgePc2.getInternalController();
         //Ищем задачу
         Problem problem = findProblemInPC2(internalController, problemDb);
 
@@ -251,7 +254,7 @@ public class ProblemFacade {
 
     //Добавление тестов к задаче в PC2
     public void addTestsToProblem(ru.vkr.vkr.entity.Problem problemDb) {
-        InternalController internalController = (InternalController) applicationContext.getBean("getInternalController");
+        InternalController internalController = BridgePc2.getInternalController();
 
         String baseDirectoryName = uploadPath + "tests\\problem-" + problemDb.getId();
 
@@ -272,9 +275,9 @@ public class ProblemFacade {
     }
 
     public Collection<Problem> getAllProblems() {
-        InternalController internalController = (InternalController) applicationContext.getBean("getInternalController");
+        InternalController internalController = BridgePc2.getInternalController();
         ArrayList<Problem> problems = new ArrayList<>();
-        Collections.addAll(problems, internalController.getContest().getProblems());
+        Collections.addAll(problems, BridgePc2.getInternalContest().getProblems());
         return problems;
     }
 
@@ -311,16 +314,27 @@ public class ProblemFacade {
     //Ищет задачу в PC2 по сущности из БД
     public Problem findProblemInPC2(InternalController internalController, ru.vkr.vkr.entity.Problem problemDb) {
         ElementId elementId = new ElementId(problemDb.getName());
-        elementId.setNum(problemDb.getNumElementId());
-        return internalController.getContest().getProblem(elementId);
+        try {
+            Class elementIdClass = elementId.getClass();
+            Field elementIdField = elementIdClass.getDeclaredField("num");
+            elementIdField.set(elementIdField.get(elementId), problemDb.getNumElementId());
+        } catch (IllegalAccessException | NoSuchFieldException e) {
+            e.printStackTrace();
+        }
+        return BridgePc2.getInternalContest().getProblem(elementId);
     }
 
     //Ищет задачу в PC2 по сущности из БД
     public Problem findProblemInPC2(ru.vkr.vkr.entity.Problem problemDb) {
-        InternalController internalController = (InternalController) applicationContext.getBean("getInternalController");
         ElementId elementId = new ElementId(problemDb.getName());
-        elementId.setNum(problemDb.getNumElementId());
-        return internalController.getContest().getProblem(elementId);
+        try {
+            Class elementIdClass = elementId.getClass();
+            Field elementIdField = elementIdClass.getDeclaredField("num");
+            elementIdField.set(elementIdField.get(elementId), problemDb.getNumElementId());
+        } catch (IllegalAccessException | NoSuchFieldException e) {
+            e.printStackTrace();
+        }
+        return BridgePc2.getInternalContest().getProblem(elementId);
     }
 
     private ProblemDataFiles loadDataFiles(Problem aProblem, ProblemDataFiles files, String dataFileBaseDirectory, String dataExtension, String answerExtension, boolean externalDataFiles) {
@@ -367,7 +381,7 @@ public class ProblemFacade {
 
 
     public MonitorData getMonitor(Set<Student> students, Set<ru.vkr.vkr.entity.Problem> problems) {
-        InternalController internalController = (InternalController) applicationContext.getBean("getInternalController");
+        InternalController internalController = BridgePc2.getInternalController();
         NewScoringAlgorithm newScoringAlgorithm = new NewScoringAlgorithm();
         MonitorData monitorData = new MonitorData();
         try {
@@ -387,10 +401,8 @@ public class ProblemFacade {
                 problemsPC2[i++] = findProblemInPC2(internalController, pr);
 
             //Получаем монитор от PC2
-            StandingsRecord[] standingsRecords = newScoringAlgorithm.getStandingsRecords(internalController.getContest(),
-                    new Properties(), false,
-                    loginPC2Users, problemsPC2
-                    );
+            StandingsRecord[] standingsRecords = newScoringAlgorithm.getStandingsRecords(BridgePc2.getInternalContest(),
+                    new Properties(), false);
             //Формируем данные для вывода
             for (StandingsRecord rec : standingsRecords) {
                 //Заполняем строку монитора
@@ -414,16 +426,6 @@ public class ProblemFacade {
 
 
     public void getStatisticForProblems(Collection<ru.vkr.vkr.entity.Problem> problemsDb) {
-        InternalController internalController = (InternalController) applicationContext.getBean("getInternalController");
-        HashMap<Long, RunStatistic.StatisticOfTask> statisticOfTask = internalController.getRunStatistic().getStatisticOfTaskHashMap();
-
-        for(ru.vkr.vkr.entity.Problem pr : problemsDb) {
-            if (statisticOfTask.containsKey(pr.getNumElementId())) {
-                RunStatistic.StatisticOfTask stat = statisticOfTask.get(pr.getNumElementId());
-                pr.setCountAccepted(stat.getCountYes());
-                pr.setTotalSubmit(stat.getCount());
-            }
-        }
     }
 
 }
