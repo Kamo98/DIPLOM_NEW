@@ -13,6 +13,7 @@ import ru.vkr.vkr.repository.GroupRepository;
 
 import java.util.Collection;
 import java.util.Set;
+import java.util.List;
 
 @Service
 public class CourseService {
@@ -45,7 +46,7 @@ public class CourseService {
     }
 
     public void addChapter(Chapter chapter, Course course) {
-        Set<Chapter> chapterSet = course.getChapters();
+        List<Chapter> chapterSet = course.getChapters();
         chapterSet.add(chapter);
         course.setChapters(chapterSet);
     }

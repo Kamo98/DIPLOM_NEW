@@ -18,19 +18,27 @@
 
 
         <div class="main-content col-9 border rounded-lg">
+            <h4 class="centered green-h dotted-bottom-border" th:unless="${isCreate}">
+                <a th:href="@{'/teacher/course/' + ${chapter.courseChapters.id}}" th:text="${chapter.courseChapters.name}">
+                </a>
+            </h4>
             <h5 class="centered green-h" th:unless="${isCreate}">Тема "[[ ${chapter.name} ]]"</h5>
             <h5 class="centered green-h" th:if="${isCreate}">Тема "Новая тема"</h5>
 
             <ul class="nav nav-pills tabs-menu">
                 <li th:unless="${isCreate}">
-                    <a class="nav-link active" href="#" id="linkTmOfChapter"><i class="fa fa-book fa-fw"
-                                                                                aria-hidden="true"></i>&nbsp;Теоретический
-                        материал</a>
+                    <a class="nav-link active" href="#" id="linkTmOfChapter">
+                        <i class="fa fa-book fa-fw"aria-hidden="true"></i>&nbsp;Теоретический материал
+                    </a>
                 </li>
                 <li th:unless="${isCreate}">
                     <a class="nav-link" href="#" id="linkThemeProblems">
                         <i class="fa fa-tasks"aria-hidden="true"></i>&nbsp;Задачи
                     </a>
+                </li>
+                <li th:unless="${isCreate}">
+                    <a class="nav-link " href="#" id="linkResultsForTheme">
+                        <i class="fa fa-table" aria-hidden="true"></i>&nbsp;Монитор</a>
                 </li>
                 <li>
                     <a class="nav-link " href="#" id="linkThemeSettings"><i class="fa fa-cogs" aria-hidden="true"></i>&nbsp;Параметры</a>
@@ -206,6 +214,42 @@
                     </div>
                 </div>
 
+                <div id="resultForTheme" style="display: none;" th:unless="${isCreate}">
+                    <div class="container row-margin-top  col-align-centered" id="monitorOfGroup">
+                        <div class="row table-header row-table">
+                            <div class="col-1">№</div>
+                            <div class="col-3"><i class="fa fa-user" aria-hidden="true"></i>&nbsp;Студент</div>
+                            <div class="col-1"><i class="fa fa-tasks" aria-hidden="true"></i></div>
+                            <div class="col-1"><i class="fa fa-clock-o" aria-hidden="true"></i></div>
+                            <div class="col" th:each="problem, iState: ${chapter.chapterProblems}">
+                                <a th:href="@{'/teacher/problem/' + ${problem.id}}"
+                                   th:text="${iState.index} + 1"
+                                   th:title="${problem.name}">A</a>
+                            </div>
+                        </div>
+                        <div class="row row-table" th:each="standingsRecord, iState : ${monitor.getRecords()}">
+                            <div class="col-1" th:text="${iState.index + 1}">#</div>
+                            <div class="col-3" th:text="${monitor.getStudent(iState.index)}">Иванов Иван Иванович</div>
+                            <div class="col-1" th:text="${standingsRecord.getNumberSolved()}">-</div>
+                            <div class="col-1" th:text="${standingsRecord.getPenaltyPoints()}">-</div>
+                            <div class="col" th:each="problemInfo : ${monitor.getProblemInfos(iState.index)}">
+                                    <span th:if="${problemInfo.getNumberSubmitted()} == 0">
+
+                                    </span>
+                                <span th:unless="${problemInfo.getNumberSubmitted()} == 0">
+                                        <span th:if="${problemInfo.isSolved()}" class="cell-task-plus">
+                                            +[[ (${problemInfo.getNumberSubmitted() - 1}) != 0 ? ${problemInfo.getNumberSubmitted() - 1} : '' ]]
+                                        </span>
+                                        <span th:unless="${problemInfo.isSolved()}" class="cell-task-minus">
+                                            -[[ (${problemInfo.getNumberSubmitted() - 1}) != 0 ? ${problemInfo.getNumberSubmitted() - 1} : '' ]]
+                                        </span>
+                                    </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
                 <div id="themeSettings" style="display: none;">
                     <form class="needs-validation" novalidate
                           th:action="${isCreate}? @{'/teacher/course/'+${course_id}+'/chapter-create'} : @{'/teacher/course/'+${course_id}+'/chapter/' + ${chapter.id}}"
@@ -273,6 +317,12 @@
     $('#linkThemeProblems').click(function (e) {
         $('#linkThemeProblems').addClass('active');
         $('#problemsOfTheme').show();
+    });
+
+    //Клик по вкладке Монитор
+    $('#linkResultsForTheme').click(function (e) {
+        $('#linkResultsForTheme').addClass('active');
+        $('#resultForTheme').show();
     });
 
     //Клик по вкладке Параметры

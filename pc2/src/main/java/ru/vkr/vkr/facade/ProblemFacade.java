@@ -415,7 +415,7 @@ public class ProblemFacade {
 
 
 
-    public MonitorData getMonitor(Set<Student> students, Set<ru.vkr.vkr.entity.Problem> problems) {
+    public MonitorData getMonitor(List<Student> students, List<ru.vkr.vkr.entity.Problem> problems) {
         InternalController internalController = BridgePc2.getInternalController();
         NewScoringAlgorithm newScoringAlgorithm = new NewScoringAlgorithm();
         MonitorData monitorData = new MonitorData();

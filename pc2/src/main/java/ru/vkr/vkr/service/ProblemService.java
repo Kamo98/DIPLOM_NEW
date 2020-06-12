@@ -73,8 +73,8 @@ public class ProblemService {
     }
 
     public Collection<Problem> getProblemsByCurrentStudent() {
-        Set<Chapter> chapterSet = authenticationFacade.getCurrentStudent().getGroup().getCourseSubscriptions().getChapters();
-        Set<Problem> problemSet = new HashSet<>();
+        List<Chapter> chapterSet = authenticationFacade.getCurrentStudent().getGroup().getCourseSubscriptions().getChapters();
+        List<Problem> problemSet = new ArrayList<>();
         for (Chapter chapter : chapterSet) {
             for (Problem problem : chapter.getChapterProblems())
             if (problemSet.size() < 5) {

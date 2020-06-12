@@ -4,6 +4,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Set;
+import java.util.List;
 
 @Table(name = "t_chapter")
 @Entity
@@ -27,28 +28,28 @@ public class Chapter {
     @JoinTable(name = "t_chapter_problems",
             joinColumns = @JoinColumn(name = "chapter_id"),
     inverseJoinColumns = @JoinColumn(name = "problem_id"))
-    private Set<Problem> chapterProblems;
+    private List<Problem> chapterProblems;
 
     // Теория темы
     @ManyToMany(cascade = CascadeType.REFRESH)
     @JoinTable(name = "t_chapter_theories",
             joinColumns = @JoinColumn(name = "chapter_id"),
             inverseJoinColumns = @JoinColumn(name = "theory_id"))
-    private Set<Theory> chapterTheories;
+    private List<Theory> chapterTheories;
 
-    public Set<Theory> getChapterTheories() {
+    public List<Theory> getChapterTheories() {
         return chapterTheories;
     }
 
-    public Set<Problem> getChapterProblems() {
+    public List<Problem> getChapterProblems() {
         return chapterProblems;
     }
 
-    public void setChapterProblems(Set<Problem> chapterProblems) {
+    public void setChapterProblems(List<Problem> chapterProblems) {
         this.chapterProblems = chapterProblems;
     }
 
-    public void setChapterTheories(Set<Theory> chapterTheories) {
+    public void setChapterTheories(List<Theory> chapterTheories) {
         this.chapterTheories = chapterTheories;
     }
 
