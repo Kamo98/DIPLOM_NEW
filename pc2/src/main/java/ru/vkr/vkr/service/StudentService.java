@@ -8,6 +8,7 @@ import ru.vkr.vkr.repository.CourseRepository;
 import ru.vkr.vkr.repository.StudentRepository;
 
 import java.util.Set;
+import java.util.List;
 
 @Service
 public class StudentService {
@@ -23,11 +24,11 @@ public class StudentService {
         return student.getGroup().getCourseSubscriptions();
     }
 
-    public Set<Problem> getProblemByChapter(Chapter chapter) {
+    public List<Problem> getProblemByChapter(Chapter chapter) {
         return chapter.getChapterProblems();
     }
 
-    public Set<Theory> getTheoryByChapter(Chapter chapter) {
+    public List<Theory> getTheoryByChapter(Chapter chapter) {
         return chapter.getChapterTheories();
     }
 

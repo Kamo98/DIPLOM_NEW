@@ -18,6 +18,10 @@
 
 
             <div class="main-content col-9 border rounded-lg">
+                <h4 class="centered green-h dotted-bottom-border" th:unless="${isCreate}">
+                    <a th:href="@{'/teacher/course/' + ${group.courseSubscriptions.id}}" th:text="${group.courseSubscriptions.name}">
+                    </a>
+                </h4>
                 <h5 class="centered green-h" th:unless="${isCreate}">Группа "[[ ${group.name} ]]"</h5>
                 <h5 class="centered green-h" th:if="${isCreate}">Группа "Новая группа"</h5>
 
@@ -26,9 +30,9 @@
                     <li th:unless="${isCreate}">
                         <a class="nav-link active" href="#" id="linkGroupMembers"><i class="fa fa-users" aria-hidden="true"></i>&nbsp;Состав группы</a>
                     </li>
-                    <li th:unless="${isCreate}">
-                        <a class="nav-link " href="#" id="linkGroupResults"><i class="fa fa-table" aria-hidden="true"></i>&nbsp;Результаты группы</a>
-                    </li>
+                    <!--<li th:unless="${isCreate}">-->
+                        <!--<a class="nav-link " href="#" id="linkGroupResults"><i class="fa fa-table" aria-hidden="true"></i>&nbsp;Результаты группы</a>-->
+                    <!--</li>-->
                     <!--<li th:unless="${isCreate}">-->
                         <!--<a class="nav-link " href="#" id="linkGroupProblems"> <i class="fa fa-tasks" aria-hidden="true"></i>&nbsp;Задание группе</a>-->
                     <!--</li>-->
@@ -121,99 +125,36 @@
                         <!--</form>-->
 
 
-                        <div class="container row-margin-top  col-align-centered" id="monitorOfGroup">
-                            <div class="row table-header row-table">
-                                <div class="col-1">№</div>
-                                <div class="col-3"><i class="fa fa-user" aria-hidden="true"></i>&nbsp;Студент</div>
-                                <div class="col-1"><i class="fa fa-tasks" aria-hidden="true"></i></div>
-                                <div class="col-1"><i class="fa fa-clock-o" aria-hidden="true"></i></div>
-                                <div class="col-task" th:each="problem, iState: ${problems}">
-                                    <a th:href="@{'/teacher/problem/' + ${problem.id}}"
-                                       th:text="${iState.index} + 1"
-                                       th:title="${problem.name}">A</a>
-                                </div>
-                            </div>
-                            <div class="row row-table" th:each="standingsRecord, iState : ${monitor.getRecords()}">
-                                <div class="col-1" th:text="${iState.index + 1}">#</div>
-                                <div class="col-3" th:text="${monitor.getStudent(iState.index)}">Иванов Иван Иванович</div>
-                                <div class="col-1" th:text="${standingsRecord.getNumberSolved()}">-</div>
-                                <div class="col-1" th:text="${standingsRecord.getPenaltyPoints()}">-</div>
-                                <div class="col-task" th:each="problemInfo : ${monitor.getProblemInfos(iState.index)}">
-                                    <span th:if="${problemInfo.getNumberSubmitted()} == 0">
-                                        -
-                                    </span>
-                                    <span th:unless="${problemInfo.getNumberSubmitted()} == 0">
-                                        <span th:if="${problemInfo.isSolved()}" class="cell-task-plus">
-                                            +[[ (${problemInfo.getNumberSubmitted() - 1}) != 0 ? ${problemInfo.getNumberSubmitted() - 1} : '' ]]
-                                        </span>
-                                        <span th:unless="${problemInfo.isSolved()}" class="cell-task-minus">
-                                            -[[ (${problemInfo.getNumberSubmitted() - 1}) != 0 ? ${problemInfo.getNumberSubmitted() - 1} : '' ]]
-                                        </span>
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-
                         <!--<div class="container row-margin-top  col-align-centered" id="monitorOfGroup">-->
                             <!--<div class="row table-header row-table">-->
                                 <!--<div class="col-1">№</div>-->
                                 <!--<div class="col-3"><i class="fa fa-user" aria-hidden="true"></i>&nbsp;Студент</div>-->
                                 <!--<div class="col-1"><i class="fa fa-tasks" aria-hidden="true"></i></div>-->
                                 <!--<div class="col-1"><i class="fa fa-clock-o" aria-hidden="true"></i></div>-->
-                                <!--<div class="col-1"><a href="#">A</a></div>-->
-                                <!--<div class="col-1"><a href="#">B</a></div>-->
-                                <!--<div class="col-1"><a href="#">C</a></div>-->
-                                <!--<div class="col-1"><a href="#">D</a></div>-->
-                                <!--<div class="col-1"><a href="#">E</a></div>-->
-                                <!--<div class="col-1"><a href="#">F</a></div>-->
+                                <!--<div class="col-task" th:each="problem, iState: ${problems}">-->
+                                    <!--<a th:href="@{'/teacher/problem/' + ${problem.id}}"-->
+                                       <!--th:text="${iState.index} + 1"-->
+                                       <!--th:title="${problem.name}">A</a>-->
+                                <!--</div>-->
                             <!--</div>-->
-                            <!--<div class="row row-table">-->
-                                <!--<div class="col-1">1</div>-->
-                                <!--<div class="col-3">Иванов Иван Иванович</div>-->
-                                <!--<div class="col-1">5</div>-->
-                                <!--<div class="col-1">290</div>-->
-                                <!--<div class="col cell-task-plus">+2</div>-->
-                                <!--<div class="col cell-task-plus">+1</div>-->
-                                <!--<div class="col cell-task-plus">+3</div>-->
-                                <!--<div class="col cell-task-minus">-5</div>-->
-                                <!--<div class="col cell-task-plus">+</div>-->
-                                <!--<div class="col cell-task-plus">+1</div>-->
-                            <!--</div>-->
-                            <!--<div class="row  row-table dark-row">-->
-                                <!--<div class="col-1">1</div>-->
-                                <!--<div class="col-3">Петров Пётр Петрович</div>-->
-                                <!--<div class="col-1">4</div>-->
-                                <!--<div class="col-1">300</div>-->
-                                <!--<div class="col-1 cell-task-plus">+4</div>-->
-                                <!--<div class="col-1 cell-task-plus">-9</div>-->
-                                <!--<div class="col-1 cell-task-plus">+2</div>-->
-                                <!--<div class="col-1 cell-task-minus">-2</div>-->
-                                <!--<div class="col-1 cell-task-plus">+1</div>-->
-                                <!--<div class="col-1 cell-task-plus">+2</div>-->
-                            <!--</div>-->
-                            <!--<div class="row row-table">-->
-                                <!--<div class="col-1">1</div>-->
-                                <!--<div class="col-3">Сидоров Артём Сергеевич</div>-->
-                                <!--<div class="col-1">4</div>-->
-                                <!--<div class="col-1">275</div>-->
-                                <!--<div class="col-1 cell-task-plus">+1</div>-->
-                                <!--<div class="col-1 cell-task-plus">+5</div>-->
-                                <!--<div class="col-1 cell-task-plus">+2</div>-->
-                                <!--<div class="col-1 cell-task-minus">-5</div>-->
-                                <!--<div class="col-1 cell-task-plus">-6</div>-->
-                                <!--<div class="col-1 cell-task-plus">+2</div>-->
-                            <!--</div>-->
-                            <!--<div class="row  row-table dark-row">-->
-                                <!--<div class="col-1">1</div>-->
-                                <!--<div class="col-3">Иванов Владимир Павлович</div>-->
-                                <!--<div class="col-1">3</div>-->
-                                <!--<div class="col-1">250</div>-->
-                                <!--<div class="col-1 cell-task-plus">+6</div>-->
-                                <!--<div class="col-1 cell-task-plus">-4</div>-->
-                                <!--<div class="col-1 cell-task-plus"></div>-->
-                                <!--<div class="col-1 cell-task-minus"></div>-->
-                                <!--<div class="col-1 cell-task-plus">+3</div>-->
-                                <!--<div class="col-1 cell-task-plus">+6</div>-->
+                            <!--<div class="row row-table" th:each="standingsRecord, iState : ${monitor.getRecords()}">-->
+                                <!--<div class="col-1" th:text="${iState.index + 1}">#</div>-->
+                                <!--<div class="col-3" th:text="${monitor.getStudent(iState.index)}">Иванов Иван Иванович</div>-->
+                                <!--<div class="col-1" th:text="${standingsRecord.getNumberSolved()}">-</div>-->
+                                <!--<div class="col-1" th:text="${standingsRecord.getPenaltyPoints()}">-</div>-->
+                                <!--<div class="col-task" th:each="problemInfo : ${monitor.getProblemInfos(iState.index)}">-->
+                                    <!--<span th:if="${problemInfo.getNumberSubmitted()} == 0">-->
+                                         <!-- - -->
+                                    <!--</span>-->
+                                    <!--<span th:unless="${problemInfo.getNumberSubmitted()} == 0">-->
+                                        <!--<span th:if="${problemInfo.isSolved()}" class="cell-task-plus"-->
+                                              <!--th:text="'+' + ((${problemInfo.getNumberSubmitted() - 1}) != 0 ? ${problemInfo.getNumberSubmitted() - 1} : '')">-->
+                                        <!--</span>-->
+                                        <!--<span th:unless="${problemInfo.isSolved()}" class="cell-task-minus"-->
+                                            <!--th:text="'-' + ((${problemInfo.getNumberSubmitted() - 1}) != 0 ? ${problemInfo.getNumberSubmitted() - 1} : '')">-->
+                                        <!--</span>-->
+                                    <!--</span>-->
+                                <!--</div>-->
                             <!--</div>-->
                         <!--</div>-->
                     </div>

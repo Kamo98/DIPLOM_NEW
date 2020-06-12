@@ -187,6 +187,11 @@ hr {
     background-color: #078600;
 }
 
+.dotted-bottom-border{
+    border-bottom: 2px #008500 dotted;
+    padding-bottom: 0.5rem;
+}
+
 /****************/
 
 

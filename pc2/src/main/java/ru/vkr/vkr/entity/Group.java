@@ -5,6 +5,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Collection;
 import java.util.Set;
+import java.util.List;
 
 @Entity
 @Table(name="t_group")
@@ -30,7 +31,7 @@ public class Group {
 
     // Студенты группы
     @OneToMany(mappedBy = "group", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private Set<Student> students;
+    private List<Student> students;
 
     public Group() {
     }
@@ -72,11 +73,11 @@ public class Group {
         this.courseSubscriptions = courseSubscriptions;
     }
 
-    public Set<Student> getStudents() {
+    public List<Student> getStudents() {
         return students;
     }
 
-    public void setStudents(Set<Student> students) {
+    public void setStudents(List<Student> students) {
         this.students = students;
     }
 }

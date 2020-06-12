@@ -246,4 +246,12 @@ public class ProblemController {
         return "redirect:/teacher/problem/" + problemId;
     }
 
+
+
+    @GetMapping("/teacher/updateNumInProblems")
+    public String updateNumInProblems () {
+        problemFacade.updateNumInProblems();
+        return "redirect:/teacher";
+    }
+
 }

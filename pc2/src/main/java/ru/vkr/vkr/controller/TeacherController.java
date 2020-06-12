@@ -177,13 +177,19 @@ public class TeacherController {
 
         Chapter chapter = chapterService.getChapterById(chapter_id);
         problemFacade.getStatisticForProblems(chapter.getChapterProblems());
-        Set<Theory> theories = chapter.getChapterTheories();
+        List<Theory> theories = chapter.getChapterTheories();
         model.addAttribute("theories", theories);
         model.addAttribute("course_id", course_id);
         model.addAttribute("chapter", chapter);
         model.addAttribute("isCreate", false);
 
-
+        //Загрузка монитора
+        List<Group> groups = chapter.getCourseChapters().getSubscribers();
+        List<Student> students = new ArrayList<>();
+        for (Group gr : groups)
+            students.addAll(gr.getStudents());
+        MonitorData monitor = problemFacade.getMonitor(students, chapter.getChapterProblems());
+        model.addAttribute("monitor", monitor);
 
         return "teacher/theme";
     }
@@ -297,12 +303,12 @@ public class TeacherController {
 
 
         //Загрузка монитора
-        Set<Problem> problems = new HashSet<>();
-        for (Chapter chapter : course.getChapters())
-            problems.addAll(chapter.getChapterProblems());
-        MonitorData monitor = problemFacade.getMonitor(group.getStudents(), problems);
-        model.addAttribute("monitor", monitor);
-        model.addAttribute("problems", problems);
+//        Set<Problem> problems = new HashSet<>();
+//        for (Chapter chapter : course.getChapters())
+//            problems.addAll(chapter.getChapterProblems());
+//        MonitorData monitor = problemFacade.getMonitor(group.getStudents(), problems);
+//        model.addAttribute("monitor", monitor);
+//        model.addAttribute("problems", problems);
         return "teacher/group";
     }
 
