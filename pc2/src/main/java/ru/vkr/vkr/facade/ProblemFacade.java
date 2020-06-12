@@ -5,12 +5,12 @@ import edu.csus.ecs.pc2.api.exceptions.NotLoggedInException;
 import edu.csus.ecs.pc2.core.InternalController;
 import edu.csus.ecs.pc2.core.Utilities;
 import edu.csus.ecs.pc2.core.exception.IllegalContestState;
+import edu.csus.ecs.pc2.core.list.AccountList;
 import edu.csus.ecs.pc2.core.model.*;
-import edu.csus.ecs.pc2.core.packet.PacketType;
+import edu.csus.ecs.pc2.core.scoring.DefaultStandingsRecordComparator;
 import edu.csus.ecs.pc2.core.scoring.NewScoringAlgorithm;
 import edu.csus.ecs.pc2.core.scoring.ProblemSummaryInfo;
 import edu.csus.ecs.pc2.core.scoring.StandingsRecord;
-import edu.csus.ecs.pc2.core.security.Permission;
 import edu.csus.ecs.pc2.validator.clicsValidator.ClicsValidatorSettings;
 import edu.csus.ecs.pc2.validator.customValidator.CustomValidatorSettings;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +28,8 @@ import ru.vkr.vkr.service.ProblemService;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.*;
 
 @Component
@@ -136,7 +138,7 @@ public class ProblemFacade {
         InternalController internalController = BridgePc2.getInternalController();
 
         //Ищем задачу
-        Problem problem = findProblemInPC2(internalController, problemDb);
+        Problem problem = findProblemInPC2(problemDb);
         if (problem != null) {
             //todo: после изменения имени задача перстаёт искаться
             //problem.setDisplayName(newName);
@@ -153,7 +155,7 @@ public class ProblemFacade {
         InternalController internalController = BridgePc2.getInternalController();
 
         //Ищем задачу
-        Problem problem = findProblemInPC2(internalController, problemDb);
+        Problem problem = findProblemInPC2(problemDb);
 
 //        problem.setValidatorType(Problem.VALIDATOR_TYPE.PC2VALIDATOR);
 //        PC2ValidatorSettings pc2ValidatorSettings = new PC2ValidatorSettings();
@@ -194,7 +196,7 @@ public class ProblemFacade {
     public void setCheckerParamsToForm(CheckerSettingsForm checkerSettingsForm, ru.vkr.vkr.entity.Problem problemDb) {
         InternalController internalController = BridgePc2.getInternalController();
         //Ищем задачу
-        Problem problem = findProblemInPC2(internalController, problemDb);
+        Problem problem = findProblemInPC2(problemDb);
 
         if (problem != null) {
             if (problem.getValidatorType() == Problem.VALIDATOR_TYPE.CLICSVALIDATOR) {
@@ -266,8 +268,10 @@ public class ProblemFacade {
 
         String baseDirectoryName = uploadPath + "tests\\problem-" + problemDb.getId();
 
+        Problem[] problems = BridgePc2.getInternalContest().getProblems();
+
         //Ищем задачу
-        Problem problem = findProblemInPC2(internalController, problemDb);
+        Problem problem = findProblemInPC2(problemDb);
 
         //Тесты
         final boolean externalFiles = true;
@@ -320,24 +324,7 @@ public class ProblemFacade {
 
 
     //Ищет задачу в PC2 по сущности из БД
-    public Problem findProblemInPC2(InternalController internalController, ru.vkr.vkr.entity.Problem problemDb) {
-
-
-        ElementId elementId = new ElementId(problemDb.getName());
-        try {
-            Class elementIdClass = elementId.getClass();
-            Field elementIdField = elementIdClass.getDeclaredField("num");
-            elementIdField.setAccessible(true);
-            elementIdField.set(elementId, problemDb.getNumElementId());
-        } catch (IllegalAccessException | NoSuchFieldException e) {
-            e.printStackTrace();
-        }
-        return BridgePc2.getInternalContest().getProblem(elementId);
-    }
-
-    //Ищет задачу в PC2 по сущности из БД
     public Problem findProblemInPC2(ru.vkr.vkr.entity.Problem problemDb) {
-        //ElementId elementId = new ElementId(problemDb.getName());
         ElementId elementId = new ElementId("problem-" + problemDb.getId());
         try {
             Class elementIdClass = elementId.getClass();
@@ -347,7 +334,20 @@ public class ProblemFacade {
         } catch (IllegalAccessException | NoSuchFieldException e) {
             e.printStackTrace();
         }
-        return BridgePc2.getInternalContest().getProblem(elementId);
+        Problem problem = BridgePc2.getInternalContest().getProblem(elementId);
+        if (problem == null) {
+            elementId = new ElementId(problemDb.getName());
+            try {
+                Class elementIdClass = elementId.getClass();
+                Field elementIdField = elementIdClass.getDeclaredField("num");
+                elementIdField.setAccessible(true);
+                elementIdField.set(elementId, problemDb.getNumElementId());
+            } catch (IllegalAccessException | NoSuchFieldException e) {
+                e.printStackTrace();
+            }
+            problem = BridgePc2.getInternalContest().getProblem(elementId);
+        }
+        return problem;
     }
 
 
@@ -355,9 +355,7 @@ public class ProblemFacade {
      * Скрипт для обновления задач в базе после экспорта
      */
     public void updateNumInProblems () {
-
-
-        /*roblem problems[] = BridgePc2.getInternalContest().getProblems();
+        Problem problems[] = BridgePc2.getInternalContest().getProblems();
         for (Problem iproblem : problems) {
             String shortName = iproblem.getShortName();
             String arr[] = shortName.split("-");
@@ -370,12 +368,11 @@ public class ProblemFacade {
                     elementIdField.setAccessible(true);
                     Long num = (Long) elementIdField.get(elementId);
                     problem.setNumElementId(num);
-                    iproblem.setDisplayName(problem.getName());
                     problemService.save(problem);
                 } catch (Exception e) {
                 }
             }
-        }*/
+        }
     }
 
 
@@ -424,7 +421,6 @@ public class ProblemFacade {
 
     public MonitorData getMonitor(List<Student> students, List<ru.vkr.vkr.entity.Problem> problems) {
         InternalController internalController = BridgePc2.getInternalController();
-        NewScoringAlgorithm newScoringAlgorithm = new NewScoringAlgorithm();
         MonitorData monitorData = new MonitorData();
         try {
             //Формируем сет логинов в PC2
@@ -440,11 +436,11 @@ public class ProblemFacade {
 //                problemsPC2[i] = findProblemInPC2(internalController, problems.get(i));
             int i = 0;
             for(ru.vkr.vkr.entity.Problem pr : problems)
-                problemsPC2[i++] = findProblemInPC2(internalController, pr);
+                problemsPC2[i++] = findProblemInPC2(pr);
 
             //Получаем монитор от PC2
-            StandingsRecord[] standingsRecords = newScoringAlgorithm.getStandingsRecords(BridgePc2.getInternalContest(),
-                    new Properties(), false);
+            StandingsRecord[] standingsRecords = getStandingsRecords(BridgePc2.getInternalContest(),
+                    new Properties(), loginPC2Users, problemsPC2);
             //Формируем данные для вывода
             for (StandingsRecord rec : standingsRecords) {
                 //Заполняем строку монитора
@@ -462,8 +458,80 @@ public class ProblemFacade {
         } catch (IllegalContestState illegalContestState) {
             illegalContestState.printStackTrace();
         }
-
         return monitorData;
+    }
+
+
+    private StandingsRecord[] getStandingsRecords(
+            IInternalContest contest,
+            Properties properties,
+            HashSet<String> loginPC2Users,
+            Problem[] problemsPC2) throws IllegalContestState
+    {
+        NewScoringAlgorithm newScoringAlgorithm = new NewScoringAlgorithm();
+        if (contest == null) {
+            throw new IllegalArgumentException("contest is null");
+        } else {
+            newScoringAlgorithm.setContest(contest);
+            Vector<Account> accountVector_ = newScoringAlgorithm.getContest().getAccounts(ClientType.Type.TEAM);
+            Vector<Account> accountVector = new Vector<>();
+            for(Account acc : accountVector_)
+                if (loginPC2Users.contains(acc.getDisplayName()))
+                    accountVector.add(acc);
+            Account[] accounts = (Account[])accountVector.toArray(new Account[accountVector.size()]);
+            AccountList accountList = new AccountList();
+            Account[] var10 = accounts;
+            int var9 = accounts.length;
+
+            for(int var8 = 0; var8 < var9; ++var8) {
+                Account account = var10[var8];
+                accountList.add(account);
+            }
+
+            DefaultStandingsRecordComparator comparator = new DefaultStandingsRecordComparator();
+            comparator.setCachedAccountList(accountList);
+            Run[] runs = newScoringAlgorithm.getContest().getRuns();
+//            newScoringAlgorithm.respectEOC = newScoringAlgorithm.isAllowed(newScoringAlgorithm.getContest(), newScoringAlgorithm.getContest().getClientId(), edu.csus.ecs.pc2.core.security.Permission.Type.RESPECT_EOC_SUPPRESSION);
+//            if (newScoringAlgorithm.respectEOC) {
+//                runs = newScoringAlgorithm.filterRunsbyEOC(newScoringAlgorithm.getContest(), runs);
+//            }
+//
+//            if (honorScoreboardFreeze) {
+//                runs = newScoringAlgorithm.filterRunsByScoreboardFreeze(newScoringAlgorithm.getContest(), runs);
+//            }
+
+            Class newScoringAlgorithmClass = newScoringAlgorithm.getClass();
+            try {
+                Method computeStandingMethod = newScoringAlgorithmClass.getDeclaredMethod(
+                        "computeStandingStandingsRecords",
+                        Run[].class, Account[].class, Properties.class, Problem[].class
+                );
+                computeStandingMethod.setAccessible(true);
+                StandingsRecord[] standings = ( StandingsRecord[])computeStandingMethod.invoke(
+                        newScoringAlgorithm,
+                        runs, accounts, properties, problemsPC2);
+
+                Arrays.sort(standings, comparator);
+    //            if (newScoringAlgorithm.blockRanking) {
+    //                newScoringAlgorithm.assignRanksBlock(standings);
+    //            } else {
+    //                newScoringAlgorithm.assignRanks(standings);
+    //            }
+
+                Method assignGroupRanksMethod = newScoringAlgorithmClass.getDeclaredMethod(
+                        "assignGroupRanks",
+                        IInternalContest.class, StandingsRecord[].class);
+                assignGroupRanksMethod.setAccessible(true);
+                assignGroupRanksMethod.invoke(
+                        newScoringAlgorithm,
+                        newScoringAlgorithm.getContest(), standings);
+                return standings;
+
+            } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
     }
 
 
