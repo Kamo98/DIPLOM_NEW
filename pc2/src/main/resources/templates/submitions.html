@@ -44,7 +44,8 @@
                         <td th:text="${run.time}"></td>
                         <td th:text="${run.langauge}"></td>
                         <td th:text="${run.status}"></td>
-                        <td><a class="btn btn-primary" th:href="@{'/student/source/' + ${run.number}}" target="_blank">Исходный код</a>
+                        <td><a class="btn btn-primary" th:href="${isTeacher} ? @{'/teacher/source/' + ${run.number}} : (${isStudent} ? @{'/student/source/' + ${run.number}} : @{'#'})"
+                              target="_blank">Исходный код</a>
                         </td>
                     </tr>
                     </tbody>
