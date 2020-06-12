@@ -1,5 +1,8 @@
 package ru.vkr.vkr.service;
 
+import edu.csus.ecs.pc2.api.ILanguage;
+import edu.csus.ecs.pc2.api.IProblem;
+import edu.csus.ecs.pc2.api.exceptions.NotLoggedInException;
 import edu.csus.ecs.pc2.core.InternalController;
 import edu.csus.ecs.pc2.core.log.Log;
 import edu.csus.ecs.pc2.core.model.*;
@@ -24,11 +27,8 @@ import java.util.concurrent.Future;
 @Service
 public class SubmitRunService {
     private static Logger logger = LoggerFactory.getLogger(SubmitRunService.class);
-    SerializedFile[] otherFiles = null;
     private final String nameOfFolder = "submition";
     private boolean serverReplied;
-    @Autowired
-    private ApplicationContext applicationContext;
 
 
     private ElementId getElementIdRun(int index) {
@@ -38,8 +38,29 @@ public class SubmitRunService {
 
 
     public void submitRun(Problem problem, int languageIndex, MultipartFile file) {
-        InternalController internalController = BridgePc2.getInternalController();
         Language language = BridgePc2.getInternalContest().getLanguages()[languageIndex];
+        IProblem iProblem = null;
+        ILanguage iLanguage = null;
+        try {
+            IProblem problems[] = BridgePc2.getServerConnection().getContest().getProblems();
+            for (IProblem iproblem : problems) {
+                if (iproblem.getShortName().equals(problem.getShortName())) {
+                    iProblem = iproblem;
+                    break;
+                }
+            }
+
+            ILanguage languages[] = BridgePc2.getServerConnection().getContest().getLanguages();
+            for (ILanguage ilanguage : languages) {
+                if (ilanguage.getName().equals(language.getDisplayName())) {
+                    iLanguage = ilanguage;
+                    break;
+                }
+            }
+        } catch (NotLoggedInException e) {
+            e.printStackTrace();
+        }
+
 
 
         String fileName = FileManager.loadFileToServer(file, nameOfFolder);
@@ -58,7 +79,8 @@ public class SubmitRunService {
 
         try {
             logger.info("submitRun for " + problem + " " + language + " file: " + fileName);
-            internalController.submitRun(problem, language, fileName, otherFiles);
+            BridgePc2.getServerConnection().
+                    submitRun(iProblem, iLanguage, fileName, new String[0], 0, 0);
         } catch (Exception e) {
             // TODO need to make this cleaner
             logger.error("Exception " + e.getMessage());

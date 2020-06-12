@@ -115,7 +115,8 @@ public class ProblemFacade {
             ElementId elementId = problem.getElementId();
             Class elementIdClass = elementId.getClass();
             Field elementIdField = elementIdClass.getDeclaredField("num");
-            return elementIdField.getLong(elementIdField.get(elementId));
+            elementIdField.setAccessible(true);
+            return elementIdField.getLong(elementId);
         } catch (IllegalAccessException | NoSuchFieldException e) {
             e.printStackTrace();
         }
@@ -317,7 +318,8 @@ public class ProblemFacade {
         try {
             Class elementIdClass = elementId.getClass();
             Field elementIdField = elementIdClass.getDeclaredField("num");
-            elementIdField.set(elementIdField.get(elementId), problemDb.getNumElementId());
+            elementIdField.setAccessible(true);
+            elementIdField.set(elementId, problemDb.getNumElementId());
         } catch (IllegalAccessException | NoSuchFieldException e) {
             e.printStackTrace();
         }
@@ -330,7 +332,8 @@ public class ProblemFacade {
         try {
             Class elementIdClass = elementId.getClass();
             Field elementIdField = elementIdClass.getDeclaredField("num");
-            elementIdField.set(elementIdField.get(elementId), problemDb.getNumElementId());
+            elementIdField.setAccessible(true);
+            elementIdField.set(elementId, problemDb.getNumElementId());
         } catch (IllegalAccessException | NoSuchFieldException e) {
             e.printStackTrace();
         }
