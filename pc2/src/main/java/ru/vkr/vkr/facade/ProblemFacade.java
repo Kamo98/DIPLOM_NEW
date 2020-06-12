@@ -314,6 +314,8 @@ public class ProblemFacade {
 
     //Ищет задачу в PC2 по сущности из БД
     public Problem findProblemInPC2(InternalController internalController, ru.vkr.vkr.entity.Problem problemDb) {
+
+
         ElementId elementId = new ElementId(problemDb.getName());
         try {
             Class elementIdClass = elementId.getClass();

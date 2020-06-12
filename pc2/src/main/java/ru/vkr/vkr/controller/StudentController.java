@@ -31,8 +31,6 @@ public class StudentController {
     @Autowired
     private StudentService studentService;
     @Autowired
-    private ApplicationContext applicationContext;
-    @Autowired
     private SearchService searchService;
     @Autowired
     private ChapterService chapterService;
@@ -97,29 +95,7 @@ public class StudentController {
     @GetMapping("/student/source/{indexRun}")
     public String showSource(Model model,
                              @PathVariable int indexRun) throws ExecutionException, InterruptedException {
-        System.out.println("Invoking an asynchronous method. "
-                + Thread.currentThread().getName());
-        Future<String> future1 = submitRunService.showSourceForSelectedRun(indexRun);
-        String result;
-        while (true) {
-            if (future1.isDone()) {
-                result = future1.get();
-                break;
-            }
-            System.out.println("Continue doing something else. ");
-            Thread.sleep(100);
-        }
-
-        Future<String> future2 = submitRunService.showSourceForSelectedRun(indexRun);
-        while (true) {
-            if (future2.isDone()) {
-                result = future2.get();
-                break;
-            }
-            System.out.println("Continue doing something else. ");
-            Thread.sleep(100);
-        }
-        model.addAttribute("source", result);
+        model.addAttribute("source", "result");
         return "student/source";
     }
 

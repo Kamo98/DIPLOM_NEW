@@ -1,9 +1,12 @@
 package ru.vkr.vkr.service;
 
+import edu.csus.ecs.pc2.api.IProblem;
+import edu.csus.ecs.pc2.api.exceptions.NotLoggedInException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.vkr.vkr.domain.BridgePc2;
 import ru.vkr.vkr.domain.FileManager;
 import ru.vkr.vkr.entity.Chapter;
 import ru.vkr.vkr.entity.HashTag;
@@ -73,6 +76,9 @@ public class ProblemService {
     }
 
     public Collection<Problem> getProblemsByCurrentStudent() {
+        List<Problem> problems = problemRepository.findAll();
+
+
         Set<Chapter> chapterSet = authenticationFacade.getCurrentStudent().getGroup().getCourseSubscriptions().getChapters();
         Set<Problem> problemSet = new HashSet<>();
         for (Chapter chapter : chapterSet) {
