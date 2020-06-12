@@ -425,6 +425,12 @@ public class TeacherController {
     }
 
 
+    @GetMapping("/teacher/updateNumInProblems")
+    public String updateNumInProblems () {
+        problemFacade.updateNumInProblems();
+        return "redirect:/teacher";
+    }
+
     @GetMapping("/teacher/pool-problems/{hashTagId}")
     public String poolProblemOneHashtag(@PathVariable("hashTagId") Long hashTagId, Model model) {
         searchService.poolSearchProblems(model, hashTagId);
@@ -443,6 +449,14 @@ public class TeacherController {
     public String showSubmitions(Model model) {
         model.addAttribute("runs", submitRunService.getRunSummit());
         return "/submitions";
+    }
+
+    @GetMapping("/teacher/source/{numberRun}")
+    public String showSource(Model model,
+                             @PathVariable int numberRun)  {
+        String sourceCode = submitRunService.showSourceCode(numberRun);
+        model.addAttribute("source", sourceCode);
+        return "source";
     }
 
 }

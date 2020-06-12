@@ -6,9 +6,11 @@ import edu.csus.ecs.pc2.core.InternalController;
 import edu.csus.ecs.pc2.core.Utilities;
 import edu.csus.ecs.pc2.core.exception.IllegalContestState;
 import edu.csus.ecs.pc2.core.model.*;
+import edu.csus.ecs.pc2.core.packet.PacketType;
 import edu.csus.ecs.pc2.core.scoring.NewScoringAlgorithm;
 import edu.csus.ecs.pc2.core.scoring.ProblemSummaryInfo;
 import edu.csus.ecs.pc2.core.scoring.StandingsRecord;
+import edu.csus.ecs.pc2.core.security.Permission;
 import edu.csus.ecs.pc2.validator.clicsValidator.ClicsValidatorSettings;
 import edu.csus.ecs.pc2.validator.customValidator.CustomValidatorSettings;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -353,7 +355,9 @@ public class ProblemFacade {
      * Скрипт для обновления задач в базе после экспорта
      */
     public void updateNumInProblems () {
-        Problem problems[] = BridgePc2.getInternalContest().getProblems();
+
+
+        /*roblem problems[] = BridgePc2.getInternalContest().getProblems();
         for (Problem iproblem : problems) {
             String shortName = iproblem.getShortName();
             String arr[] = shortName.split("-");
@@ -366,11 +370,12 @@ public class ProblemFacade {
                     elementIdField.setAccessible(true);
                     Long num = (Long) elementIdField.get(elementId);
                     problem.setNumElementId(num);
+                    iproblem.setDisplayName(problem.getName());
                     problemService.save(problem);
                 } catch (Exception e) {
                 }
             }
-        }
+        }*/
     }
 
 

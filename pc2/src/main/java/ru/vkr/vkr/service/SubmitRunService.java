@@ -4,9 +4,11 @@ import edu.csus.ecs.pc2.api.ILanguage;
 import edu.csus.ecs.pc2.api.IProblem;
 import edu.csus.ecs.pc2.api.IRun;
 import edu.csus.ecs.pc2.api.exceptions.NotLoggedInException;
+import edu.csus.ecs.pc2.api.implementation.Contest;
 import edu.csus.ecs.pc2.core.InternalController;
 import edu.csus.ecs.pc2.core.log.Log;
 import edu.csus.ecs.pc2.core.model.*;
+import edu.csus.ecs.pc2.core.scoring.NewScoringAlgorithm;
 import edu.csus.ecs.pc2.core.security.Permission;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,8 +23,11 @@ import ru.vkr.vkr.domain.FileManager;
 import ru.vkr.vkr.domain.RunSubmitDto;
 
 import java.io.File;
+import java.lang.reflect.Method;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 import java.util.concurrent.Future;
 
 @Service
@@ -43,6 +48,7 @@ public class SubmitRunService {
         IProblem iProblem = null;
         ILanguage iLanguage = null;
         try {
+
             IProblem problems[] = BridgePc2.getServerConnection().getContest().getProblems();
             for (IProblem iproblem : problems) {
                 if (iproblem.getShortName().equals(problem.getShortName())) {
@@ -89,8 +95,8 @@ public class SubmitRunService {
     }
 
     public List<RunSubmitDto> getRunSummit() {
-        IInternalContest contest = BridgePc2.getInternalContest();
         List<RunSubmitDto> runSubmitDtos = new ArrayList<>();
+        Contest contest = null;
         // в отсортированном порядке
         IRun iRuns[] = null;
         try {
@@ -98,7 +104,6 @@ public class SubmitRunService {
         } catch (NotLoggedInException e) {
             e.printStackTrace();
         }
-
         for (IRun run : iRuns) {
             runSubmitDtos.add(new RunSubmitDto(run.getNumber(),
                     run.getProblem().getName(),
@@ -107,5 +112,16 @@ public class SubmitRunService {
                     run.isSolved() ? "Yes" : "No"));
         }
         return runSubmitDtos;
+    }
+
+    public String showSourceCode(int numberRun) {
+        IRun iRun = null;
+        try {
+            iRun = BridgePc2.getServerConnection().getContest().getRun(numberRun);
+            return new String(iRun.getSourceCodeFileContents()[0], StandardCharsets.UTF_8);
+        } catch (NotLoggedInException e) {
+            e.printStackTrace();
+        }
+        return "";
     }
 }
