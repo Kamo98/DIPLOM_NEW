@@ -1,5 +1,7 @@
 package ru.vkr.vkr.facade;
 
+import edu.csus.ecs.pc2.api.IProblem;
+import edu.csus.ecs.pc2.api.exceptions.NotLoggedInException;
 import edu.csus.ecs.pc2.core.InternalController;
 import edu.csus.ecs.pc2.core.Utilities;
 import edu.csus.ecs.pc2.core.exception.IllegalContestState;
@@ -19,6 +21,7 @@ import ru.vkr.vkr.domain.MonitorData;
 import ru.vkr.vkr.entity.Student;
 import ru.vkr.vkr.form.CheckerSettingsForm;
 import ru.vkr.vkr.form.LoadTestsForm;
+import ru.vkr.vkr.service.ProblemService;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,6 +36,8 @@ public class ProblemFacade {
 
     @Autowired
     private ApplicationContext applicationContext;
+    @Autowired
+    private ProblemService problemService;
 
     //Стандартные имена тестовых файлов
     private final String extensionInStandart = ".in";
@@ -328,7 +333,8 @@ public class ProblemFacade {
 
     //Ищет задачу в PC2 по сущности из БД
     public Problem findProblemInPC2(ru.vkr.vkr.entity.Problem problemDb) {
-        ElementId elementId = new ElementId(problemDb.getName());
+        //ElementId elementId = new ElementId(problemDb.getName());
+        ElementId elementId = new ElementId("problem-" + problemDb.getId());
         try {
             Class elementIdClass = elementId.getClass();
             Field elementIdField = elementIdClass.getDeclaredField("num");
@@ -339,6 +345,32 @@ public class ProblemFacade {
         }
         return BridgePc2.getInternalContest().getProblem(elementId);
     }
+
+
+    /***********************************
+     * Скрипт для обновления задач в базе после экспорта
+     */
+    public void updateNumInProblems () {
+        Problem problems[] = BridgePc2.getInternalContest().getProblems();
+        for (Problem iproblem : problems) {
+            String shortName = iproblem.getShortName();
+            String arr[] = shortName.split("-");
+            if (arr.length == 2){
+                try {
+                    ru.vkr.vkr.entity.Problem problem = problemService.getProblemById(Long.parseLong(arr[1]));
+                    ElementId elementId = iproblem.getElementId();
+                    Class elementIdClass = elementId.getClass();
+                    Field elementIdField = elementIdClass.getDeclaredField("num");
+                    elementIdField.setAccessible(true);
+                    Long num = (Long) elementIdField.get(elementId);
+                    problem.setNumElementId(num);
+                    problemService.save(problem);
+                } catch (Exception e) {
+                }
+            }
+        }
+    }
+
 
     private ProblemDataFiles loadDataFiles(Problem aProblem, ProblemDataFiles files, String dataFileBaseDirectory, String dataExtension, String answerExtension, boolean externalDataFiles) {
 
