@@ -276,13 +276,6 @@
     });
 </script>
 
-<script th:if="${pageSubscribes}">
-    //Чтобы при запуске страницы активировалась вкладка с подписчиками
-    $(document).ready(function () {
-        $("#linkTmOfChapter").click();
-    });
-</script>
-
 <script>
     function getMonitor() {
         $.ajax({
@@ -348,6 +341,11 @@
         }
     }, 10000);
 
+</script>
+
+
+<script th:if="${activeTabMenu}">
+    $("#[[ ${activeTabMenu} ]]").click();
 </script>
 </body>
 </html>

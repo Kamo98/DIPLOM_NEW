@@ -15,7 +15,7 @@
     <tr th:each="run, state : ${runs}">
         <th th:text="${run.hiddenNumber}" style="display: none"></th>
         <th th:text="${run.number}"></th>
-        <td th:text="${run.displayName}"></td>
+        <td><a th:href="@{'problem/' + ${run.idProblem}}" th:text="${run.displayName}"></a></td>
         <td th:text="${run.time}"></td>
         <td th:text="${run.langauge}"></td>
         <td th:text="${run.status}"></td>

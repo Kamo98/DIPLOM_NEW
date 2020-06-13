@@ -502,6 +502,7 @@
     <footer th:replace="base :: footer"></footer>
 
 
+
     <script>
 
         $('#linkGeneralSetting').click(function(e){
@@ -563,5 +564,11 @@
         });
 
     </script>
+
+
+    <script th:if="${activeTabMenu}">
+        $("#[[ ${activeTabMenu} ]]").click();
+    </script>
+
 </body>
 </html>

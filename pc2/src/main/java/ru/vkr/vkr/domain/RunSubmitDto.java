@@ -4,18 +4,20 @@ public class RunSubmitDto {
     private int hiddenNumber;
     private int number;
     private String displayName;
+    private Long idProblem;
     private long time;
     private String langauge;
     private String status;
 
 
-    public RunSubmitDto(int hiddenNumber, int number, String displayName, long time, String langauge, String status) {
+    public RunSubmitDto(int hiddenNumber, int number, String displayName, long time, String langauge, String status, Long idProblem) {
         this.hiddenNumber = hiddenNumber;
         this.number = number;
         this.displayName = displayName;
         this.time = time;
         this.langauge = langauge;
         this.status = status;
+        this.idProblem = idProblem;
     }
 
     public int getNumber() {
@@ -73,4 +75,11 @@ public class RunSubmitDto {
         this.hiddenNumber = hiddenNumber;
     }
 
+    public Long getIdProblem() {
+        return idProblem;
+    }
+
+    public void setIdProblem(Long idProblem) {
+        this.idProblem = idProblem;
+    }
 }

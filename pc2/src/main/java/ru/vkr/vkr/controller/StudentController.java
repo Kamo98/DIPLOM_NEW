@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ru.vkr.vkr.domain.BridgePc2;
 import ru.vkr.vkr.entity.Chapter;
 import ru.vkr.vkr.entity.Course;
@@ -79,12 +80,14 @@ public class StudentController {
     }
 
     @PostMapping("/student/submit/{problemId}")
-    public String sendFileSubmit(Model model,
+    public String sendFileSubmit(RedirectAttributes redirectAttributes, Model model,
                                  @ModelAttribute("submitRunForm") SubmitRunForm submitRunForm,
                                  @PathVariable Long problemId) {
         submitRunService.submitRun(problemFacade.findProblemInPC2(problemService.getProblemById(problemId)),
                 submitRunForm.getLanguage(),
                 submitRunForm.getMultipartFile());
+
+        redirectAttributes.addFlashAttribute("activeTabMenu", "linkViewRuns");
         return "redirect:/student/problem/" + problemId;
     }
 

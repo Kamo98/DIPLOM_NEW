@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ru.vkr.vkr.domain.BridgePc2;
 import ru.vkr.vkr.entity.*;
 import ru.vkr.vkr.facade.ProblemFacade;
@@ -181,7 +182,7 @@ public class ProblemController {
 
     //Загрузка тестов
     @PostMapping("/teacher/problem/{problemId}/tests-upload")
-    public String uploadProblemTests(LoadTestsForm loadTestsForm, @PathVariable Long problemId) throws IOException {
+    public String uploadProblemTests(RedirectAttributes redirectAttributes, LoadTestsForm loadTestsForm, @PathVariable Long problemId) throws IOException {
         //todo: нужна валидация данных
         logger.info("Количество тестовых файлов = " + loadTestsForm.getDirTests().length);
 
@@ -190,15 +191,17 @@ public class ProblemController {
         problemFacade.loadTestFiles(loadTestsForm, problem);
         problemFacade.addTestsToProblem(problem);
 
+        redirectAttributes.addFlashAttribute("activeTabMenu", "linkTestsProblem");
         return "redirect:/teacher/problem/" + problemId;
     }
 
     //Изменение параметров тестов
     @PostMapping("/teacher/problem/{problemId}/tests-settings")
-    public String testsSettings(TestSettingsForm testSettingsForm, @PathVariable Long problemId) {
+    public String testsSettings(RedirectAttributes redirectAttributes, TestSettingsForm testSettingsForm, @PathVariable Long problemId) {
         Problem problem = problemService.getProblemById(problemId);
         problemFacade.setParamOfTests(problem, testSettingsForm);
 
+        redirectAttributes.addFlashAttribute("activeTabMenu", "linkTestsProblem");
         return "redirect:/teacher/problem/" + problemId;
     }
 
@@ -213,25 +216,30 @@ public class ProblemController {
 
 
     @GetMapping("/teacher/problem/{problemId}/test-delete/{testNum}")
-    public String deleteProblemTest(@PathVariable Long problemId, @PathVariable Integer testNum) {
+    public String deleteProblemTest(RedirectAttributes redirectAttributes, @PathVariable Long problemId, @PathVariable Integer testNum) {
         Problem problem = problemService.getProblemById(problemId);
         problemFacade.deleteTestFile(problem, testNum - 1);
+
+        redirectAttributes.addFlashAttribute("activeTabMenu", "linkTestsProblem");
         return "redirect:/teacher/problem/" + problemId;
     }
 
     @GetMapping("/teacher/problem/{problemId}/test-deleteAll")
-    public String deleteProblemAllTests(@PathVariable Long problemId) {
+    public String deleteProblemAllTests(RedirectAttributes redirectAttributes, @PathVariable Long problemId) {
         Problem problem = problemService.getProblemById(problemId);
         problemFacade.deleteAllTestFiles(problem);
+
+        redirectAttributes.addFlashAttribute("activeTabMenu", "linkTestsProblem");
         return "redirect:/teacher/problem/" + problemId;
     }
     //Установка параметров чекера
     @PostMapping("/teacher/problem/{problemId}/checker-settings")
-    public String checkerSettings(CheckerSettingsForm checkerSettingsForm, @PathVariable Long problemId) {
+    public String checkerSettings(RedirectAttributes redirectAttributes, CheckerSettingsForm checkerSettingsForm, @PathVariable Long problemId) {
         Problem problem = problemService.getProblemById(problemId);
 
         problemFacade.setParamsOfChecker(problem, checkerSettingsForm);
 
+        redirectAttributes.addFlashAttribute("activeTabMenu", "linkCheckerProblem");
         return "redirect:/teacher/problem/" + problemId;
     }
 
@@ -244,28 +252,34 @@ public class ProblemController {
 
     // добавление условия к задачи
     @PostMapping("/teacher/problem/{problemId}/add-statement")
-    public String addStatementMaterial(Model model,
+    public String addStatementMaterial(RedirectAttributes redirectAttributes, Model model,
                                        @PathVariable Long problemId,
                                        @ModelAttribute("theoryMaterialForm") TheoryMaterialForm theoryMaterialForm) {
         problemService.loadStatement(problemService.getProblemById(problemId), theoryMaterialForm);
+
+        redirectAttributes.addFlashAttribute("activeTabMenu", "linkStatementProblem");
         return "redirect:/teacher/problem/" + problemId;
     }
 
     //Удаление условия задачи
     @GetMapping("/teacher/problem/{problemId}/delete-statement")
-    public String deleteChapter(Model model,
+    public String deleteChapter(RedirectAttributes redirectAttributes, Model model,
                                 @PathVariable Long problemId) {
         problemService.deleteStatement(problemService.getProblemById(problemId));
+
+        redirectAttributes.addFlashAttribute("activeTabMenu", "linkStatementProblem");
         return "redirect:/teacher/problem/" + problemId;
     }
 
     @PostMapping("/teacher/submit/{problemId}")
-    public String sendFileSubmit(Model model,
+    public String sendFileSubmit(RedirectAttributes redirectAttributes, Model model,
                                  @ModelAttribute("submitRunForm") SubmitRunForm submitRunForm,
                                  @PathVariable Long problemId) {
         submitRunService.submitRun(problemFacade.findProblemInPC2(problemService.getProblemById(problemId)),
                 submitRunForm.getLanguage(),
                 submitRunForm.getMultipartFile());
+
+        redirectAttributes.addFlashAttribute("activeTabMenu", "linkViewRunsProblem");
         return "redirect:/teacher/problem/" + problemId;
     }
 }
