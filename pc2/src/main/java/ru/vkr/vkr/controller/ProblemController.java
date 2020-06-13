@@ -79,6 +79,9 @@ public class ProblemController {
 
         Collection<String> fileTests = problemFacade.getAllTestsById(problemId);
         model.addAttribute("fileTests", fileTests);
+        TestSettingsForm testSettingsForm = new TestSettingsForm();
+        problemFacade.setTestsParamsToForm(testSettingsForm, problem);
+        model.addAttribute("testSettingsForm", testSettingsForm);
 
         //Для чекера
         CheckerSettingsForm checkerSettingsForm = new CheckerSettingsForm();
@@ -161,6 +164,15 @@ public class ProblemController {
 
         problemFacade.loadTestFiles(loadTestsForm, problem);
         problemFacade.addTestsToProblem(problem);
+
+        return "redirect:/teacher/problem/" + problemId;
+    }
+
+    //Изменение параметров тестов
+    @PostMapping("/teacher/problem/{problemId}/tests-settings")
+    public String testsSettings(TestSettingsForm testSettingsForm, @PathVariable Long problemId) {
+        Problem problem = problemService.getProblemById(problemId);
+        problemFacade.setParamOfTests(problem, testSettingsForm);
 
         return "redirect:/teacher/problem/" + problemId;
     }

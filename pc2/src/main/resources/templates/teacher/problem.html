@@ -319,6 +319,23 @@
                             </div>
                         </form>
 
+                        <form th:action="@{'/teacher/problem/'+ ${problem.id} +'/tests-settings'}"
+                              th:object="${testSettingsForm}" method="post">
+                            <div class="row row-margin-top">
+                                <div class="col">
+                                    <input type="checkbox" id="stopOnFirstFail" th:field="*{stopOnFirstFail}">
+                                    <label for="stopOnFirstFail">Остановить выполнение на первом неудачном тесте</label>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <button class="btn btn-primary" type="submit">
+                                        <i class="fa fa-floppy-o" aria-hidden="true"></i>&nbsp;Сохранить
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+
                         <div class="row row-margin-top">
                             <div class="col">
                                 <h6 ><i class="fa fa-list" aria-hidden="true"></i>&nbsp;Тесты к задаче</h6 >

@@ -340,6 +340,26 @@
     $('#typeAddNew').click(function (e) {
         $('#selectProblems').attr('disabled', true);
     });
+
+    function getMonitor() {
+        $.ajax({
+             type: 'post',
+             url: "/teacher/theme/monitor",
+             data: {'idChapter': 305},
+             dataType: "html",
+             success: function (data) {
+                 console.log("фио было успешно изменено " + data);
+             }
+        });
+    }
+
+
+    setInterval(function() {
+        if ($('#linkResultsForTheme').hasClass('active')) {
+            //getMonitor();
+        }
+    }, 2000);
+
 </script>
 </body>
 </html>

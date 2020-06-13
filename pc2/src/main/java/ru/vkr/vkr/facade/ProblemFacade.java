@@ -23,6 +23,7 @@ import ru.vkr.vkr.domain.MonitorData;
 import ru.vkr.vkr.entity.Student;
 import ru.vkr.vkr.form.CheckerSettingsForm;
 import ru.vkr.vkr.form.LoadTestsForm;
+import ru.vkr.vkr.form.TestSettingsForm;
 import ru.vkr.vkr.service.ProblemService;
 
 import java.io.File;
@@ -149,6 +150,21 @@ public class ProblemFacade {
     }
 
 
+    public void setParamOfTests(ru.vkr.vkr.entity.Problem problemDb, TestSettingsForm testSettingsForm) {
+        InternalController internalController = BridgePc2.getInternalController();
+        //Ищем задачу
+        Problem problem = findProblemInPC2(problemDb);
+
+        problem.setStopOnFirstFailedTestCase(testSettingsForm.isStopOnFirstFail());
+        internalController.updateProblem(problem);
+    }
+
+    public void setTestsParamsToForm(TestSettingsForm testSettingsForm, ru.vkr.vkr.entity.Problem problemDb) {
+        InternalController internalController = BridgePc2.getInternalController();
+        //Ищем задачу
+        Problem problem = findProblemInPC2(problemDb);
+        testSettingsForm.setStopOnFirstFail(problem.isStopOnFirstFailedTestCase());
+    }
 
     //Установка параметров чекера
     public void setParamsOfChecker(ru.vkr.vkr.entity.Problem problemDb, CheckerSettingsForm checkerSettingsForm) {
