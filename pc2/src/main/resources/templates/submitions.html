@@ -21,8 +21,16 @@
             <ul class="nav nav-pills tabs-menu">
             </ul>
 
-            <div id="tableSubmitions">
+            <div class="row">
+                <div class="col col-align-center">
+                    <div>Время последнего обновления: <span id="timeLastRefreshTableSubmitions"></span></div>
+                </div>
+                <div class="col col-align-right">
+                    <a class="btn btn-primary" id="refreshTableSubmitions"><i class="fa fa-refresh" aria-hidden="true"></i></a>
+                </div>
+            </div>
 
+            <div id="tableSubmitions">
             </div>
         </div>
 
@@ -33,5 +41,12 @@
 
 <footer th:replace="base :: footer">
 </footer>
+<script>
+    //Обновление таблицы посылок по таймеру
+    setInterval(function() {
+        getSubmitions();
+    }, 10000);
+
+</script>
 </body>
 </html>

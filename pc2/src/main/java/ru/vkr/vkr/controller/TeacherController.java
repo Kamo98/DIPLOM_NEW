@@ -72,7 +72,6 @@ public class TeacherController {
     }
 
 
-
     @GetMapping("/teacher")
     public String mainTeacher() {
         //return "teacher/main";
@@ -111,7 +110,7 @@ public class TeacherController {
 
     //Создание нового курса
     @PostMapping("/teacher/course-create")
-    public String courseCreatePost (Model model, @Valid Course course, BindingResult bindingResult) {
+    public String courseCreatePost(Model model, @Valid Course course, BindingResult bindingResult) {
         // проверка на ошибки валидации
         if (bindingResult.hasErrors()) {
             model.addAttribute("isCreate", true);
@@ -137,9 +136,9 @@ public class TeacherController {
 
     //Страница с созданием новой темы/лабы
     @GetMapping("/teacher/course/{courseId}/chapter-create")
-    public String chapterCreateGet (Model model,
-                                    @PathVariable Long courseId,
-                                    Chapter chapter) {
+    public String chapterCreateGet(Model model,
+                                   @PathVariable Long courseId,
+                                   Chapter chapter) {
         model.addAttribute("course_id", courseId);
         model.addAttribute("isCreate", true);
         return "teacher/theme";
@@ -148,10 +147,10 @@ public class TeacherController {
 
     //Создание новой темы/лабы
     @PostMapping("/teacher/course/{courseId}/chapter-create")
-    public String createChapter (Model model,
-                                     @PathVariable Long courseId,
-                                     @Valid Chapter chapter,
-                                     BindingResult bindingResult) {
+    public String createChapter(Model model,
+                                @PathVariable Long courseId,
+                                @Valid Chapter chapter,
+                                BindingResult bindingResult) {
         // проверка на ошибки валидации
         if (bindingResult.hasErrors()) {
             model.addAttribute("course_id", courseId);
@@ -170,8 +169,8 @@ public class TeacherController {
     // страница для просмотра данных темы/лабы
     @GetMapping("/teacher/course/{course_id}/chapter/{chapter_id}")
     public String readChapter(Model model,
-                            @PathVariable Long course_id,
-                            @PathVariable Long chapter_id) {
+                              @PathVariable Long course_id,
+                              @PathVariable Long chapter_id) {
         TheoryMaterialForm theoryMaterialForm = new TheoryMaterialForm();
         model.addAttribute("theoryMaterialForm", theoryMaterialForm);
 
@@ -224,7 +223,7 @@ public class TeacherController {
     @GetMapping("/teacher/chapter/{chapterId}/dettach-problem/{problemId}")
     public String dettachProblemToChapter(Model model,
                                           @PathVariable Long chapterId,
-                                         @PathVariable Long problemId) {
+                                          @PathVariable Long problemId) {
         Problem problem = problemService.getProblemById(problemId);
         Chapter chapter = chapterService.getChapterById(chapterId);
         chapterService.dettachProblem(chapter, problem);
@@ -235,9 +234,9 @@ public class TeacherController {
     // добавление теоретического материала
     @PostMapping("/teacher/course/{course_id}/chapter/{chapter_id}/add-theory")
     public String addTheoryMaterial(Model model,
-                                 @PathVariable Long course_id,
-                                 @PathVariable Long chapter_id,
-                                 @ModelAttribute("theoryMaterialForm") TheoryMaterialForm theoryMaterialForm) {
+                                    @PathVariable Long course_id,
+                                    @PathVariable Long chapter_id,
+                                    @ModelAttribute("theoryMaterialForm") TheoryMaterialForm theoryMaterialForm) {
         chapterService.loadTheory(chapterService.getChapterById(chapter_id), theoryMaterialForm);
         return "redirect:/teacher/course/" + course_id + "/chapter/" + chapter_id;
     }
@@ -245,10 +244,10 @@ public class TeacherController {
     //Для изменения параметров темы/лабы
     @PostMapping("/teacher/course/{course_id}/chapter/{chapter_id}")
     public String updateChapterSettings(Model model,
-                             @Valid Chapter chapterForm,
-                             @PathVariable Long course_id,
-                             @PathVariable Long chapter_id,
-                             BindingResult bindingResult) {
+                                        @Valid Chapter chapterForm,
+                                        @PathVariable Long course_id,
+                                        @PathVariable Long chapter_id,
+                                        BindingResult bindingResult) {
         //todo: при создании курса валидация работает, при обновлении нет, нужно разбираться
 //        if (bindingResult.hasErrors()) {        //Ошибки валидации есть
 //            return "teacher/course";
@@ -262,8 +261,8 @@ public class TeacherController {
     //Удаление темы/лабы
     @GetMapping("/teacher/course/{courseId}/delete-chapter/{chapterId}")
     public String deleteChapter(Model model,
-                               @PathVariable Long courseId,
-                               @PathVariable Long chapterId) {
+                                @PathVariable Long courseId,
+                                @PathVariable Long chapterId) {
         Chapter chapter = chapterService.getChapterById(chapterId);
         chapterService.deleteChapter(chapter);
         return "redirect:/teacher/course/" + courseId;
@@ -273,9 +272,9 @@ public class TeacherController {
 
     //Страница с созданием новой группы
     @GetMapping("/teacher/course/{courseId}/group-create")
-    public String createGroup (Model model,
-                                  @PathVariable Long courseId,
-                                  Group group) {
+    public String createGroup(Model model,
+                              @PathVariable Long courseId,
+                              Group group) {
         model.addAttribute("course_id", courseId);
         model.addAttribute("isCreate", true);
         return "teacher/group";
@@ -283,10 +282,10 @@ public class TeacherController {
 
     // Создание новой группы
     @PostMapping("/teacher/course/{courseId}/group-create")
-    public String createGroup (Model model,
-                                   @PathVariable Long courseId,
-                                   @Valid Group group,
-                                   BindingResult bindingResult) {
+    public String createGroup(Model model,
+                              @PathVariable Long courseId,
+                              @Valid Group group,
+                              BindingResult bindingResult) {
         model.addAttribute("course_id", courseId);
         // проверка на ошибки валидации
         if (bindingResult.hasErrors()) {
@@ -351,6 +350,7 @@ public class TeacherController {
 
 
     //Удаление группы
+
     /**
      * Работа с группой
      * ********************************************
@@ -371,7 +371,7 @@ public class TeacherController {
         }
 
         //Сделать всех новых пользователе йчленами группы
-        for(Long userId : usersId) {
+        for (Long userId : usersId) {
             Student student = studentRepository.getOne(userId);
             student.setGroup(group);
             studentRepository.save(student);
@@ -392,7 +392,7 @@ public class TeacherController {
 
     // редактирование ФИО студнета
     @ResponseBody
-    @PostMapping ("/teacher/editStudent/")
+    @PostMapping("/teacher/editStudent/")
     public String editFioStudent(Model model, @RequestParam(value = "fio") String newFio,
                                  @RequestParam(value = "idStudent") Long idStudent) {
         teacherFacade.editStudent(idStudent, newFio);
@@ -441,7 +441,7 @@ public class TeacherController {
 
 
     @GetMapping("/teacher/updateNumInProblems")
-    public String updateNumInProblems () {
+    public String updateNumInProblems() {
         problemFacade.updateNumInProblems();
         return "redirect:/teacher";
     }
@@ -462,16 +462,6 @@ public class TeacherController {
 
     @GetMapping("/teacher/submitions")
     public String showSubmitions(Model model) {
-        model.addAttribute("runs", submitRunService.getRunSummit());
         return "/submitions";
     }
-
-    @GetMapping("/teacher/source/{numberRun}")
-    public String showSource(Model model,
-                             @PathVariable int numberRun)  {
-        String sourceCode = submitRunService.showSourceCode(numberRun);
-        model.addAttribute("source", sourceCode);
-        return "source";
-    }
-
 }

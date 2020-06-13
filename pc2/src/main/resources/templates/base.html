@@ -101,7 +101,7 @@
                         </ul>
                         <div class="link-new"><a th:href="@{'/teacher/problem-create'}"><i class="fa fa-plus" aria-hidden="true"></i>&nbsp;Создать задачу</a></div>
 
-                        <div class="link-new"><a th:href="@{'/teacher/submitions'}">
+                        <div class="link-new"><a id="linkShowSubmitionsTeacher" th:href="@{'/teacher/submitions'}">
                             <i class="fa fa-angellist" aria-hidden="true"></i>&nbsp;Посмотреть отправки</a></div>
                     </div>
                 </div>
@@ -129,9 +129,8 @@
                                 <a th:href="@{'/student/problem/' + ${problem.id}}" th:text="${problem.name}">Задача</a>
                             </li>
                         </ul>
-                        <div class="link-new"><a th:href="@{'/student/submitions'}">
+                        <div class="link-new"><a id="linkShowSubmitionsStudent" th:href="@{'/student/submitions'}">
                             <i class="fa fa-angellist" aria-hidden="true"></i>&nbsp;Посмотреть отправки</a></div>
-
 
                     </div>
                 </div>

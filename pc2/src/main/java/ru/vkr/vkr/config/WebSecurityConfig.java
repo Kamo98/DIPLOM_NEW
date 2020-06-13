@@ -45,23 +45,26 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf()
                 .disable()
                 .authorizeRequests()
-                    //Доступ только для пользователей с ролью Администратор
-                    .antMatchers("/admin/**", "/").hasRole("ADMIN")
-                    //Доступ только для пользователей с ролью Преподаватель
-                    .antMatchers("/teacher/**").hasRole("TEACHER")
-                    //Доступ только для пользователей с ролью Студент
-                    .antMatchers("/student/**").hasRole("STUDENT")
-                    .anyRequest().authenticated()
+                //Доступ только для пользователей с ролью Администратор
+                .antMatchers("/admin/**", "/").hasRole("ADMIN")
+                //Доступ только для пользователей с ролью Преподаватель
+                .antMatchers("/teacher/**").hasRole("TEACHER")
+                //Доступ только для пользователей с ролью Студент
+                .antMatchers("/student/**").hasRole("STUDENT")
+                //Доступ только для пользователей с ролью Студент
+                .antMatchers("/user/**").hasAnyRole("ADMIN", "TEACHER", "STUDENT")
+
+                .anyRequest().authenticated()
                 .and()
-                    //Настройка для входа в систему
-                    .formLogin()
-                    .loginPage("/login")
-                    .successHandler(mySimpleUrlAuthenticationSuccessHandler)
-                    .permitAll()
+                //Настройка для входа в систему
+                .formLogin()
+                .loginPage("/login")
+                .successHandler(mySimpleUrlAuthenticationSuccessHandler)
+                .permitAll()
                 .and()
-                    .logout()
-                    .logoutSuccessHandler(customLogoutSuccessHandler)
-                    .permitAll()
+                .logout()
+                .logoutSuccessHandler(customLogoutSuccessHandler)
+                .permitAll()
                 .and()
                 .exceptionHandling().accessDeniedHandler(accessDeniedHandler);
     }

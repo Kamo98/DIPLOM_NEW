@@ -105,30 +105,15 @@
 
                 <div id="ViewRuns" style="display:none;">
 
-                    <table id="ViewRunsUser" class="table table-striped table-bordered table-sm">
-                        <thead class="thead-dark">
-                        <tr>
-                            <th scope="col" id="firstColumn">#</th>
-                            <th scope="col">Задача</th>
-                            <th scope="col">Время</th>
-                            <th scope="col">Язык</th>
-                            <th scope="col">Статус</th>
-                            <th scope="col">Исходный код</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-
-                        <tr th:each="run, state : ${runs}">
-                            <th th:text="${run.number}"></th>
-                            <td th:text="${run.displayName}"></td>
-                            <td th:text="${run.time}"></td>
-                            <td th:text="${run.langauge}"></td>
-                            <td th:text="${run.status}"></td>
-                            <td><a class="btn btn-primary" th:href="@{'/student/source/' + ${run.number}}" target="_blank">Исходный код</a>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
+                    <div class="row">
+                        <div class="col col-align-center">
+                            <div>Время последнего обновления: <span id="timeLastRefreshTableSubmitions"></span></div>
+                        </div>
+                        <div class="col col-align-right">
+                            <a class="btn btn-primary" id="refreshTableSubmitions"><i class="fa fa-refresh" aria-hidden="true"></i></a>
+                        </div>
+                    </div>
+                    <div id="tableSubmitions"></div>
 
                 </div>
 
@@ -159,6 +144,7 @@
     $('#linkViewRuns').click(function (e) {
         $('#linkViewRuns').addClass('active');
         $('#ViewRuns').show();
+        getSubmitions();
     });
 
 </script>

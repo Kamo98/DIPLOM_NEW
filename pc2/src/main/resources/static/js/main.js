@@ -7,8 +7,14 @@ $('.tabs-menu a').click(function (e) {
 });
 
 $(document).ready(function () {
-    $('#ViewRunsUser').DataTable();
-    $('.dataTables_length').addClass('bs-select');
+
+    $('#linkShowSubmitionsTeacher').click(function(){
+        getSubmitions();
+    });
+
+    $('#linkShowSubmitionsStudent').click(function(){
+        getSubmitions();
+    });
 
     $('#sourceTM2').hide();
 
@@ -125,8 +131,30 @@ function editFioTeacher (idTeacher, stringFIO) {
      });
  }
 
+function getSubmitions() {
+    $.ajax({
+        type: 'post',
+        url: "/user/submitions",
+        dataType: "html",
+        success: function (data) {
+            $("#tableSubmitions").html(data);
+            $('#ViewRunsUser').DataTable();
+            $('.dataTables_length').addClass('bs-select');
+            var dt = new Date();
+            var time = dt.getHours() + ":" + dt.getMinutes() + ":" + dt.getSeconds();
+            $("#timeLastRefreshTableSubmitions").text(time);
+        }
+    });
+}
 
+$('#refreshTableSubmitions').click(function (e) {
+    getSubmitions();
+});
 
+//Обновление таблицы посылок по таймеру
+setInterval(function() {
+    getSubmitions();
+}, 10000);
 
 
 $(".myButtonFio").click(function (e) {

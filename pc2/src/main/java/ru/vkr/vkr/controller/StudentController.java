@@ -73,7 +73,6 @@ public class StudentController {
             model.addAttribute("statement", true);
         }
         model.addAttribute("problem", problem);
-        model.addAttribute("runs", submitRunService.getRunSummit());
         model.addAttribute("langs", BridgePc2.getInternalContest().getLanguages());
         model.addAttribute("submitRunForm", submitRunForm);
         return "student/problem";
@@ -130,7 +129,6 @@ public class StudentController {
 
     @GetMapping("/student/submitions")
     public String showSubmitions(Model model) {
-        model.addAttribute("runs", submitRunService.getRunSummit());
         return "/submitions";
     }
 }

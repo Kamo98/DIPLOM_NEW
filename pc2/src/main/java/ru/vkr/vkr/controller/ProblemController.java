@@ -1,7 +1,5 @@
 package ru.vkr.vkr.controller;
 
-import edu.csus.ecs.pc2.core.InternalController;
-import edu.csus.ecs.pc2.core.scoring.NewScoringAlgorithm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +11,10 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import ru.vkr.vkr.domain.BridgePc2;
-import ru.vkr.vkr.entity.*;
+import ru.vkr.vkr.entity.Chapter;
+import ru.vkr.vkr.entity.Course;
+import ru.vkr.vkr.entity.HashTag;
+import ru.vkr.vkr.entity.Problem;
 import ru.vkr.vkr.facade.ProblemFacade;
 import ru.vkr.vkr.form.*;
 import ru.vkr.vkr.service.*;
@@ -52,7 +53,6 @@ public class ProblemController {
         TheoryMaterialForm theoryMaterialForm = new TheoryMaterialForm();
         SubmitRunForm submitRunForm = new SubmitRunForm();
 
-        model.addAttribute("runs", submitRunService.getRunSummit());
         model.addAttribute("theoryMaterialForm", theoryMaterialForm);
         model.addAttribute("teacherCourses", teacherCourses);
         model.addAttribute("teacherProblems", teacherProblems);
