@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ru.vkr.vkr.domain.MonitorData;
 import ru.vkr.vkr.domain.ROLE;
 import ru.vkr.vkr.entity.*;
@@ -46,10 +47,6 @@ public class TeacherController {
     @Autowired
     private SearchService searchService;
 
-
-    //todo: костыльное решение для активизации нужной вкладки при загрузке страницы
-    private String pageTabAttribute = "tabMain";
-
     //Для вывода сообщений пользоваетлю
     private String messageAttribute = "no";
 
@@ -65,8 +62,6 @@ public class TeacherController {
         model.addAttribute("teacherCourses", teacherCourses);
         model.addAttribute("teacherProblems", teacherProblems);
         model.addAttribute("isTeacher", true);
-        model.addAttribute(pageTabAttribute, true);
-        pageTabAttribute = "tabMain";
         model.addAttribute(messageAttribute, true);
         messageAttribute = "no";
     }
@@ -221,12 +216,14 @@ public class TeacherController {
 
     //Открепление задачи от темы
     @GetMapping("/teacher/chapter/{chapterId}/dettach-problem/{problemId}")
-    public String dettachProblemToChapter(Model model,
+    public String dettachProblemToChapter(RedirectAttributes redirectAttributes, Model model,
                                           @PathVariable Long chapterId,
                                           @PathVariable Long problemId) {
         Problem problem = problemService.getProblemById(problemId);
         Chapter chapter = chapterService.getChapterById(chapterId);
         chapterService.dettachProblem(chapter, problem);
+
+        redirectAttributes.addFlashAttribute("activeTabMenu", "linkThemeProblems");
         return "redirect:/teacher/course/" + chapter.getCourseChapters().getId() + "/chapter/" + chapterId;
     }
 
@@ -326,7 +323,7 @@ public class TeacherController {
         return "teacher/group";
     }
 
-    //Для изменения параметров темы/лабы
+    //Для изменения параметров группы
     @PostMapping("/teacher/course/{courseId}/group/{groupId}")
     public String groupPost(Model model,
                             @Valid Group groupForm,
@@ -382,11 +379,13 @@ public class TeacherController {
 
     // удаление группы
     @GetMapping("/teacher/course/{courseId}/delete-group/{groupId}")
-    public String deleteGroup(Model model,
+    public String deleteGroup(RedirectAttributes redirectAttributes, Model model,
                               @PathVariable Long courseId,
                               @PathVariable Long groupId) {
         Group group = groupService.getGroupById(groupId);
         groupService.deleteGroup(group);
+
+        redirectAttributes.addFlashAttribute("activeTabMenu", "linkSubscribeOfCourse");
         return "redirect:/teacher/course/" + courseId;
     }
 

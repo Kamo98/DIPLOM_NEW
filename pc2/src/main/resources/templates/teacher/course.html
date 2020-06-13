@@ -224,5 +224,9 @@
         $('#selectGroups').attr('disabled', true);
     });
 </script>
+
+<script th:if="${activeTabMenu}">
+    $("#[[ ${activeTabMenu} ]]").click();
+</script>
 </body>
 </html>

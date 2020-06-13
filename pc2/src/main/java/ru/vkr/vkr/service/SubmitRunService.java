@@ -125,7 +125,8 @@ public class SubmitRunService {
                     run.getSubmissionTime(),
                     run.getLanguage().getName(),
                     run.isFinalJudged() ? getResultRun(getInternalRunMethod, contest, run)
-                            : "testing..."));
+                            : "testing...",
+                    Long.parseLong(run.getProblem().getShortName().split("-")[1])));
         }
         // в отсортированном порядке
         runSubmitDtos.sort(new RunSubmitDtoComparator());
