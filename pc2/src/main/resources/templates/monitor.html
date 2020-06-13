@@ -1,0 +1,29 @@
+<div class="row table-header row-table">
+    <div class="col-1">№</div>
+    <div class="col-3"><i class="fa fa-user" aria-hidden="true"></i>&nbsp;Студент</div>
+    <div class="col-1"><i class="fa fa-tasks" aria-hidden="true"></i></div>
+    <div class="col-1"><i class="fa fa-clock-o" aria-hidden="true"></i></div>
+    <div class="col" th:each="problem, iState: ${chapter.chapterProblems}">
+        <a th:href="@{'/teacher/problem/' + ${problem.id}}"
+           th:text="${iState.index} + 1"
+           th:title="${problem.name}">A</a>
+    </div>
+</div>
+<div class="row row-table" th:each="standingsRecord, iState : ${monitor.getRecords()}">
+    <div class="col-1" th:text="${iState.index + 1}">#</div>
+    <div class="col-3" th:text="${monitor.getStudent(iState.index)}">Иванов Иван Иванович</div>
+    <div class="col-1" th:text="${standingsRecord.getNumberSolved()}">-</div>
+    <div class="col-1" th:text="${standingsRecord.getPenaltyPoints()}">-</div>
+    <div class="col" th:each="problemInfo : ${monitor.getProblemInfos(iState.index)}">
+        <span th:if="${problemInfo.getNumberSubmitted()} == 0">
+        </span>
+        <span th:unless="${problemInfo.getNumberSubmitted()} == 0">
+            <span th:if="${problemInfo.isSolved()}" class="cell-task-plus">
+                +[[ (${problemInfo.getNumberSubmitted() - 1}) != 0 ? ${problemInfo.getNumberSubmitted() - 1} : '' ]]
+            </span>
+            <span th:unless="${problemInfo.isSolved()}" class="cell-task-minus">
+                -[[ (${problemInfo.getNumberSubmitted() - 1}) != 0 ? ${problemInfo.getNumberSubmitted() - 1} : '' ]]
+            </span>
+        </span>
+    </div>
+</div>
