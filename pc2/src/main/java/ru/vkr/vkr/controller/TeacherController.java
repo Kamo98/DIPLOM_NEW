@@ -183,15 +183,29 @@ public class TeacherController {
         model.addAttribute("chapter", chapter);
         model.addAttribute("isCreate", false);
 
-        //Загрузка монитора
+
         List<Group> groups = chapter.getCourseChapters().getSubscribers();
         List<Student> students = new ArrayList<>();
         for (Group gr : groups)
             students.addAll(gr.getStudents());
-        MonitorData monitor = problemFacade.getMonitor(students, chapter.getChapterProblems());
-        model.addAttribute("monitor", monitor);
+
+        model.addAttribute("monitor", problemFacade.getMonitor(students, chapter.getChapterProblems()));
 
         return "teacher/theme";
+    }
+
+
+    //Загрузка монитора
+    @ResponseBody
+    @PostMapping("/teacher/theme/monitor")
+    public MonitorData getMonitor(@RequestParam(value = "idChapter") Long idChapter) {
+        Chapter chapter = chapterService.getChapterById(idChapter);
+        List<Group> groups = chapter.getCourseChapters().getSubscribers();
+        List<Student> students = new ArrayList<>();
+        for (Group gr : groups)
+            students.addAll(gr.getStudents());
+
+        return problemFacade.getMonitor(students, chapter.getChapterProblems());
     }
 
 
