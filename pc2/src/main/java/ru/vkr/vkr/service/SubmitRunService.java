@@ -89,6 +89,7 @@ public class SubmitRunService {
 
         try {
             logger.info("submitRun for " + problem + " " + language + " file: " + fileName);
+            BridgePc2.getRunStatisticListener().setSourceCode(false);
             BridgePc2.getServerConnection().
                     submitRun(iProblem, iLanguage, fileName, new String[0], 0, 0);
         } catch (Exception e) {
@@ -100,7 +101,6 @@ public class SubmitRunService {
     public List<RunSubmitDto> getRunSummit() {
         List<RunSubmitDto> runSubmitDtos = new ArrayList<>();
         Contest contest = null;
-        // в отсортированном порядке
         IRun iRuns[] = null;
         try {
             contest = BridgePc2.getServerConnection().getContest();
@@ -118,7 +118,6 @@ public class SubmitRunService {
         }
 
         for (IRun run : iRuns) {
-
             runSubmitDtos.add(new RunSubmitDto(
                     -run.getNumber(),
                     run.getNumber(),
@@ -128,6 +127,7 @@ public class SubmitRunService {
                     run.isFinalJudged() ? getResultRun(getInternalRunMethod, contest, run)
                             : "testing..."));
         }
+        // в отсортированном порядке
         runSubmitDtos.sort(new RunSubmitDtoComparator());
         return runSubmitDtos;
     }
@@ -164,6 +164,7 @@ public class SubmitRunService {
         IRun iRun = null;
         try {
             iRun = BridgePc2.getServerConnection().getContest().getRun(numberRun);
+            BridgePc2.getRunStatisticListener().setSourceCode(true);
             return new String(iRun.getSourceCodeFileContents()[0], StandardCharsets.UTF_8);
         } catch (NotLoggedInException e) {
             e.printStackTrace();

@@ -54,4 +54,15 @@ public class FileManager {
         }
         return "";
     }
+
+    public static void saveRunStatistic(RunStatistic runStatistic) {
+        //создаем 2 потока для сериализации объекта и сохранения его в файл
+        try(FileOutputStream outputStream = new FileOutputStream("C:\\diplom\\save.ser");
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream)) {
+            // сохраняем статистические данные в файл
+            objectOutputStream.writeObject(runStatistic);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }
