@@ -448,8 +448,6 @@ public class ProblemFacade {
                 loginPC2Student.put(st.getUser().getLoginPC2(), st);
 
             Problem[] problemsPC2 = new Problem[problems.size()];
-//            for(int i = 0; i < problems.size(); i++)
-//                problemsPC2[i] = findProblemInPC2(internalController, problems.get(i));
             int i = 0;
             for(ru.vkr.vkr.entity.Problem pr : problems)
                 problemsPC2[i++] = findProblemInPC2(pr);

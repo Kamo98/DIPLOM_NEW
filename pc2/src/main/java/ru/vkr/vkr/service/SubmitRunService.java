@@ -118,7 +118,7 @@ public class SubmitRunService {
             e.printStackTrace();
         }
 
-
+// todo : iRun.isFinalJudged() - посмотреть - так ли это
         for (IRun run : iRuns) {
 
             runSubmitDtos.add(new RunSubmitDto(run.getNumber(),
@@ -136,20 +136,19 @@ public class SubmitRunService {
             return "Yes";
         }
         try {
-            String result = "";
             Run run = (Run) method.invoke(contest, iRun);
-            int countTestCase = 0;
-            RunTestCase runTestCases[] = run.getRunTestCases();
-            int allCountTestCases = runTestCases.length;
-            while (countTestCase < allCountTestCases && runTestCases[countTestCase++].isPassed());
-
-            Judgement judgement = BridgePc2.getInternalContest().
-                    getJudgement(runTestCases[countTestCase - 1].getJudgementId());
-            if (judgement != null) {
-                result = judgement.toString();
+            Problem problem = BridgePc2.getInternalContest().getProblem(run.getProblemId());
+            if (!problem.isStopOnFirstFailedTestCase()) {
+                RunTestCase runTestCases[] = run.getRunTestCases();
+                int numberTestCases = problem.getNumberTestCases();
+                int numberRunTestCases = runTestCases.length;
+                int countPassTestCases = 0;
+                while (countPassTestCases < numberRunTestCases && runTestCases[countPassTestCases++].isPassed());
+                double result = ((double) (countPassTestCases - 1) / numberTestCases) * 100;
+                return "No --> " + (int) result + "%";
+            } else {
+                return iRun.getJudgementName() + "-->" + run.getRunTestCases().length;
             }
-            return result + "--" + countTestCase;
-
         } catch (IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
         }
