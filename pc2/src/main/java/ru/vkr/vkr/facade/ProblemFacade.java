@@ -447,10 +447,18 @@ public class ProblemFacade {
             for (Student st : students)
                 loginPC2Student.put(st.getUser().getLoginPC2(), st);
 
-            Problem[] problemsPC2 = new Problem[problems.size()];
+
+            ArrayList<Problem> problemsPC2List = new ArrayList<>();
+            for(ru.vkr.vkr.entity.Problem pr : problems) {
+                Problem problem = findProblemInPC2(pr);
+                if (problem != null)
+                    problemsPC2List.add(problem);
+            }
+
+            Problem[] problemsPC2 = new Problem[problemsPC2List.size()];
             int i = 0;
-            for(ru.vkr.vkr.entity.Problem pr : problems)
-                problemsPC2[i++] = findProblemInPC2(pr);
+            for(Problem pr : problemsPC2List)
+                problemsPC2[i++] = pr;
 
             //Получаем монитор от PC2
             StandingsRecord[] standingsRecords = getStandingsRecords(BridgePc2.getInternalContest(),

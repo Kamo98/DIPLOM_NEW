@@ -215,37 +215,15 @@
                 </div>
 
                 <div id="resultForTheme" style="display: none;" th:unless="${isCreate}">
-                    <div class="container row-margin-top  col-align-centered" id="monitorOfGroup">
-                        <div class="row table-header row-table">
-                            <div class="col-1">№</div>
-                            <div class="col-3"><i class="fa fa-user" aria-hidden="true"></i>&nbsp;Студент</div>
-                            <div class="col-1"><i class="fa fa-tasks" aria-hidden="true"></i></div>
-                            <div class="col-1"><i class="fa fa-clock-o" aria-hidden="true"></i></div>
-                            <div class="col" th:each="problem, iState: ${chapter.chapterProblems}">
-                                <a th:href="@{'/teacher/problem/' + ${problem.id}}"
-                                   th:text="${iState.index} + 1"
-                                   th:title="${problem.name}">A</a>
-                            </div>
+                    <div class="row">
+                        <div class="col col-align-center">
+                            <div>Время последнего обновления: <span id="timeLastRefresh"></span></div>
                         </div>
-                        <div class="row row-table" th:each="standingsRecord, iState : ${monitor.getRecords()}">
-                            <div class="col-1" th:text="${iState.index + 1}">#</div>
-                            <div class="col-3" th:text="${monitor.getStudent(iState.index)}">Иванов Иван Иванович</div>
-                            <div class="col-1" th:text="${standingsRecord.getNumberSolved()}">-</div>
-                            <div class="col-1" th:text="${standingsRecord.getPenaltyPoints()}">-</div>
-                            <div class="col" th:each="problemInfo : ${monitor.getProblemInfos(iState.index)}">
-                                    <span th:if="${problemInfo.getNumberSubmitted()} == 0">
-
-                                    </span>
-                                <span th:unless="${problemInfo.getNumberSubmitted()} == 0">
-                                        <span th:if="${problemInfo.isSolved()}" class="cell-task-plus">
-                                            +[[ (${problemInfo.getNumberSubmitted() - 1}) != 0 ? ${problemInfo.getNumberSubmitted() - 1} : '' ]]
-                                        </span>
-                                        <span th:unless="${problemInfo.isSolved()}" class="cell-task-minus">
-                                            -[[ (${problemInfo.getNumberSubmitted() - 1}) != 0 ? ${problemInfo.getNumberSubmitted() - 1} : '' ]]
-                                        </span>
-                                    </span>
-                            </div>
+                        <div class="col col-align-right">
+                            <a class="btn btn-primary" id="refreshMonitor"><i class="fa fa-refresh" aria-hidden="true"></i></a>
                         </div>
+                    </div>
+                    <div class="container row-margin-top  col-align-centered" id="monitorTable">
                     </div>
                 </div>
 
@@ -306,6 +284,20 @@
 </script>
 
 <script>
+    function getMonitor() {
+        $.ajax({
+             type: 'post',
+             url: "/teacher/theme/monitor",
+             data: {'idChapter': [[ ${chapter.id} ]] },
+             dataType: "html",
+             success: function (data) {
+                 $("#monitorTable").html(data);
+                 var dt = new Date();
+                 var time = dt.getHours() + ":" + dt.getMinutes() + ":" + dt.getSeconds();
+                 $("#timeLastRefresh").text(time);
+             }
+        });
+    }
 
     //Клик по вкладке Теоретический материал
     $('#linkTmOfChapter').click(function (e) {
@@ -323,6 +315,7 @@
     $('#linkResultsForTheme').click(function (e) {
         $('#linkResultsForTheme').addClass('active');
         $('#resultForTheme').show();
+        getMonitor();
     });
 
     //Клик по вкладке Параметры
@@ -341,24 +334,19 @@
         $('#selectProblems').attr('disabled', true);
     });
 
-    function getMonitor() {
-        $.ajax({
-             type: 'post',
-             url: "/teacher/theme/monitor",
-             data: {'idChapter': 305},
-             dataType: "html",
-             success: function (data) {
-                 console.log("фио было успешно изменено " + data);
-             }
-        });
-    }
 
 
+    //Обновление монитора по клику
+    $('#refreshMonitor').click(function (e) {
+        getMonitor();
+    });
+
+    //Обновление монитора по таймеру
     setInterval(function() {
         if ($('#linkResultsForTheme').hasClass('active')) {
-            //getMonitor();
+            getMonitor();
         }
-    }, 2000);
+    }, 10000);
 
 </script>
 </body>
