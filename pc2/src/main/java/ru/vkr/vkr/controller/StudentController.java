@@ -2,7 +2,6 @@ package ru.vkr.vkr.controller;
 
 import edu.csus.ecs.pc2.core.InternalController;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -18,8 +17,6 @@ import ru.vkr.vkr.service.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 
 //import ru.vkr.vkr.contest.Test;
 
@@ -30,8 +27,6 @@ public class StudentController {
     private SubmitRunService submitRunService;
     @Autowired
     private StudentService studentService;
-    @Autowired
-    private ApplicationContext applicationContext;
     @Autowired
     private SearchService searchService;
     @Autowired
@@ -94,33 +89,18 @@ public class StudentController {
         return "redirect:/student/problem/" + problemId;
     }
 
-    @GetMapping("/student/source/{indexRun}")
-    public String showSource(Model model,
-                             @PathVariable int indexRun) throws ExecutionException, InterruptedException {
-        System.out.println("Invoking an asynchronous method. "
-                + Thread.currentThread().getName());
-        Future<String> future1 = submitRunService.showSourceForSelectedRun(indexRun);
-        String result;
-        while (true) {
-            if (future1.isDone()) {
-                result = future1.get();
-                break;
-            }
-            System.out.println("Continue doing something else. ");
-            Thread.sleep(100);
-        }
+    @GetMapping("/student/updateNumInProblems")
+    public String updateNumInProblems () {
+        problemFacade.updateNumInProblems();
+        return "redirect:/student/course";
+    }
 
-        Future<String> future2 = submitRunService.showSourceForSelectedRun(indexRun);
-        while (true) {
-            if (future2.isDone()) {
-                result = future2.get();
-                break;
-            }
-            System.out.println("Continue doing something else. ");
-            Thread.sleep(100);
-        }
-        model.addAttribute("source", result);
-        return "student/source";
+    @GetMapping("/student/source/{numberRun}")
+    public String showSource(Model model,
+                             @PathVariable int numberRun)  {
+        String sourceCode = submitRunService.showSourceCode(numberRun);
+        model.addAttribute("source", sourceCode);
+        return "source";
     }
 
 

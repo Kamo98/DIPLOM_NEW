@@ -25,19 +25,22 @@ public class AuthenticationFacade implements IAuthenticationFacade {
         return SecurityContextHolder.getContext().getAuthentication();
     }
 
+    public User getCurrentUser() {
+        Authentication authentication = getAuthentication();
+        return (User) userService.loadUserByUsername(authentication.getName());
+    }
+
 
     //todo: сделал не очень хорошо, но пока так
     public Teacher getCurrentTeacher() {
-        Authentication authentication = getAuthentication();
-        User curUser = (User) userService.loadUserByUsername(authentication.getName());
+        User curUser = getCurrentUser();
         return entityManager.createQuery("select t from Teacher t where t.user.id = :paramId", Teacher.class).
                 setParameter("paramId", curUser.getId()).getSingleResult();
     }
 
     //todo: сделал не очень хорошо, но пока так
     public Student getCurrentStudent() {
-        Authentication authentication = getAuthentication();
-        User curUser = (User) userService.loadUserByUsername(authentication.getName());
+        User curUser = getCurrentUser();
         return entityManager.createQuery("select t from Student t where t.user.id = :paramId", Student.class).
                 setParameter("paramId", curUser.getId()).getSingleResult();
     }
