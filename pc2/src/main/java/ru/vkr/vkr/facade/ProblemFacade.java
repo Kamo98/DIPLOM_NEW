@@ -2,6 +2,7 @@ package ru.vkr.vkr.facade;
 
 import edu.csus.ecs.pc2.api.IProblem;
 import edu.csus.ecs.pc2.api.exceptions.NotLoggedInException;
+import edu.csus.ecs.pc2.core.IInternalController;
 import edu.csus.ecs.pc2.core.InternalController;
 import edu.csus.ecs.pc2.core.Utilities;
 import edu.csus.ecs.pc2.core.exception.IllegalContestState;
@@ -13,6 +14,7 @@ import edu.csus.ecs.pc2.core.scoring.ProblemSummaryInfo;
 import edu.csus.ecs.pc2.core.scoring.StandingsRecord;
 import edu.csus.ecs.pc2.validator.clicsValidator.ClicsValidatorSettings;
 import edu.csus.ecs.pc2.validator.customValidator.CustomValidatorSettings;
+import javafx.util.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
@@ -281,11 +283,7 @@ public class ProblemFacade {
     //Добавление тестов к задаче в PC2
     public void addTestsToProblem(ru.vkr.vkr.entity.Problem problemDb) {
         InternalController internalController = BridgePc2.getInternalController();
-
         String baseDirectoryName = uploadPath + "tests\\problem-" + problemDb.getId();
-
-        Problem[] problems = BridgePc2.getInternalContest().getProblems();
-
         //Ищем задачу
         Problem problem = findProblemInPC2(problemDb);
 
@@ -294,13 +292,12 @@ public class ProblemFacade {
         problem.setUsingExternalDataFiles(externalFiles);
         problem.setExternalDataFileLocation(baseDirectoryName);
 
-//        problem.addTestCaseFilenames("01.in", "01.ans");
-//        problem.addTestCaseFilenames("02.in", "02.ans");
-//        problem.addTestCaseFilenames("03.in", "03.ans");
-
         ProblemDataFiles problemDataFiles = loadDataFiles(problem, null, baseDirectoryName, extensionInStandart, extensionAnsStandart, externalFiles);
         internalController.updateProblem(problem, problemDataFiles);
     }
+
+
+
 
     public Collection<Problem> getAllProblems() {
         InternalController internalController = BridgePc2.getInternalController();
@@ -310,34 +307,80 @@ public class ProblemFacade {
     }
 
 
-    public Collection<String> getAllTestsById (Long problemId) {
-        Set<String> filesList = new HashSet<>();
-        File dirFile = new File(uploadPath + "tests\\problem-" + problemId);
-        if (dirFile.exists()) {
-            String[] filesArr = dirFile.list();
-            if (filesArr != null) {
-                for (String fileName : filesArr) {
-                    if (fileName.endsWith(extensionInStandart))     //Файл входной
-                        filesList.add(fileName.substring(0, fileName.length() - extensionInStandart.length()));
-                }
-            }
-        }
+    public List<Pair<String, String>> getAllTestsById (ru.vkr.vkr.entity.Problem problemDb) {
+//        Set<String> filesList = new HashSet<>();
+//        File dirFile = new File(uploadPath + "tests\\problem-" + problemId);
+//        if (dirFile.exists()) {
+//            String[] filesArr = dirFile.list();
+//            if (filesArr != null) {
+//                for (String fileName : filesArr) {
+//                    if (fileName.endsWith(extensionInStandart))     //Файл входной
+//                        filesList.add(fileName.substring(0, fileName.length() - extensionInStandart.length()));
+//                }
+//            }
+//        }
+        List<Pair<String, String>> filesList = new ArrayList<>();
+        Problem problem = findProblemInPC2(problemDb);
+        IInternalController internalController = BridgePc2.getInternalController();
+        ProblemDataFiles problemDataFiles = internalController.getProblemDataFiles(problem);
+        int countTests = problemDataFiles.getJudgesDataFiles().length;
+        for (int i = 0; i < countTests; i++)
+            filesList.add(new Pair<>(problemDataFiles.getJudgesDataFiles()[i].getName(),
+                    problemDataFiles.getJudgesAnswerFiles()[i].getName()));
+
         return filesList;
     }
 
-    public void deleteTestFile(Long problemId, String testName) {
-        String path = uploadPath + "tests\\problem-" + problemId;
+
+    public void deleteTestFile(ru.vkr.vkr.entity.Problem problemDb, Integer testNum) {
+        IInternalController internalController = BridgePc2.getInternalController();
+        Problem problem = findProblemInPC2(problemDb);
+        ProblemDataFiles problemDataFiles = internalController.getProblemDataFiles(problem);
+        //problemDataFiles.removeAll();
+        String fileIn = problemDataFiles.getJudgesDataFiles()[testNum].getName();
+        String fileAns = problemDataFiles.getJudgesAnswerFiles()[testNum].getName();
+        problemDataFiles.removeDataSet(testNum);
+
+        problem.removeAllTestCaseFilenames();
+        String[] inputFileNames = new String[problemDataFiles.getJudgesDataFiles().length];
+        String[] answerFileNames = new String[problemDataFiles.getJudgesDataFiles().length];
+        for (int i = 0; i < problemDataFiles.getJudgesDataFiles().length; i++)
+            inputFileNames[i] = problemDataFiles.getJudgesDataFiles()[i].getName();
+        for (int i = 0; i < problemDataFiles.getJudgesDataFiles().length; i++)
+            answerFileNames[i] = problemDataFiles.getJudgesDataFiles()[i].getName();
+
+        addTestsToProblem(problem, inputFileNames, answerFileNames);
+
+        internalController.updateProblem(problem, problemDataFiles);
+
+        String path = uploadPath + "tests\\problem-" + problemDb.getId();
         File dirFile = new File(path);
         if (dirFile.exists()) {
-            File testIn = new File(path + "/" + testName + extensionInStandart);
+            File testIn = new File(path + "\\" + fileIn);
             if (testIn.exists())
                 testIn.delete();
-            File testAns = new File(path + "/" + testName + extensionAnsStandart);
+            File testAns = new File(path + "\\" + fileAns);
             if (testAns.exists())
                 testAns.delete();
         }
     }
 
+    public void deleteAllTestFiles(ru.vkr.vkr.entity.Problem problemDb) {
+        IInternalController internalController = BridgePc2.getInternalController();
+        Problem problem = findProblemInPC2(problemDb);
+        ProblemDataFiles problemDataFiles = internalController.getProblemDataFiles(problem);
+        problemDataFiles.removeAll();
+        problem.removeAllTestCaseFilenames();
+        internalController.updateProblem(problem, problemDataFiles);
+
+        String path = uploadPath + "tests\\problem-" + problemDb.getId();
+        File dirFile = new File(path);
+        String[] entries = dirFile.list();
+        for(String s : entries){
+            File currentFile = new File(dirFile.getPath(), s);
+            currentFile.delete();
+        }
+    }
 
     //Ищет задачу в PC2 по сущности из БД
     public Problem findProblemInPC2(ru.vkr.vkr.entity.Problem problemDb) {
@@ -406,8 +449,11 @@ public class ProblemFacade {
         }
 
         String[] inputFileNames = Utilities.getFileNames(dataFileBaseDirectory, dataExtension);
-
         String[] answerFileNames = Utilities.getFileNames(dataFileBaseDirectory, answerExtension);
+
+        addTestsToProblem(aProblem, inputFileNames, answerFileNames);
+        aProblem.setDataFileName(inputFileNames[0]);
+        aProblem.setAnswerFileName(answerFileNames[0]);
 
         if (inputFileNames.length == 0) {
             throw new RuntimeException("No input data files with required  '" + dataExtension + "'  extension found in " + dataFileBaseDirectory);
@@ -422,15 +468,18 @@ public class ProblemFacade {
                     + inputFileNames.length + "  '" + dataExtension + "'  files vs. " + answerFileNames.length + "  '" + answerExtension + "'  files)");
         }
 
-        aProblem.setDataFileName(inputFileNames[0]);
-        aProblem.setAnswerFileName(answerFileNames[0]);
-
         SerializedFile[] inputFiles = Utilities.createSerializedFiles(dataFileBaseDirectory, inputFileNames, externalDataFiles);
         SerializedFile[] answertFiles = Utilities.createSerializedFiles(dataFileBaseDirectory, answerFileNames, externalDataFiles);
         files.setJudgesDataFiles(inputFiles);
         files.setJudgesAnswerFiles(answertFiles);
-
         return files;
+    }
+
+
+    private void addTestsToProblem(Problem problem, String[] inputFileNames, String[] answerFileNames) {
+        for (int i = 0; i < inputFileNames.length; i++)
+            if (i < answerFileNames.length)
+                problem.addTestCaseFilenames(inputFileNames[i], answerFileNames[i]);
     }
 
 

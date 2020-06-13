@@ -1,5 +1,8 @@
 package ru.vkr.vkr.controller;
 
+import edu.csus.ecs.pc2.core.InternalController;
+import edu.csus.ecs.pc2.core.scoring.NewScoringAlgorithm;
+import javafx.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,10 +14,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import ru.vkr.vkr.domain.BridgePc2;
-import ru.vkr.vkr.entity.Chapter;
-import ru.vkr.vkr.entity.Course;
-import ru.vkr.vkr.entity.HashTag;
-import ru.vkr.vkr.entity.Problem;
+import ru.vkr.vkr.entity.*;
 import ru.vkr.vkr.facade.ProblemFacade;
 import ru.vkr.vkr.form.*;
 import ru.vkr.vkr.service.*;
@@ -53,6 +53,7 @@ public class ProblemController {
         TheoryMaterialForm theoryMaterialForm = new TheoryMaterialForm();
         SubmitRunForm submitRunForm = new SubmitRunForm();
 
+        model.addAttribute("runs", submitRunService.getRunSummit());
         model.addAttribute("theoryMaterialForm", theoryMaterialForm);
         model.addAttribute("teacherCourses", teacherCourses);
         model.addAttribute("teacherProblems", teacherProblems);
@@ -60,6 +61,29 @@ public class ProblemController {
         model.addAttribute("langs", BridgePc2.getInternalContest().getLanguages());
         model.addAttribute("submitRunForm", submitRunForm);
     }
+
+    @GetMapping("/teacher/problem-create")
+    public String problemCreateGet(Model model, Problem problem) {
+        model.addAttribute("isCreate", true);
+        return "teacher/problem";
+    }
+
+    @PostMapping("/teacher/problem-create")
+    public String problemCreatePost(Model model, Problem problem) {
+        problemService.setAuthorForNewCourse(problem);
+        problemService.save(problem);
+
+        //Инициализируем задачу в pc2
+        Long problemPc2NumId = problemFacade.initProblem(problem);
+
+        problem.setNumElementId(problemPc2NumId);
+        problemService.save(problem);
+
+
+        return "redirect:/teacher/problem/" + problem.getId();
+    }
+
+
 
     @GetMapping("/teacher/problem/{problemId}")
     public String getProblem(Model model, @PathVariable Long problemId) {
@@ -77,7 +101,7 @@ public class ProblemController {
         LoadTestsForm loadTestsForm = new LoadTestsForm();
         model.addAttribute("loadTestsForm", loadTestsForm);
 
-        Collection<String> fileTests = problemFacade.getAllTestsById(problemId);
+        List<Pair<String, String>> fileTests = problemFacade.getAllTestsById(problem);
         model.addAttribute("fileTests", fileTests);
         TestSettingsForm testSettingsForm = new TestSettingsForm();
         problemFacade.setTestsParamsToForm(testSettingsForm, problem);
@@ -136,6 +160,7 @@ public class ProblemController {
     }
 
 
+    //Обновление тегов задачи
     @PostMapping("/teacher/problem/{problemId}/update-tags")
     public String updateHashTagsPrbolem(@PathVariable Long problemId, ChoiceTagsForm choiceTagsForm) {
         Problem problem = problemService.getProblemById(problemId);
@@ -179,20 +204,27 @@ public class ProblemController {
 
 
     //Костыльная загрузка тестов через диск
-    @GetMapping("/teacher/problem/{problemId}/tests-upload/pc2")
-    public String uploadProblemTestsToPC2(@PathVariable Long problemId) throws IOException {
+//    @GetMapping("/teacher/problem/{problemId}/tests-upload/pc2")
+//    public String uploadProblemTestsToPC2(@PathVariable Long problemId) throws IOException {
+//        Problem problem = problemService.getProblemById(problemId);
+//        problemFacade.addTestsToProblem(problem);
+//        return "redirect:/teacher/problem/" + problemId;
+//    }
+
+
+    @GetMapping("/teacher/problem/{problemId}/test-delete/{testNum}")
+    public String deleteProblemTest(@PathVariable Long problemId, @PathVariable Integer testNum) {
         Problem problem = problemService.getProblemById(problemId);
-        problemFacade.addTestsToProblem(problem);
+        problemFacade.deleteTestFile(problem, testNum - 1);
         return "redirect:/teacher/problem/" + problemId;
     }
 
-    @GetMapping("/teacher/problem/{problemId}/test-delete/{testName}")
-    public String deleteProblemTest(@PathVariable Long problemId, @PathVariable String testName) {
-        problemFacade.deleteTestFile(problemId, testName);
+    @GetMapping("/teacher/problem/{problemId}/test-deleteAll")
+    public String deleteProblemAllTests(@PathVariable Long problemId) {
+        Problem problem = problemService.getProblemById(problemId);
+        problemFacade.deleteAllTestFiles(problem);
         return "redirect:/teacher/problem/" + problemId;
     }
-
-
     //Установка параметров чекера
     @PostMapping("/teacher/problem/{problemId}/checker-settings")
     public String checkerSettings(CheckerSettingsForm checkerSettingsForm, @PathVariable Long problemId) {
@@ -201,27 +233,6 @@ public class ProblemController {
         problemFacade.setParamsOfChecker(problem, checkerSettingsForm);
 
         return "redirect:/teacher/problem/" + problemId;
-    }
-
-    @GetMapping("/teacher/problem-create")
-    public String problemCreateGet(Model model, Problem problem) {
-        model.addAttribute("isCreate", true);
-        return "teacher/problem";
-    }
-
-    @PostMapping("/teacher/problem-create")
-    public String problemCreatePost(Model model, Problem problem) {
-        problemService.setAuthorForNewCourse(problem);
-        problemService.save(problem);
-
-        //Инициализируем задачу в pc2
-        Long problemPc2NumId = problemFacade.initProblem(problem);
-
-        problem.setNumElementId(problemPc2NumId);
-        problemService.save(problem);
-
-
-        return "redirect:/teacher/problem/" + problem.getId();
     }
 
     @GetMapping("/teacher/tags")
