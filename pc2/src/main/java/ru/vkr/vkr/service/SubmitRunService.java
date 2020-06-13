@@ -24,14 +24,13 @@ import org.springframework.web.multipart.MultipartFile;
 import ru.vkr.vkr.domain.BridgePc2;
 import ru.vkr.vkr.domain.FileManager;
 import ru.vkr.vkr.domain.RunSubmitDto;
+import ru.vkr.vkr.domain.RunSubmitDtoComparator;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 import java.util.concurrent.Future;
 
 @Service
@@ -118,16 +117,18 @@ public class SubmitRunService {
             e.printStackTrace();
         }
 
-// todo : iRun.isFinalJudged() - посмотреть - так ли это
         for (IRun run : iRuns) {
 
-            runSubmitDtos.add(new RunSubmitDto(run.getNumber(),
+            runSubmitDtos.add(new RunSubmitDto(
+                    -run.getNumber(),
+                    run.getNumber(),
                     run.getProblem().getName(),
                     run.getSubmissionTime(),
                     run.getLanguage().getName(),
-                    isJudged(run) ? getResultRun(getInternalRunMethod, contest, run)
+                    run.isFinalJudged() ? getResultRun(getInternalRunMethod, contest, run)
                             : "testing..."));
         }
+        runSubmitDtos.sort(new RunSubmitDtoComparator());
         return runSubmitDtos;
     }
 
@@ -142,10 +143,14 @@ public class SubmitRunService {
                 RunTestCase runTestCases[] = run.getRunTestCases();
                 int numberTestCases = problem.getNumberTestCases();
                 int numberRunTestCases = runTestCases.length;
-                int countPassTestCases = 0;
-                while (countPassTestCases < numberRunTestCases && runTestCases[countPassTestCases++].isPassed());
-                double result = ((double) (countPassTestCases - 1) / numberTestCases) * 100;
-                return "No --> " + (int) result + "%";
+                int countPassTestCases = 0, currentNumberTestCase = 0;
+                while (currentNumberTestCase < numberRunTestCases) {
+                    if (runTestCases[currentNumberTestCase++].isPassed()) {
+                        countPassTestCases++;
+                    }
+                }
+                double result = ((double) (countPassTestCases) / numberTestCases) * 100;
+                return iRun.getJudgementName() + "-->" + (int) result + "%";
             } else {
                 return iRun.getJudgementName() + "-->" + run.getRunTestCases().length;
             }
@@ -153,22 +158,6 @@ public class SubmitRunService {
             e.printStackTrace();
         }
        return "No";
-    }
-
-    /**
-     * Returns true if judged (or is being re-judged, or Manual_review.
-     *
-     * @return true if judged.
-     */
-    public boolean isJudged(IRun iRun) {
-        try {
-            RunStates status  = BridgePc2.getServerConnection().getContest().getRunState(iRun);
-            return status == RunStates.JUDGED ||
-                    status == RunStates.BEING_RE_JUDGED;
-        } catch (NotLoggedInException e) {
-            e.printStackTrace();
-        }
-        return false;
     }
 
     public String showSourceCode(int numberRun) {

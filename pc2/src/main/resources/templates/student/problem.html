@@ -108,7 +108,7 @@
                     <table id="ViewRunsUser" class="table table-striped table-bordered table-sm">
                         <thead class="thead-dark">
                         <tr>
-                            <th scope="col">#</th>
+                            <th scope="col" id="firstColumn">#</th>
                             <th scope="col">Задача</th>
                             <th scope="col">Время</th>
                             <th scope="col">Язык</th>
@@ -119,7 +119,7 @@
                         <tbody>
 
                         <tr th:each="run, state : ${runs}">
-                            <th scope="row" th:text="${run.number}"></th>
+                            <th th:text="${run.number}"></th>
                             <td th:text="${run.displayName}"></td>
                             <td th:text="${run.time}"></td>
                             <td th:text="${run.langauge}"></td>
@@ -144,6 +144,7 @@
 
 
 <script>
+
     $('#linkStatementProblem').click(function (e) {
         $('#linkStatementProblem').addClass('active');
         $('#statementProblem').show();

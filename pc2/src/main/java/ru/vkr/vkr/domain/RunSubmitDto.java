@@ -1,13 +1,16 @@
 package ru.vkr.vkr.domain;
 
 public class RunSubmitDto {
+    private int hiddenNumber;
     private int number;
     private String displayName;
     private long time;
     private String langauge;
     private String status;
 
-    public RunSubmitDto(int number, String displayName, long time, String langauge, String status) {
+
+    public RunSubmitDto(int hiddenNumber, int number, String displayName, long time, String langauge, String status) {
+        this.hiddenNumber = hiddenNumber;
         this.number = number;
         this.displayName = displayName;
         this.time = time;
@@ -61,4 +64,13 @@ public class RunSubmitDto {
     public void setStatus(String status) {
         this.status = status;
     }
+
+    public int getHiddenNumber() {
+        return hiddenNumber;
+    }
+
+    public void setHiddenNumber(int hiddenNumber) {
+        this.hiddenNumber = hiddenNumber;
+    }
+
 }
