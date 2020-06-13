@@ -347,15 +347,21 @@
                                         <div class="col-3">Управление</div>
                                     </div>
 
-                                    <div th:class="'row row-table ' + ((${iState.index} % 2 == 1) ? 'dark-row' : '')" th:each="test, iState : ${fileTests}">
+                                    <div th:class="'row row-table ' + ((${iState.index} % 2 == 1) ? 'dark-row' : '')"
+                                         th:each="test, iState : ${fileTests}">
                                         <div class="col-1" th:text="${iState.index} + 1"></div>
-                                        <div class="col" th:text="${test} + '.in'"></div>
-                                        <div class="col" th:text="${test} + '.ans'"></div>
+                                        <div class="col" th:text="${test.getKey()}"></div>
+                                        <div class="col" th:text="${test.getValue()}"></div>
                                         <div class="col-3">
-                                            <a class="btn btn-danger" th:href="@{'/teacher/problem/' + ${problem.id} + '/test-delete/' + ${test}}"><i class="fa fa-trash-o fa-lg"></i></a>
+                                            <a class="btn btn-danger" th:href="@{'/teacher/problem/' + ${problem.id} + '/test-delete/' + ${iState.index+1}}"><i class="fa fa-trash-o fa-lg"></i></a>
                                         </div>
                                     </div>
                                 </div>
+                            </div>
+                        </div>
+                        <div class="row row-margin-top">
+                            <div class="col">
+                                <a class="btn btn-danger" th:href="@{'/teacher/problem/' + ${problem.id} + '/test-deleteAll'}"><i class="fa fa-trash-o fa-lg"></i>&nbsp; Удалить все</a>
                             </div>
                         </div>
 
