@@ -3,12 +3,14 @@ package ru.vkr.vkr.service;
 import edu.csus.ecs.pc2.api.ILanguage;
 import edu.csus.ecs.pc2.api.IProblem;
 import edu.csus.ecs.pc2.api.IRun;
+import edu.csus.ecs.pc2.api.RunStates;
 import edu.csus.ecs.pc2.api.exceptions.NotLoggedInException;
 import edu.csus.ecs.pc2.api.implementation.Contest;
 import edu.csus.ecs.pc2.core.InternalController;
 import edu.csus.ecs.pc2.core.log.Log;
 import edu.csus.ecs.pc2.core.model.*;
 import edu.csus.ecs.pc2.core.scoring.NewScoringAlgorithm;
+import edu.csus.ecs.pc2.core.scoring.StandingsRecord;
 import edu.csus.ecs.pc2.core.security.Permission;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.vkr.vkr.domain.BridgePc2;
@@ -23,6 +26,7 @@ import ru.vkr.vkr.domain.FileManager;
 import ru.vkr.vkr.domain.RunSubmitDto;
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -100,18 +104,71 @@ public class SubmitRunService {
         // в отсортированном порядке
         IRun iRuns[] = null;
         try {
-            iRuns = BridgePc2.getServerConnection().getContest().getRuns();
+            contest = BridgePc2.getServerConnection().getContest();
+            iRuns = contest.getRuns();
         } catch (NotLoggedInException e) {
             e.printStackTrace();
         }
+
+        Method getInternalRunMethod = null;
+        try {
+            getInternalRunMethod = contest.getClass().getDeclaredMethod("getInternalRun", IRun.class);
+            getInternalRunMethod.setAccessible(true);
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
+
+// todo : iRun.isFinalJudged() - посмотреть - так ли это
         for (IRun run : iRuns) {
+
             runSubmitDtos.add(new RunSubmitDto(run.getNumber(),
                     run.getProblem().getName(),
                     run.getSubmissionTime(),
                     run.getLanguage().getName(),
-                    run.isSolved() ? "Yes" : "No"));
+                    isJudged(run) ? getResultRun(getInternalRunMethod, contest, run)
+                            : "testing..."));
         }
         return runSubmitDtos;
+    }
+
+    private String getResultRun(Method method, Contest contest, IRun iRun)  {
+        if (iRun.isSolved()) {
+            return "Yes";
+        }
+        try {
+            Run run = (Run) method.invoke(contest, iRun);
+            Problem problem = BridgePc2.getInternalContest().getProblem(run.getProblemId());
+            if (!problem.isStopOnFirstFailedTestCase()) {
+                RunTestCase runTestCases[] = run.getRunTestCases();
+                int numberTestCases = problem.getNumberTestCases();
+                int numberRunTestCases = runTestCases.length;
+                int countPassTestCases = 0;
+                while (countPassTestCases < numberRunTestCases && runTestCases[countPassTestCases++].isPassed());
+                double result = ((double) (countPassTestCases - 1) / numberTestCases) * 100;
+                return "No --> " + (int) result + "%";
+            } else {
+                return iRun.getJudgementName() + "-->" + run.getRunTestCases().length;
+            }
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            e.printStackTrace();
+        }
+       return "No";
+    }
+
+    /**
+     * Returns true if judged (or is being re-judged, or Manual_review.
+     *
+     * @return true if judged.
+     */
+    public boolean isJudged(IRun iRun) {
+        try {
+            RunStates status  = BridgePc2.getServerConnection().getContest().getRunState(iRun);
+            return status == RunStates.JUDGED ||
+                    status == RunStates.BEING_RE_JUDGED;
+        } catch (NotLoggedInException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     public String showSourceCode(int numberRun) {
