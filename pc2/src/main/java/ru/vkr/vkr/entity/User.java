@@ -101,6 +101,10 @@ public class User implements UserDetails {
         return Collections.singletonList(role);
     }
 
+    public Role getOneRole() {
+        return role;
+    }
+
     public void setRole(Role role) {
         this.role = role;
     }
