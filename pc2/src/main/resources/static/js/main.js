@@ -151,12 +151,6 @@ $('#refreshTableSubmitions').click(function (e) {
     getSubmitions();
 });
 
-//Обновление таблицы посылок по таймеру
-setInterval(function() {
-    getSubmitions();
-}, 10000);
-
-
 $(".myButtonFio").click(function (e) {
     var editBtn = $(this);                              //Кнопка с редактированием
     var itemDivTeach = editBtn.parent().parent();     //Элемент списка с преподом
