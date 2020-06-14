@@ -19,7 +19,7 @@
         </span>
         <span th:if="${problemInfo}">
             <span th:if="${problemInfo.isSolved()}" class="cell-task-plus">
-                +[[ (${problemInfo.getAttempts()}) != 0 ? ${problemInfo.getAttempts() - 1} : '' ]]
+                +[[ (${problemInfo.getAttempts() - 1}) != 0 ? ${problemInfo.getAttempts() - 1} : '' ]]
             </span>
             <span th:unless="${problemInfo.isSolved()}" class="cell-task-minus">
                 -[[ (${problemInfo.getAttempts()}) != 0 ? ${problemInfo.getAttempts()} : '' ]]

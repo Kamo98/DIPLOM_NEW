@@ -455,10 +455,11 @@ public class ProblemFacade {
 
 
     public MonitorData getMonitor(List<Student> students, List<ru.vkr.vkr.entity.Problem> problems) {
-        List<Pair<Student, IStanding>> iStandings = getStandingsRecords(students);
         List<Long> timeSolved = new ArrayList<>();
         List<Pair<Integer, Student>> standingOfStudent = new ArrayList<>();
         List<List<IProblemDetails>> problemDetailsOfStudent = new ArrayList<>();
+
+        List<Pair<Student, IStanding>> iStandings = getStandingsRecords(students);
         for (Pair<Student, IStanding> studentIStandingPair : iStandings) {
             List<IProblemDetails> iProblemDetailsList = new ArrayList<>();
             int countIsSolved = 0;
@@ -483,9 +484,13 @@ public class ProblemFacade {
 
     private IProblemDetails getProblemDetailsByProblem(IStanding standing,
                                                        ru.vkr.vkr.entity.Problem problem) {
-        for (IProblemDetails problemDetails : standing.getProblemDetails()) {
-            if (problemDetails.getProblem().getShortName().equals("problem-" + problem.getId())) {
-                return problemDetails;
+        if (standing == null) {
+            return null;
+        } else {
+            for (IProblemDetails problemDetails : standing.getProblemDetails()) {
+                if (problemDetails.getProblem().getShortName().equals("problem-" + problem.getId())) {
+                    return problemDetails;
+                }
             }
         }
         return null;
@@ -496,12 +501,16 @@ public class ProblemFacade {
         try {
             Contest contest = BridgePc2.getServerConnection().getContest();
             ITeam iTeams[] = contest.getTeams();
-            for (ITeam iTeam : iTeams) {
-                for (Student student : students) {
+            for (Student student : students) {
+                boolean kostil = false;
+                for (ITeam iTeam : iTeams) {
                     if (iTeam.getLoginName().equals(student.getUser().getLoginPC2())) {
+                        kostil = true;
                         iStandings.add(new Pair<>(student, contest.getStanding(iTeam)));
+                        break;
                     }
                 }
+                if (!kostil) iStandings.add(new Pair<>(student, null));
             }
         } catch (NotLoggedInException e) {
             e.printStackTrace();
