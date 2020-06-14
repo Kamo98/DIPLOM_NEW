@@ -98,8 +98,9 @@ public class BridgePc2 {
 
     public static void logoff() {
         try {
+            Thread.sleep(1000);
             serverConnection.logoff();
-        } catch (NotLoggedInException e) {
+        } catch (NotLoggedInException | InterruptedException e) {
             e.printStackTrace();
         }
     }

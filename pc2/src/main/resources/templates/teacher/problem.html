@@ -446,7 +446,7 @@
                                     <select id="compilerSend" class="form-control" th:field="*{language}">
                                         <option th:each="lang, state : ${langs}"
                                                 th:value="${state.index}"
-                                                th:text="${lang.displayName}"/>
+                                                th:text="${lang.name}"/>
                                     </select>
                                 </div>
                             </div>
