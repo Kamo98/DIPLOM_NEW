@@ -1,7 +1,5 @@
 package ru.vkr.vkr.controller;
 
-import edu.csus.ecs.pc2.core.InternalController;
-import edu.csus.ecs.pc2.core.scoring.NewScoringAlgorithm;
 import javafx.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +13,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ru.vkr.vkr.domain.BridgePc2;
-import ru.vkr.vkr.entity.*;
+import ru.vkr.vkr.entity.Chapter;
+import ru.vkr.vkr.entity.Course;
+import ru.vkr.vkr.entity.HashTag;
+import ru.vkr.vkr.entity.Problem;
 import ru.vkr.vkr.facade.ProblemFacade;
 import ru.vkr.vkr.form.*;
 import ru.vkr.vkr.service.*;
@@ -275,7 +276,7 @@ public class ProblemController {
     public String sendFileSubmit(RedirectAttributes redirectAttributes, Model model,
                                  @ModelAttribute("submitRunForm") SubmitRunForm submitRunForm,
                                  @PathVariable Long problemId) {
-        submitRunService.submitRun(problemFacade.findProblemInPC2(problemService.getProblemById(problemId)),
+        submitRunService.submitRun(problemId,
                 submitRunForm.getLanguage(),
                 submitRunForm.getMultipartFile());
 

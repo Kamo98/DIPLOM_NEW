@@ -83,7 +83,7 @@ public class StudentController {
     public String sendFileSubmit(RedirectAttributes redirectAttributes, Model model,
                                  @ModelAttribute("submitRunForm") SubmitRunForm submitRunForm,
                                  @PathVariable Long problemId) {
-        submitRunService.submitRun(problemFacade.findProblemInPC2(problemService.getProblemById(problemId)),
+        submitRunService.submitRun(problemId,
                 submitRunForm.getLanguage(),
                 submitRunForm.getMultipartFile());
 

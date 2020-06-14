@@ -1,7 +1,5 @@
 package ru.vkr.vkr.facade;
 
-import edu.csus.ecs.pc2.api.IProblem;
-import edu.csus.ecs.pc2.api.exceptions.NotLoggedInException;
 import edu.csus.ecs.pc2.core.IInternalController;
 import edu.csus.ecs.pc2.core.InternalController;
 import edu.csus.ecs.pc2.core.Utilities;
@@ -21,7 +19,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 import ru.vkr.vkr.domain.BridgePc2;
-import ru.vkr.vkr.domain.MonitorData;
+import ru.vkr.vkr.domain.problem.ProblemFactory;
+import ru.vkr.vkr.domain.run.MonitorData;
 import ru.vkr.vkr.entity.Student;
 import ru.vkr.vkr.form.CheckerSettingsForm;
 import ru.vkr.vkr.form.LoadTestsForm;
@@ -384,31 +383,8 @@ public class ProblemFacade {
 
     //Ищет задачу в PC2 по сущности из БД
     public Problem findProblemInPC2(ru.vkr.vkr.entity.Problem problemDb) {
-        ElementId elementId = new ElementId("problem-" + problemDb.getId());
-        try {
-            Class elementIdClass = elementId.getClass();
-            Field elementIdField = elementIdClass.getDeclaredField("num");
-            elementIdField.setAccessible(true);
-            elementIdField.set(elementId, problemDb.getNumElementId());
-        } catch (IllegalAccessException | NoSuchFieldException e) {
-            e.printStackTrace();
-        }
-        Problem problem = BridgePc2.getInternalContest().getProblem(elementId);
-        if (problem == null) {
-            elementId = new ElementId(problemDb.getName());
-            try {
-                Class elementIdClass = elementId.getClass();
-                Field elementIdField = elementIdClass.getDeclaredField("num");
-                elementIdField.setAccessible(true);
-                elementIdField.set(elementId, problemDb.getNumElementId());
-            } catch (IllegalAccessException | NoSuchFieldException e) {
-                e.printStackTrace();
-            }
-            problem = BridgePc2.getInternalContest().getProblem(elementId);
-        }
-        return problem;
+        return ((ProblemFactory) applicationContext.getBean("getProblemFactory")).getProblem(problemDb.getId());
     }
-
 
     /***********************************
      * Скрипт для обновления задач в базе после экспорта

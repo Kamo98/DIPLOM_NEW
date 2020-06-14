@@ -7,6 +7,8 @@ import edu.csus.ecs.pc2.api.exceptions.LoginFailureException;
 import edu.csus.ecs.pc2.api.exceptions.NotLoggedInException;
 import edu.csus.ecs.pc2.core.InternalController;
 import edu.csus.ecs.pc2.core.model.InternalContest;
+import ru.vkr.vkr.domain.run.RunStatistic;
+import ru.vkr.vkr.domain.run.RunStatisticListener;
 
 import java.io.FileInputStream;
 import java.io.IOException;

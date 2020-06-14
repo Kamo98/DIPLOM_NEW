@@ -1,9 +1,9 @@
 package ru.vkr.vkr.domain;
 
-import edu.csus.ecs.pc2.core.IInternalController;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
+import ru.vkr.vkr.domain.run.RunStatistic;
 
 import java.io.File;
 import java.io.FileOutputStream;

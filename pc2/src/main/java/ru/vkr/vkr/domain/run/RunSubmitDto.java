@@ -1,4 +1,4 @@
-package ru.vkr.vkr.domain;
+package ru.vkr.vkr.domain.run;
 
 public class RunSubmitDto {
     private int hiddenNumber;

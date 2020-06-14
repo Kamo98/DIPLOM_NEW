@@ -1,8 +1,9 @@
-package ru.vkr.vkr.domain;
+package ru.vkr.vkr.domain.run;
 
 import edu.csus.ecs.pc2.api.IClient;
 import edu.csus.ecs.pc2.api.IRun;
 import edu.csus.ecs.pc2.api.listener.IRunEventListener;
+import ru.vkr.vkr.domain.FileManager;
 
 public class RunStatisticListener implements IRunEventListener {
     private RunStatistic runStatistic;

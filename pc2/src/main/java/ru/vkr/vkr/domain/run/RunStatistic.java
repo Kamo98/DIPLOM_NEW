@@ -1,14 +1,8 @@
-package ru.vkr.vkr.domain;
+package ru.vkr.vkr.domain.run;
 
-import edu.csus.ecs.pc2.api.IProblem;
 import edu.csus.ecs.pc2.api.IRun;
-import edu.csus.ecs.pc2.core.model.ElementId;
-import edu.csus.ecs.pc2.core.model.Problem;
-import edu.csus.ecs.pc2.core.model.Run;
 
-import javax.xml.bind.Element;
 import java.io.Serializable;
-import java.lang.reflect.Field;
 import java.util.HashMap;
 
 
@@ -78,7 +72,7 @@ public final class RunStatistic implements Serializable {
     void updateStatisticData(IRun run) {
         StatisticOfTask statisticOfTask;
         String response = run.getJudgementName();
-        long num = getNumProblem(run.getProblem());
+        long num = Long.parseLong(run.getProblem().getShortName().split("-")[1]);
 
         if (statisticOfTaskHashMap.containsKey(num)) {
             statisticOfTask = statisticOfTaskHashMap.get(num);
@@ -119,22 +113,5 @@ public final class RunStatistic implements Serializable {
         }
 
         statisticOfTaskHashMap.put(num, statisticOfTask);
-    }
-
-    private Long getNumProblem(IProblem problem) {
-        long num = 0;
-        try {
-            Field fieldProblem = problem.getClass().getDeclaredField("elementId");
-            fieldProblem.setAccessible(true);
-            ElementId elementId = (ElementId) fieldProblem.get(problem);
-
-            Field fieldElementId = elementId.getClass().getDeclaredField("num");
-            fieldElementId.setAccessible(true);
-            num = fieldElementId.getLong(elementId);
-
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            e.printStackTrace();
-        }
-        return num;
     }
 }

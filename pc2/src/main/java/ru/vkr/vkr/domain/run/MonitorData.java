@@ -1,4 +1,4 @@
-package ru.vkr.vkr.domain;
+package ru.vkr.vkr.domain.run;
 
 import edu.csus.ecs.pc2.core.scoring.ProblemSummaryInfo;
 import edu.csus.ecs.pc2.core.scoring.StandingsRecord;
