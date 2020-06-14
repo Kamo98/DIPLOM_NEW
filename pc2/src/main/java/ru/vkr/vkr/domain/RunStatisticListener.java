@@ -1,5 +1,6 @@
 package ru.vkr.vkr.domain;
 
+import edu.csus.ecs.pc2.api.IClient;
 import edu.csus.ecs.pc2.api.IRun;
 import edu.csus.ecs.pc2.api.listener.IRunEventListener;
 
@@ -32,7 +33,7 @@ public class RunStatisticListener implements IRunEventListener {
 
     @Override
     public void runJudged(IRun iRun, boolean b) {
-        if (b && iRun.getTeam().getLoginName().substring(0, 4).equals("team") && !isSourceCode) {
+        if (b && iRun.getTeam().getType().equals(IClient.ClientType.TEAM_CLIENT) && !isSourceCode) {
             runStatistic.updateStatisticData(iRun);
             FileManager.saveRunStatistic(runStatistic);
         }
@@ -60,7 +61,7 @@ public class RunStatisticListener implements IRunEventListener {
 
     @Override
     public void runJudgingCanceled(IRun iRun, boolean b) {
-        if (b && iRun.getTeam().getLoginName().contentEquals("team") && !isSourceCode) {
+        if (b && iRun.getTeam().getType().equals(IClient.ClientType.TEAM_CLIENT) && !isSourceCode) {
             runStatistic.updateStatisticData(iRun);
             FileManager.saveRunStatistic(runStatistic);
         }
