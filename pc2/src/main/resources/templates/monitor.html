@@ -9,20 +9,20 @@
            th:title="${problem.name}">A</a>
     </div>
 </div>
-<div class="row row-table" th:each="standingsRecord, iState : ${monitor.getRecords()}">
+<div class="row row-table" th:each="record, iState : ${monitor.getRecords()}">
     <div class="col-1" th:text="${iState.index + 1}">#</div>
-    <div class="col-3" th:text="${monitor.getStudent(iState.index)}">Иванов Иван Иванович</div>
-    <div class="col-1" th:text="${standingsRecord.getNumberSolved()}">-</div>
-    <div class="col-1" th:text="${standingsRecord.getPenaltyPoints()}">-</div>
-    <div class="col" th:each="problemInfo : ${monitor.getProblemInfos(iState.index)}">
-        <span th:if="${problemInfo.getNumberSubmitted()} == 0">
+    <div class="col-3" th:text="${record.fio}"></div>
+    <div class="col-1" th:text="${record.countOfPass}">-</div>
+    <div class="col-1" th:text="${record.timeSolve}">-</div>
+    <div class="col" th:each="problemInfo : ${record.iProblemDetailsList}">
+        <span th:unless="${problemInfo}">
         </span>
-        <span th:unless="${problemInfo.getNumberSubmitted()} == 0">
+        <span th:if="${problemInfo}">
             <span th:if="${problemInfo.isSolved()}" class="cell-task-plus">
-                +[[ (${problemInfo.getNumberSubmitted() - 1}) != 0 ? ${problemInfo.getNumberSubmitted() - 1} : '' ]]
+                +[[ (${problemInfo.getAttempts()}) != 0 ? ${problemInfo.getAttempts() - 1} : '' ]]
             </span>
             <span th:unless="${problemInfo.isSolved()}" class="cell-task-minus">
-                -[[ (${problemInfo.getNumberSubmitted() - 1}) != 0 ? ${problemInfo.getNumberSubmitted() - 1} : '' ]]
+                -[[ (${problemInfo.getAttempts()}) != 0 ? ${problemInfo.getAttempts()} : '' ]]
             </span>
         </span>
     </div>

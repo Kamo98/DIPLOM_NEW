@@ -1,15 +1,14 @@
 package ru.vkr.vkr.facade;
 
+import edu.csus.ecs.pc2.api.IProblemDetails;
+import edu.csus.ecs.pc2.api.IStanding;
+import edu.csus.ecs.pc2.api.ITeam;
+import edu.csus.ecs.pc2.api.exceptions.NotLoggedInException;
+import edu.csus.ecs.pc2.api.implementation.Contest;
 import edu.csus.ecs.pc2.core.IInternalController;
 import edu.csus.ecs.pc2.core.InternalController;
 import edu.csus.ecs.pc2.core.Utilities;
-import edu.csus.ecs.pc2.core.exception.IllegalContestState;
-import edu.csus.ecs.pc2.core.list.AccountList;
 import edu.csus.ecs.pc2.core.model.*;
-import edu.csus.ecs.pc2.core.scoring.DefaultStandingsRecordComparator;
-import edu.csus.ecs.pc2.core.scoring.NewScoringAlgorithm;
-import edu.csus.ecs.pc2.core.scoring.ProblemSummaryInfo;
-import edu.csus.ecs.pc2.core.scoring.StandingsRecord;
 import edu.csus.ecs.pc2.validator.clicsValidator.ClicsValidatorSettings;
 import edu.csus.ecs.pc2.validator.customValidator.CustomValidatorSettings;
 import javafx.util.Pair;
@@ -30,8 +29,6 @@ import ru.vkr.vkr.service.ProblemService;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.*;
 
 @Component
@@ -51,7 +48,7 @@ public class ProblemFacade {
 
 
     //todo: надо разделить на несколько методов, чтобы вызывать отдельные там где требуется та или иная папка
-    private void makeDirectory (Long problemId) {
+    private void makeDirectory(Long problemId) {
 //        File pathTests = new File(uploadPath + "/tests");
 //        if (!pathTests.exists())
 //            pathTests.mkdir();
@@ -111,18 +108,18 @@ public class ProblemFacade {
         //todo: не совмем уверен что в список clientSettingsList будут попадать все автосудьи, которые есть в системе
         ClientSettings clientSettingsList[] = BridgePc2.getInternalContest().getClientSettingsList();
         for (int i = 0; i < clientSettingsList.length; i++) {
-           if (clientSettingsList[i].isAutoJudging()) {
-               Filter filter = clientSettingsList[i].getAutoJudgeFilter();
-               filter.addProblem(problem);
-               internalController.updateClientSettings(clientSettingsList[i]);
-           }
+            if (clientSettingsList[i].isAutoJudging()) {
+                Filter filter = clientSettingsList[i].getAutoJudgeFilter();
+                filter.addProblem(problem);
+                internalController.updateClientSettings(clientSettingsList[i]);
+            }
         }
 
         ProblemDataFiles problemDataFiles = new ProblemDataFiles(problem);
         internalController.addNewProblem(problem, problemDataFiles);
 
 
-        try{
+        try {
             ElementId elementId = problem.getElementId();
             Class elementIdClass = elementId.getClass();
             Field elementIdField = elementIdClass.getDeclaredField("num");
@@ -202,7 +199,7 @@ public class ProblemFacade {
             customValidatorSettings.setUseClicsValidatorInterface();
             customValidatorSettings.setValidatorCommandLine("{:validator} {:infile} {:outfile} {:ansfile} {:resfile}");
             //customValidatorSettings.setValidatorProgramName();
-              problem.setCustomValidatorSettings(customValidatorSettings);
+            problem.setCustomValidatorSettings(customValidatorSettings);
         }
 
         problem.setShowValidationToJudges(true);
@@ -296,8 +293,6 @@ public class ProblemFacade {
     }
 
 
-
-
     public Collection<Problem> getAllProblems() {
         InternalController internalController = BridgePc2.getInternalController();
         ArrayList<Problem> problems = new ArrayList<>();
@@ -306,7 +301,7 @@ public class ProblemFacade {
     }
 
 
-    public List<Pair<String, String>> getAllTestsById (ru.vkr.vkr.entity.Problem problemDb) {
+    public List<Pair<String, String>> getAllTestsById(ru.vkr.vkr.entity.Problem problemDb) {
 //        Set<String> filesList = new HashSet<>();
 //        File dirFile = new File(uploadPath + "tests\\problem-" + problemId);
 //        if (dirFile.exists()) {
@@ -375,7 +370,7 @@ public class ProblemFacade {
         String path = uploadPath + "tests\\problem-" + problemDb.getId();
         File dirFile = new File(path);
         String[] entries = dirFile.list();
-        for(String s : entries){
+        for (String s : entries) {
             File currentFile = new File(dirFile.getPath(), s);
             currentFile.delete();
         }
@@ -389,12 +384,12 @@ public class ProblemFacade {
     /***********************************
      * Скрипт для обновления задач в базе после экспорта
      */
-    public void updateNumInProblems () {
+    public void updateNumInProblems() {
         Problem problems[] = BridgePc2.getInternalContest().getProblems();
         for (Problem iproblem : problems) {
             String shortName = iproblem.getShortName();
             String arr[] = shortName.split("-");
-            if (arr.length == 2){
+            if (arr.length == 2) {
                 try {
                     ru.vkr.vkr.entity.Problem problem = problemService.getProblemById(Long.parseLong(arr[1]));
                     ElementId elementId = iproblem.getElementId();
@@ -459,128 +454,60 @@ public class ProblemFacade {
     }
 
 
-
     public MonitorData getMonitor(List<Student> students, List<ru.vkr.vkr.entity.Problem> problems) {
-        InternalController internalController = BridgePc2.getInternalController();
-        MonitorData monitorData = new MonitorData();
-        try {
-            //Формируем сет логинов в PC2
-            HashSet<String> loginPC2Users = new HashSet<>();
-            for (Student st : students)
-                loginPC2Users.add(st.getUser().getLoginPC2());
-            HashMap<String, Student> loginPC2Student = new HashMap<>();
-            for (Student st : students)
-                loginPC2Student.put(st.getUser().getLoginPC2(), st);
-
-
-            ArrayList<Problem> problemsPC2List = new ArrayList<>();
-            for(ru.vkr.vkr.entity.Problem pr : problems) {
-                Problem problem = findProblemInPC2(pr);
-                if (problem != null)
-                    problemsPC2List.add(problem);
-            }
-
-            Problem[] problemsPC2 = new Problem[problemsPC2List.size()];
-            int i = 0;
-            for(Problem pr : problemsPC2List)
-                problemsPC2[i++] = pr;
-
-            //Получаем монитор от PC2
-            StandingsRecord[] standingsRecords = getStandingsRecords(BridgePc2.getInternalContest(),
-                    new Properties(), loginPC2Users, problemsPC2);
-            //Формируем данные для вывода
-            for (StandingsRecord rec : standingsRecords) {
-                //Заполняем строку монитора
-                ClientId clientId = rec.getClientId();
-                ArrayList<ProblemSummaryInfo> problemSummaryInfos = new ArrayList<>();
-                Integer[] keysP = rec.getSummaryRow().getSortedKeys();
-                for (int k : keysP) {
-                    ProblemSummaryInfo problemSummaryInfo = rec.getSummaryRow().get(k);
-                    problemSummaryInfos.add(problemSummaryInfo);
+        List<Pair<Student, IStanding>> iStandings = getStandingsRecords(students);
+        List<Long> timeSolved = new ArrayList<>();
+        List<Pair<Integer, Student>> standingOfStudent = new ArrayList<>();
+        List<List<IProblemDetails>> problemDetailsOfStudent = new ArrayList<>();
+        for (Pair<Student, IStanding> studentIStandingPair : iStandings) {
+            List<IProblemDetails> iProblemDetailsList = new ArrayList<>();
+            int countIsSolved = 0;
+            long timeSolve = 0;
+            for (ru.vkr.vkr.entity.Problem problem : problems) {
+                IProblemDetails problemDetails = getProblemDetailsByProblem(studentIStandingPair.getValue(), problem);
+                if (problemDetails != null) {
+                    if (problemDetails.isSolved()) {
+                        countIsSolved++;
+                        timeSolve += problemDetails.getPenaltyPoints();
+                    }
                 }
-
-                monitorData.addRecord(loginPC2Student.get(clientId.getName()),
-                        rec, problemSummaryInfos);
+                iProblemDetailsList.add(problemDetails);
             }
-        } catch (IllegalContestState illegalContestState) {
-            illegalContestState.printStackTrace();
+            timeSolved.add(timeSolve);
+            standingOfStudent.add(new Pair<>(countIsSolved, studentIStandingPair.getKey()));
+            problemDetailsOfStudent.add(iProblemDetailsList);
         }
+        MonitorData monitorData = new MonitorData(standingOfStudent, problemDetailsOfStudent, timeSolved);
         return monitorData;
     }
 
-
-    private StandingsRecord[] getStandingsRecords(
-            IInternalContest contest,
-            Properties properties,
-            HashSet<String> loginPC2Users,
-            Problem[] problemsPC2) throws IllegalContestState
-    {
-        NewScoringAlgorithm newScoringAlgorithm = new NewScoringAlgorithm();
-        if (contest == null) {
-            throw new IllegalArgumentException("contest is null");
-        } else {
-            newScoringAlgorithm.setContest(contest);
-            Vector<Account> accountVector_ = newScoringAlgorithm.getContest().getAccounts(ClientType.Type.TEAM);
-            Vector<Account> accountVector = new Vector<>();
-            for(Account acc : accountVector_)
-                if (loginPC2Users.contains(acc.getDisplayName()))
-                    accountVector.add(acc);
-            Account[] accounts = (Account[])accountVector.toArray(new Account[accountVector.size()]);
-            AccountList accountList = new AccountList();
-            Account[] var10 = accounts;
-            int var9 = accounts.length;
-
-            for(int var8 = 0; var8 < var9; ++var8) {
-                Account account = var10[var8];
-                accountList.add(account);
-            }
-
-            DefaultStandingsRecordComparator comparator = new DefaultStandingsRecordComparator();
-            comparator.setCachedAccountList(accountList);
-            Run[] runs = newScoringAlgorithm.getContest().getRuns();
-//            newScoringAlgorithm.respectEOC = newScoringAlgorithm.isAllowed(newScoringAlgorithm.getContest(), newScoringAlgorithm.getContest().getClientId(), edu.csus.ecs.pc2.core.security.Permission.Type.RESPECT_EOC_SUPPRESSION);
-//            if (newScoringAlgorithm.respectEOC) {
-//                runs = newScoringAlgorithm.filterRunsbyEOC(newScoringAlgorithm.getContest(), runs);
-//            }
-//
-//            if (honorScoreboardFreeze) {
-//                runs = newScoringAlgorithm.filterRunsByScoreboardFreeze(newScoringAlgorithm.getContest(), runs);
-//            }
-
-            Class newScoringAlgorithmClass = newScoringAlgorithm.getClass();
-            try {
-                Method computeStandingMethod = newScoringAlgorithmClass.getDeclaredMethod(
-                        "computeStandingStandingsRecords",
-                        Run[].class, Account[].class, Properties.class, Problem[].class
-                );
-                computeStandingMethod.setAccessible(true);
-                StandingsRecord[] standings = ( StandingsRecord[])computeStandingMethod.invoke(
-                        newScoringAlgorithm,
-                        runs, accounts, properties, problemsPC2);
-
-                Arrays.sort(standings, comparator);
-    //            if (newScoringAlgorithm.blockRanking) {
-    //                newScoringAlgorithm.assignRanksBlock(standings);
-    //            } else {
-    //                newScoringAlgorithm.assignRanks(standings);
-    //            }
-
-                Method assignGroupRanksMethod = newScoringAlgorithmClass.getDeclaredMethod(
-                        "assignGroupRanks",
-                        IInternalContest.class, StandingsRecord[].class);
-                assignGroupRanksMethod.setAccessible(true);
-                assignGroupRanksMethod.invoke(
-                        newScoringAlgorithm,
-                        newScoringAlgorithm.getContest(), standings);
-                return standings;
-
-            } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
-                e.printStackTrace();
-                return null;
+    private IProblemDetails getProblemDetailsByProblem(IStanding standing,
+                                                       ru.vkr.vkr.entity.Problem problem) {
+        for (IProblemDetails problemDetails : standing.getProblemDetails()) {
+            if (problemDetails.getProblem().getShortName().equals("problem-" + problem.getId())) {
+                return problemDetails;
             }
         }
+        return null;
     }
 
+    private List<Pair<Student, IStanding>> getStandingsRecords(List<Student> students) {
+        List<Pair<Student, IStanding>> iStandings = new ArrayList<>();
+        try {
+            Contest contest = BridgePc2.getServerConnection().getContest();
+            ITeam iTeams[] = contest.getTeams();
+            for (ITeam iTeam : iTeams) {
+                for (Student student : students) {
+                    if (iTeam.getLoginName().equals(student.getUser().getLoginPC2())) {
+                        iStandings.add(new Pair<>(student, contest.getStanding(iTeam)));
+                    }
+                }
+            }
+        } catch (NotLoggedInException e) {
+            e.printStackTrace();
+        }
+        return iStandings;
+    }
 
     public void getStatisticForProblems(Collection<ru.vkr.vkr.entity.Problem> problemsDb) {
     }
