@@ -434,17 +434,19 @@ public class TeacherController {
     }
 
 
-    @GetMapping("/teacher/updateNumInProblems")
-    public String updateNumInProblems() {
-        problemFacade.updateNumInProblems();
-        return "redirect:/teacher";
-    }
 
     @GetMapping("/teacher/pool-problems/{hashTagId}")
     public String poolProblemOneHashtag(@PathVariable("hashTagId") Long hashTagId, Model model) {
         searchService.poolSearchProblems(model, hashTagId);
         return "/pool-problems";
     }
+
+
+    @GetMapping("/teacher/submitions")
+    public String showSubmitions(Model model) {
+        return "/submitions";
+    }
+
 
 
     //Для вставки в бд тегов
@@ -454,8 +456,16 @@ public class TeacherController {
         return "redirect:/teacher/pool-problems";
     }
 
-    @GetMapping("/teacher/submitions")
-    public String showSubmitions(Model model) {
-        return "/submitions";
+    @GetMapping("/teacher/updateNumInProblems")
+    public String updateNumInProblems() {
+        problemFacade.updateNumInProblems();
+        return "redirect:/teacher";
     }
+
+    @GetMapping("/teacher/init-complexity")
+    public String complexityInit() {
+        problemService.complexityInit();
+        return "redirect:/teacher";
+    }
+
 }

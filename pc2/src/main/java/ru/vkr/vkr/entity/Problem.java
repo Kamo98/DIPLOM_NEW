@@ -38,6 +38,11 @@ public class Problem {
     @JoinColumn(name = "teacher_id")
     private Teacher teacherAuthor;
 
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "complexity_id")
+    private Complexity complexity;
+
     @ManyToMany(mappedBy = "chapterProblems", fetch = FetchType.LAZY)
     private Set<Chapter> chapters;
 
@@ -178,5 +183,13 @@ public class Problem {
     @Transient
     public void setTotalSubmit(Long totalSubmit) {
         this.totalSubmit = totalSubmit;
+    }
+
+    public Complexity getComplexity() {
+        return complexity;
+    }
+
+    public void setComplexity(Complexity complexity) {
+        this.complexity = complexity;
     }
 }

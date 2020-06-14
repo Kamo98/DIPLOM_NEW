@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import ru.vkr.vkr.entity.Complexity;
 import ru.vkr.vkr.entity.HashTag;
 import ru.vkr.vkr.entity.Problem;
 import ru.vkr.vkr.facade.ProblemFacade;
@@ -28,7 +29,9 @@ public class SearchService {
     public void poolProblemsGet(Model model) {
         List<HashTag> hashTags = hashTagService.getAllTags();
         model.addAttribute("hashTags", hashTags);
-        SearchProblemForm searchProblemForm = new SearchProblemForm(hashTags.size());
+        List<Complexity> complexities = problemService.getAllComplexity();
+        model.addAttribute("complexities", complexities);
+        SearchProblemForm searchProblemForm = new SearchProblemForm(hashTags.size(), complexities.size());
         model.addAttribute("searchProblemForm", searchProblemForm);
         model.addAttribute("isFirstRunPool", true);
     }
@@ -37,33 +40,48 @@ public class SearchService {
     public void poolSearchProblems(Model model, SearchProblemForm searchProblemForm) {
         List<HashTag> hashTags = hashTagService.getAllTags();
         model.addAttribute("hashTags", hashTags);
-        filterProblemsByTags(model, searchProblemForm, hashTags, -1L);
+        List<Complexity> complexities = problemService.getAllComplexity();
+        model.addAttribute("complexities", complexities);
+        filterProblemsByTags(model, searchProblemForm, hashTags, complexities, -1L);
     }
 
     //Для фильтрации по одному тегу
     public void poolSearchProblems(Model model, Long selectedTagId) {
         List<HashTag> hashTags = hashTagService.getAllTags();
         model.addAttribute("hashTags", hashTags);
-        SearchProblemForm searchProblemForm = new SearchProblemForm(hashTags.size());
-        filterProblemsByTags(model, searchProblemForm, hashTags, selectedTagId);
+        List<Complexity> complexities = problemService.getAllComplexity();
+        model.addAttribute("complexities", complexities);
+        SearchProblemForm searchProblemForm = new SearchProblemForm(hashTags.size(), complexities.size());
+        filterProblemsByTags(model, searchProblemForm, hashTags, complexities, selectedTagId);
     }
 
 
     //Непосредстванно фильтрация задач
     //Ищет как по одному тегу selectedTagId, так и по списку тегов из searchProblemForm
-    private void filterProblemsByTags(Model model, SearchProblemForm searchProblemForm, List<HashTag> hashTags, Long selectedTagId) {
-        Set<Problem> problems = new HashSet<>();
+    private void filterProblemsByTags(Model model, SearchProblemForm searchProblemForm, List<HashTag> hashTags, List<Complexity> complexities, Long selectedTagId) {
+        Set<Problem> problems_1 = new HashSet<>();
         for (int i = 0; i < searchProblemForm.getTagList().size(); i++) {
             if (selectedTagId != -1L && hashTags.get(i).getId().equals(selectedTagId))
                 searchProblemForm.getTagList().set(i, true);
-            if (searchProblemForm.getTagList().get(i) != null && searchProblemForm.getTagList().get(i))
-                problems.addAll(hashTags.get(i).getProblems());
+            if (searchProblemForm.getTagList().get(i) != null && searchProblemForm.getTagList().get(i)) {
+                problems_1.addAll(hashTags.get(i).getProblems());
+            }
         }
 
+        Set<Complexity> needComplexity = new HashSet<>();       //Для быстрого поиска при фильтрации задач
+        for(int i = 0; i < searchProblemForm.getComplexityList().size(); i++)
+            if (searchProblemForm.getComplexityList().get(i) != null && searchProblemForm.getComplexityList().get(i))
+                needComplexity.add(complexities.get(i));
+
+
+        List<Problem> problems = new ArrayList<>();
+        for (Problem problem : problems_1)
+            if (problem.getComplexity() == null || needComplexity.contains(problem.getComplexity()))
+                problems.add(problem);
 
         problemFacade.getStatisticForProblems(problems);
         model.addAttribute("problems", problems);
-        SearchProblemForm searchProblemForm_ = new SearchProblemForm(hashTags.size(), searchProblemForm);
+        SearchProblemForm searchProblemForm_ = new SearchProblemForm(hashTags.size(), complexities.size(), searchProblemForm);
         model.addAttribute("searchProblemForm", searchProblemForm_);
     }
 

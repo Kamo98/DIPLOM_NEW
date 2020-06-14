@@ -5,12 +5,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.vkr.vkr.domain.FileManager;
-import ru.vkr.vkr.entity.Chapter;
-import ru.vkr.vkr.entity.HashTag;
-import ru.vkr.vkr.entity.Problem;
-import ru.vkr.vkr.entity.TagProblem;
+import ru.vkr.vkr.entity.*;
 import ru.vkr.vkr.facade.AuthenticationFacade;
 import ru.vkr.vkr.form.TheoryMaterialForm;
+import ru.vkr.vkr.repository.ComplexityRepository;
 import ru.vkr.vkr.repository.ProblemRepository;
 import ru.vkr.vkr.repository.TagProblemRepository;
 
@@ -28,7 +26,9 @@ public class ProblemService {
     @Autowired
     private AuthenticationFacade authenticationFacade;
     @Autowired
-    TagProblemRepository tagProblemRepository;
+    private TagProblemRepository tagProblemRepository;
+    @Autowired
+    private ComplexityRepository complexityRepository;
 
     public void loadStatement(Problem problem, TheoryMaterialForm theoryMaterialForm) {
         String sourceStatement = FileManager.loadFileToServer(theoryMaterialForm.getMultipartFile(), nameOfFolder);
@@ -108,4 +108,26 @@ public class ProblemService {
     }
 
 
+    public List<Complexity> getAllComplexity() {
+        return complexityRepository.findAll();
+    }
+
+    public void complexityInit() {
+        complexityRepository.deleteAll();
+        Complexity complexity = new Complexity();
+        complexity.setName("Очень низкая");
+        complexityRepository.save(complexity);
+        complexity = new Complexity();
+        complexity.setName("Низкая");
+        complexityRepository.save(complexity);
+        complexity = new Complexity();
+        complexity.setName("Средняя");
+        complexityRepository.save(complexity);
+        complexity = new Complexity();
+        complexity.setName("Высокая");
+        complexityRepository.save(complexity);
+        complexity = new Complexity();
+        complexity.setName("Очень высокая");
+        complexityRepository.save(complexity);
+    }
 }

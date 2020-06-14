@@ -87,7 +87,7 @@
                                         [[ ${problem.name} ]]
                                     </a>
                                 </div>
-                                <div class="col">
+                                <div class="col" th:text="${problem.getComplexity()} ? ${problem.getComplexity().getName()} : 'Не определена'">
                                     Средняя
                                 </div>
                                 <div class="col">

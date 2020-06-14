@@ -13,10 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ru.vkr.vkr.domain.BridgePc2;
-import ru.vkr.vkr.entity.Chapter;
-import ru.vkr.vkr.entity.Course;
-import ru.vkr.vkr.entity.HashTag;
-import ru.vkr.vkr.entity.Problem;
+import ru.vkr.vkr.entity.*;
 import ru.vkr.vkr.facade.ProblemFacade;
 import ru.vkr.vkr.form.*;
 import ru.vkr.vkr.service.*;
@@ -67,6 +64,9 @@ public class ProblemController {
     @GetMapping("/teacher/problem-create")
     public String problemCreateGet(Model model, Problem problem) {
         model.addAttribute("isCreate", true);
+        //Сложность задачи
+        List<Complexity> complexities = problemService.getAllComplexity();
+        model.addAttribute("complexities", complexities);
         return "teacher/problem";
     }
 
@@ -143,6 +143,10 @@ public class ProblemController {
         AttachProblemForm attachProblemForm = new AttachProblemForm();
         model.addAttribute("attachProblemForm", attachProblemForm);
 
+
+        //Сложность задачи
+        List<Complexity> complexities = problemService.getAllComplexity();
+        model.addAttribute("complexities", complexities);
         return "teacher/problem";
     }
 
@@ -154,6 +158,7 @@ public class ProblemController {
         Problem problem = problemService.getProblemById(problemId);
         problem.setMemoryLimit(newProblem.getMemoryLimit());
         problem.setTimeLimit(newProblem.getTimeLimit());
+        problem.setComplexity(newProblem.getComplexity());
         problemFacade.updateMainParams(newProblem.getName(), problem);
 
         //problem.setName(newProblem.getName());
