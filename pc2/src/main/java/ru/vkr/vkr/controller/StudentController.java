@@ -65,7 +65,6 @@ public class StudentController {
 
     @GetMapping("/student/problem/{problemId}")
     public String getProblem(Model model, @PathVariable Long problemId) {
-        InternalController internalController = BridgePc2.getInternalController();
         SubmitRunForm submitRunForm = new SubmitRunForm();
         Problem problem = problemService.getProblemById(problemId);
         if (problem.getPathToTextProblem() == null || problem.getPathToTextProblem().equals("")) {

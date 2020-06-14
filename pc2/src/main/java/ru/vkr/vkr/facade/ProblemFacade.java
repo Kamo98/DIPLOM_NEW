@@ -158,7 +158,6 @@ public class ProblemFacade {
     }
 
     public void setTestsParamsToForm(TestSettingsForm testSettingsForm, ru.vkr.vkr.entity.Problem problemDb) {
-        InternalController internalController = BridgePc2.getInternalController();
         //Ищем задачу
         Problem problem = findProblemInPC2(problemDb);
         testSettingsForm.setStopOnFirstFail(problem.isStopOnFirstFailedTestCase());
@@ -208,7 +207,6 @@ public class ProblemFacade {
 
 
     public void setCheckerParamsToForm(CheckerSettingsForm checkerSettingsForm, ru.vkr.vkr.entity.Problem problemDb) {
-        InternalController internalController = BridgePc2.getInternalController();
         //Ищем задачу
         Problem problem = findProblemInPC2(problemDb);
 
@@ -294,7 +292,6 @@ public class ProblemFacade {
 
 
     public Collection<Problem> getAllProblems() {
-        InternalController internalController = BridgePc2.getInternalController();
         ArrayList<Problem> problems = new ArrayList<>();
         Collections.addAll(problems, BridgePc2.getInternalContest().getProblems());
         return problems;

@@ -99,8 +99,6 @@ public class UserService implements UserDetailsService {
     //todo: когда будет интерфейс, нужно будет возвращать его, а не идентификаторы teacher или student
     public List<Long> addUsers(UserForm userForm, ROLE role) {
         List<Long> usersId = new ArrayList<>();
-        InternalController internalController = BridgePc2.getInternalController();
-
 
         String fios = userForm.getFios().trim();
         List<String> surname = new ArrayList<>();
@@ -135,7 +133,7 @@ public class UserService implements UserDetailsService {
             user.setUsername(login);
             user.setPassword(password);
             user.setRole(roleRepository.findById(role.getId()).get());
-            user.setLoginPC2(generateNewAccount(user, role));
+            user.setLoginPC2(generateNewAccount(role));
             saveUser(user);
             logger.info("UserService.addUsers: fio = " + fiosArr[i] + "  login = " + login + "  pass = " + password +
                     "loginPC2 = " );
@@ -172,7 +170,7 @@ public class UserService implements UserDetailsService {
      * генерация соответствующего пользователя в pc2
      * @return логин и пароль сгенерированного пользователя
       */
-    private String generateNewAccount(User user, ROLE role) {
+    private String generateNewAccount(ROLE role) {
         InternalController internalController = BridgePc2.getInternalController();
         internalController.generateNewAccounts(role.getRolePc2(), 1, 1, 1, true);
         if (role == ROLE.ROLE_STUDENT) {
