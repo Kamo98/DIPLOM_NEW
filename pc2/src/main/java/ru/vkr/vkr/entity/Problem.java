@@ -25,13 +25,13 @@ public class Problem {
     @Column(nullable = false)
     private Integer memoryLimit;
 
-    @Column
+    @Column(nullable = false)
     private String nameOfTextProblem;
 
-    @Column
+    @Column(nullable = false)
     private String pathToTextProblem;
 
-    @Column
+    @Column(nullable = false)
     private Long numElementId;      //Для адекватного поиска задач в PC2
 
     @ManyToOne(fetch = FetchType.EAGER)
@@ -42,6 +42,9 @@ public class Problem {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "complexity_id")
     private Complexity complexity;
+
+    @Column(nullable = false)
+    private boolean publ;
 
     @ManyToMany(mappedBy = "chapterProblems", fetch = FetchType.LAZY)
     private Set<Chapter> chapters;
@@ -191,5 +194,13 @@ public class Problem {
 
     public void setComplexity(Complexity complexity) {
         this.complexity = complexity;
+    }
+
+    public boolean isPubl() {
+        return publ;
+    }
+
+    public void setPubl(boolean publ) {
+        this.publ = publ;
     }
 }

@@ -3,6 +3,8 @@ package ru.vkr.vkr.service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.querydsl.QSort;
 import org.springframework.stereotype.Service;
 import ru.vkr.vkr.domain.FileManager;
 import ru.vkr.vkr.entity.*;
@@ -87,8 +89,13 @@ public class ProblemService {
     }
 
 
-    public List<Problem> getAllProblems() {
-        return problemRepository.findAll();
+    public List<Problem> getAllPublicProblems() {
+        List<Sort.Order> orders = new ArrayList<>();
+        orders.add(new Sort.Order(Sort.Direction.ASC, "id"));
+        Sort sort = Sort.by(orders);
+        List<Problem> problems = problemRepository.findAll();
+        return problems;
+//        return problemRepository.findByTeacherAuthor_id(44L);
     }
 
     public Set<TagProblem> setHashTagsToProblem(Problem problem, Map<HashTag, Boolean> hashTags) {

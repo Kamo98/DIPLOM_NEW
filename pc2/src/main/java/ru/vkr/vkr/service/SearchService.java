@@ -60,23 +60,25 @@ public class SearchService {
     //Ищет как по одному тегу selectedTagId, так и по списку тегов из searchProblemForm
     private void filterProblemsByTags(Model model, SearchProblemForm searchProblemForm, List<HashTag> hashTags, List<Complexity> complexities, Long selectedTagId) {
         Set<Problem> problems_1 = new HashSet<>();
-        for (int i = 0; i < searchProblemForm.getTagList().size(); i++) {
-            if (selectedTagId != -1L && hashTags.get(i).getId().equals(selectedTagId))
-                searchProblemForm.getTagList().set(i, true);
-            if (searchProblemForm.getTagList().get(i) != null && searchProblemForm.getTagList().get(i)) {
-                problems_1.addAll(hashTags.get(i).getProblems());
+        if (searchProblemForm.getTagList().size() == 0)
+            problems_1.addAll(problemService.getAllPublicProblems());
+        else
+            for (int i = 0; i < searchProblemForm.getTagList().size(); i++) {
+                if (selectedTagId != -1L && hashTags.get(i).getId().equals(selectedTagId))
+                    searchProblemForm.getTagList().set(i, true);
+                if (searchProblemForm.getTagList().get(i) != null && searchProblemForm.getTagList().get(i))
+                    problems_1.addAll(hashTags.get(i).getProblems());
             }
-        }
 
         Set<Complexity> needComplexity = new HashSet<>();       //Для быстрого поиска при фильтрации задач
-        for(int i = 0; i < searchProblemForm.getComplexityList().size(); i++)
+        for (int i = 0; i < searchProblemForm.getComplexityList().size(); i++)
             if (searchProblemForm.getComplexityList().get(i) != null && searchProblemForm.getComplexityList().get(i))
                 needComplexity.add(complexities.get(i));
 
 
         List<Problem> problems = new ArrayList<>();
         for (Problem problem : problems_1)
-            if (problem.getComplexity() == null || needComplexity.contains(problem.getComplexity()))
+            if (problem.isPubl() && (problem.getComplexity() == null || needComplexity.contains(problem.getComplexity())))
                 problems.add(problem);
 
         problemFacade.getStatisticForProblems(problems);
