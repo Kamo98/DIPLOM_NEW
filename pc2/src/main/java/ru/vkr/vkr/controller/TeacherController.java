@@ -52,8 +52,10 @@ public class TeacherController {
         Collection<Course> teacherCourses = courseService.getCoursesByCurrentTeacher();
         List<Problem> teacherProblems_ = problemService.getProblemsByCurrentTeacher();
         Collection<Problem> teacherProblems = new ArrayList<>();
-        for (int i = 0; i < 5; i++)
-            teacherProblems.add(teacherProblems_.get(i));
+        if (!teacherProblems_.isEmpty()) {
+            for (int i = 0; i < 5; i++)
+                teacherProblems.add(teacherProblems_.get(i));
+        }
         model.addAttribute("teacherCourses", teacherCourses);
         model.addAttribute("teacherProblems", teacherProblems);
         model.addAttribute("isTeacher", true);

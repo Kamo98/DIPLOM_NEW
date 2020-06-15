@@ -1,6 +1,9 @@
 package ru.vkr.vkr.service;
 
 
+import edu.csus.ecs.pc2.api.IClient;
+import edu.csus.ecs.pc2.api.exceptions.NotLoggedInException;
+import edu.csus.ecs.pc2.api.implementation.Contest;
 import edu.csus.ecs.pc2.core.InternalController;
 import edu.csus.ecs.pc2.core.model.Account;
 import edu.csus.ecs.pc2.core.model.ClientType;
@@ -98,10 +101,10 @@ public class UserService implements UserDetailsService {
 
     //todo: когда будет интерфейс, нужно будет возвращать его, а не идентификаторы teacher или student
     public List<Long> addUsers(UserForm userForm, ROLE role) {
+        int countUser = getCountUser(role);
+        if (countUser == -1) return null;
+
         List<Long> usersId = new ArrayList<>();
-        InternalController internalController = BridgePc2.getInternalController();
-
-
         String fios = userForm.getFios().trim();
         List<String> surname = new ArrayList<>();
         List<String> name = new ArrayList<>();
@@ -125,7 +128,6 @@ public class UserService implements UserDetailsService {
                 }
             }
         }
-
         logger.info("UserService.addUsers: count surnames = " + surname.size());
         for (int i = 0; i < surname.size(); ++i) {
             User user = new User();
@@ -135,10 +137,10 @@ public class UserService implements UserDetailsService {
             user.setUsername(login);
             user.setPassword(password);
             user.setRole(roleRepository.findById(role.getId()).get());
-            user.setLoginPC2(generateNewAccount(user, role));
+            user.setLoginPC2(generateNewAccount(role, countUser++));
             saveUser(user);
             logger.info("UserService.addUsers: fio = " + fiosArr[i] + "  login = " + login + "  pass = " + password +
-                    "loginPC2 = " );
+                    "loginPC2 = ");
 
             switch (role) {
                 case ROLE_STUDENT: {
@@ -170,17 +172,39 @@ public class UserService implements UserDetailsService {
 
     /**
      * генерация соответствующего пользователя в pc2
+     *
      * @return логин и пароль сгенерированного пользователя
-      */
-    private String generateNewAccount(User user, ROLE role) {
-        InternalController internalController = BridgePc2.getInternalController();
-        internalController.generateNewAccounts(role.getRolePc2(), 1, 1, 1, true);
-        if (role == ROLE.ROLE_STUDENT) {
-            int countTeam = BridgePc2.getInternalContest().getAccounts(ClientType.Type.TEAM).size();
-            return role.getRolePc2().toLowerCase() + (countTeam + 1);
-        } else {
-            int countAdmin = BridgePc2.getInternalContest().getAccounts(ClientType.Type.ADMINISTRATOR).size();
-            return role.getRolePc2().toLowerCase() + (countAdmin + 1);
+     */
+    private String generateNewAccount(ROLE role, int countUser) {
+        try {
+            String auth = role.getRolePc2().toLowerCase() + countUser;
+            BridgePc2.getServerConnection().addAccount(role.getRolePc2(), auth, auth);
+            return auth;
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+        return "error";
     }
+
+    // передача accountNumber of new account
+    private int getCountUser(ROLE role) {
+        try {
+            if (role == ROLE.ROLE_STUDENT) {
+                return BridgePc2.getServerConnection().getContest().getTeams().length + 1;
+            } else {
+                IClient iClients[] = BridgePc2.getServerConnection().getContest().getClients();
+                int count = 0;
+                for (IClient iClient : iClients) {
+                    if (iClient.getType() == IClient.ClientType.ADMIN_CLIENT) {
+                        count++;
+                    }
+                }
+                return count + 1;
+            }
+        } catch (NotLoggedInException e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
+
 }

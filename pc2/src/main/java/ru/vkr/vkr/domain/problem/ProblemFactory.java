@@ -11,8 +11,8 @@ import java.util.Map;
 
 @Component
 public class ProblemFactory {
-    private final Map<Long, IProblem> problemMap;
-    private final Map<Long, Problem> iProblemMap;
+    private final Map<Long, Problem> problemMap;
+    private final Map<Long, IProblem> iProblemMap;
 
     public ProblemFactory() {
         problemMap = new HashMap<>();
@@ -21,12 +21,12 @@ public class ProblemFactory {
 
     public Problem getProblem(Long problemId) {
         if (problemMap.containsKey(problemId)) {
-            return iProblemMap.get(problemId);
+            return problemMap.get(problemId);
         } else {
             String name = "problem-" + problemId;
-            Problem problems[] = BridgePc2.getInternalContest().getProblems();
+            Problem[] problems = BridgePc2.getInternalContest().getProblems();
             for (Problem problem : problems) {
-                iProblemMap.put(problemId, problem);
+                problemMap.put(problemId, problem);
                 if (problem.getShortName().equals(name)) {
                     return problem;
                 }
@@ -37,13 +37,13 @@ public class ProblemFactory {
 
     public IProblem getIProblem(Long problemId) {
         if (problemMap.containsKey(problemId)) {
-            return problemMap.get(problemId);
+            return iProblemMap.get(problemId);
         } else {
             try {
                 String name = "problem-" + problemId;
-                IProblem iProblems[] = BridgePc2.getServerConnection().getContest().getProblems();
+                IProblem[] iProblems = BridgePc2.getServerConnection().getContest().getProblems();
                 for (IProblem iProblem : iProblems) {
-                    problemMap.put(problemId, iProblem);
+                    iProblemMap.put(problemId, iProblem);
                     if (iProblem.getShortName().equals(name)) {
                         return iProblem;
                     }

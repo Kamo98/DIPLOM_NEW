@@ -1,5 +1,6 @@
 package ru.vkr.vkr.controller;
 
+import edu.csus.ecs.pc2.api.exceptions.NotLoggedInException;
 import edu.csus.ecs.pc2.core.InternalController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -64,8 +65,7 @@ public class StudentController {
 
 
     @GetMapping("/student/problem/{problemId}")
-    public String getProblem(Model model, @PathVariable Long problemId) {
-        InternalController internalController = BridgePc2.getInternalController();
+    public String getProblem(Model model, @PathVariable Long problemId) throws NotLoggedInException {
         SubmitRunForm submitRunForm = new SubmitRunForm();
         Problem problem = problemService.getProblemById(problemId);
         if (problem.getPathToTextProblem() == null || problem.getPathToTextProblem().equals("")) {
@@ -74,7 +74,7 @@ public class StudentController {
             model.addAttribute("statement", true);
         }
         model.addAttribute("problem", problem);
-        model.addAttribute("langs", BridgePc2.getInternalContest().getLanguages());
+        model.addAttribute("langs", BridgePc2.getServerConnection().getContest().getLanguages());
         model.addAttribute("submitRunForm", submitRunForm);
         return "student/problem";
     }

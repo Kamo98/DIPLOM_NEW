@@ -1,5 +1,6 @@
 package ru.vkr.vkr.controller;
 
+import edu.csus.ecs.pc2.api.exceptions.NotLoggedInException;
 import javafx.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,7 +44,7 @@ public class ProblemController {
 
     //todo: в этом методе отчасти дублируется код из такого же в TeacherController, а это не хорошо
     @ModelAttribute
-    public void addAttributes(Model model) {
+    public void addAttributes(Model model) throws NotLoggedInException {
         Collection<Course> teacherCourses = courseService.getCoursesByCurrentTeacher();
         List<Problem> teacherProblems_ = problemService.getProblemsByCurrentTeacher();
         Collection<Problem> teacherProblems = new ArrayList<>();
@@ -57,7 +58,7 @@ public class ProblemController {
         model.addAttribute("teacherCourses", teacherCourses);
         model.addAttribute("teacherProblems", teacherProblems);
         model.addAttribute("isTeacher", true);
-        model.addAttribute("langs", BridgePc2.getInternalContest().getLanguages());
+        model.addAttribute("langs", BridgePc2.getServerConnection().getContest().getLanguages());
         model.addAttribute("submitRunForm", submitRunForm);
     }
 
@@ -74,17 +75,10 @@ public class ProblemController {
     public String problemCreatePost(Model model, Problem problem) {
         problemService.setAuthorForNewCourse(problem);
         problemService.save(problem);
-
         //Инициализируем задачу в pc2
-        Long problemPc2NumId = problemFacade.initProblem(problem);
-
-        problem.setNumElementId(problemPc2NumId);
-        problemService.save(problem);
-
-
+        problemFacade.initProblem(problem);
         return "redirect:/teacher/problem/" + problem.getId();
     }
-
 
 
     @GetMapping("/teacher/problem/{problemId}")

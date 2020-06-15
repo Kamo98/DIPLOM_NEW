@@ -55,14 +55,6 @@ public class ProblemService {
         return problemRepository.findById(problemId).get();
     }
 
-    public Problem getProblemByNum(Long num) {
-        for (Problem problem : problemRepository.findAll()) {
-            if (problem.getNumElementId() == num) {
-                return problem;
-            }
-        }
-        return null;
-    }
 
     //Устанавливает автора создаваемой задачи
     public void setAuthorForNewCourse(Problem problem){
