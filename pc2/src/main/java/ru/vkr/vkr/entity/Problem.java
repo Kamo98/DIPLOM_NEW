@@ -31,9 +31,6 @@ public class Problem {
     @Column
     private String pathToTextProblem;
 
-    @Column
-    private Long numElementId;      //Для адекватного поиска задач в PC2
-
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "teacher_id")
     private Teacher teacherAuthor;
@@ -113,14 +110,6 @@ public class Problem {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public Long getNumElementId() {
-        return numElementId;
-    }
-
-    public void setNumElementId(Long numElementId) {
-        this.numElementId = numElementId;
     }
 
     public Teacher getTeacherAuthor() {

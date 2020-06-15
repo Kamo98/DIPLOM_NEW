@@ -144,6 +144,6 @@ public class DownloadController {
             account.addPermission(Permission.Type.ALLOWED_TO_FETCH_RUN);
             accountss[i++] = account;
         }
-        BridgePc2.getInternalController().updateAccounts(accountss);
+        BridgePc2.getInternalContest().updateAccounts(accountss);
     }
 }

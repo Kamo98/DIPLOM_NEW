@@ -75,17 +75,10 @@ public class ProblemController {
     public String problemCreatePost(Model model, Problem problem) {
         problemService.setAuthorForNewCourse(problem);
         problemService.save(problem);
-
         //Инициализируем задачу в pc2
-        Long problemPc2NumId = problemFacade.initProblem(problem);
-
-        problem.setNumElementId(problemPc2NumId);
-        problemService.save(problem);
-
-
+        problemFacade.initProblem(problem);
         return "redirect:/teacher/problem/" + problem.getId();
     }
-
 
 
     @GetMapping("/teacher/problem/{problemId}")

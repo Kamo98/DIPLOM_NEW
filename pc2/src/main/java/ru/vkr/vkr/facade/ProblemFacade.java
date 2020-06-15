@@ -79,12 +79,9 @@ public class ProblemFacade {
     }
 
 
-    public Long initProblem(ru.vkr.vkr.entity.Problem problemDb) {
+    public void initProblem(ru.vkr.vkr.entity.Problem problemDb) {
         makeDirectory(problemDb.getId());
-
         InternalController internalController = BridgePc2.getInternalController();
-
-        String baseDirectoryName = uploadPath + "tests\\problem-" + problemDb.getId();
 
         //Основные параметры задачи
         Problem problem = new Problem(problemDb.getName());
@@ -114,35 +111,17 @@ public class ProblemFacade {
                 internalController.updateClientSettings(clientSettingsList[i]);
             }
         }
-
         ProblemDataFiles problemDataFiles = new ProblemDataFiles(problem);
         internalController.addNewProblem(problem, problemDataFiles);
-
-
-        try {
-            ElementId elementId = problem.getElementId();
-            Class elementIdClass = elementId.getClass();
-            Field elementIdField = elementIdClass.getDeclaredField("num");
-            elementIdField.setAccessible(true);
-            return elementIdField.getLong(elementId);
-        } catch (IllegalAccessException | NoSuchFieldException e) {
-            e.printStackTrace();
-        }
-
-
-        return 1L;
     }
 
     public void updateMainParams(String newName, ru.vkr.vkr.entity.Problem problemDb) {
         InternalController internalController = BridgePc2.getInternalController();
-
         //Ищем задачу
         Problem problem = findProblemInPC2(problemDb);
         if (problem != null) {
-            //todo: после изменения имени задача перстаёт искаться
-            //problem.setDisplayName(newName);
+            problem.setDisplayName(newName);
             problem.setTimeOutInSeconds(problemDb.getTimeLimit());
-
             internalController.updateProblem(problem);
         }
     }
@@ -233,9 +212,7 @@ public class ProblemFacade {
     public void loadTestFiles(LoadTestsForm loadTestsForm, ru.vkr.vkr.entity.Problem problemDb) throws IOException {
         String extensionIn = loadTestsForm.getExtensionIn();
         String extensionAns = loadTestsForm.getExtensionAns();
-
         String uloadDirPath = uploadPath + "tests\\problem-" + problemDb.getId();
-
 
         //Изменение расширений файлов с extensionIn и extensionAns на .in и .ans
         HashMap<String, MultipartFile> filesIn = new HashMap<>();
@@ -289,14 +266,6 @@ public class ProblemFacade {
         ProblemDataFiles problemDataFiles = loadDataFiles(problem, null, baseDirectoryName, extensionInStandart, extensionAnsStandart, externalFiles);
         internalController.updateProblem(problem, problemDataFiles);
     }
-
-
-    public Collection<Problem> getAllProblems() {
-        ArrayList<Problem> problems = new ArrayList<>();
-        Collections.addAll(problems, BridgePc2.getInternalContest().getProblems());
-        return problems;
-    }
-
 
     public List<Pair<String, String>> getAllTestsById(ru.vkr.vkr.entity.Problem problemDb) {
 //        Set<String> filesList = new HashSet<>();
@@ -382,24 +351,7 @@ public class ProblemFacade {
      * Скрипт для обновления задач в базе после экспорта
      */
     public void updateNumInProblems() {
-        Problem problems[] = BridgePc2.getInternalContest().getProblems();
-        for (Problem iproblem : problems) {
-            String shortName = iproblem.getShortName();
-            String arr[] = shortName.split("-");
-            if (arr.length == 2) {
-                try {
-                    ru.vkr.vkr.entity.Problem problem = problemService.getProblemById(Long.parseLong(arr[1]));
-                    ElementId elementId = iproblem.getElementId();
-                    Class elementIdClass = elementId.getClass();
-                    Field elementIdField = elementIdClass.getDeclaredField("num");
-                    elementIdField.setAccessible(true);
-                    Long num = (Long) elementIdField.get(elementId);
-                    problem.setNumElementId(num);
-                    problemService.save(problem);
-                } catch (Exception e) {
-                }
-            }
-        }
+
     }
 
 
