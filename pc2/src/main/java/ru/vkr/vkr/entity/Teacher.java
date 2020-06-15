@@ -2,6 +2,7 @@ package ru.vkr.vkr.entity;
 
 import javax.persistence.*;
 import java.util.Set;
+import java.util.List;
 
 @Entity
 @Table(name = "t_teacher")
@@ -28,7 +29,7 @@ public class Teacher {
 
     // задачи, созданные преподавателем
     @OneToMany(mappedBy = "teacherAuthor", fetch = FetchType.LAZY)
-    private Set<Problem> problems;
+    private List<Problem> problems;
 
 
     public void setId(Long id) {
@@ -79,11 +80,11 @@ public class Teacher {
         this.courses = courses;
     }
 
-    public Set<Problem> getProblems() {
+    public List<Problem> getProblems() {
         return problems;
     }
 
-    public void setProblems(Set<Problem> problems) {
+    public void setProblems(List<Problem> problems) {
         this.problems = problems;
     }
 }

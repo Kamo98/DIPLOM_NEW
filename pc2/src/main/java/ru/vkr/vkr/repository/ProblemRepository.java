@@ -6,6 +6,6 @@ import ru.vkr.vkr.entity.Problem;
 import java.util.List;
 
 public interface ProblemRepository extends JpaRepository<Problem, Long> {
-    List<Problem> findByTeacherAuthor_id(Long idTeacher);
-//    List<Problem> findByPubl(boolean publ);
+//    List<Problem> findByTeacherAuthor_id(Long idTeacher);
+    List<Problem> findByPubl(boolean publ);
 }

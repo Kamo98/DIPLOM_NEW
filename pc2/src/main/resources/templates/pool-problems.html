@@ -35,14 +35,14 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-6 border rounded-lg" id="tags-scrolling">
+                                <div class="col-6 border rounded-lg block-search" id="tags-scrolling">
                                     <div th:each="tag, iStat : ${hashTags}" th:style="'margin-left: ' + ${tag.level}*2 + 'rem;'">
                                         <input type="checkbox" th:class="'tag-checkbox parent-' + ((${tag.parent}) ? (${tag.parent.id}) : '')"
                                                th:id="'hashTag-' + ${tag.id}" th:field="*{tagList[__${iStat.index}__]}">
                                         <label th:for="'hashTag-' + ${tag.id}" th:text="${tag.name}">Тег</label>
                                     </div>
                                 </div>
-                                <div class="col border rounded-lg" id="complexity">
+                                <div class="col border rounded-lg block-search" id="complexity">
                                     <div th:each="complexity, iStat : ${complexities}">
                                         <input type="checkbox" th:id="'complexity-' + ${complexity.id}" th:field="*{complexityList[__${iStat.index}__]}">
                                         <label th:for="'complexity-' + ${complexity.id}" th:text="${complexity.name}">Средняя</label>

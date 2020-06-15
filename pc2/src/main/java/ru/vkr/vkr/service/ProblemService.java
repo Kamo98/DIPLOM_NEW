@@ -63,7 +63,8 @@ public class ProblemService {
     }
 
     public List<Problem> getProblemsByCurrentTeacher() {
-        return problemRepository.findByTeacherAuthor_id(authenticationFacade.getCurrentTeacher().getId());
+        return authenticationFacade.getCurrentTeacher().getProblems();
+//        return problemRepository.findByTeacherAuthor_id(authenticationFacade.getCurrentTeacher().getId());
     }
 
     public Collection<Problem> getProblemsByCurrentStudent() {
@@ -82,12 +83,10 @@ public class ProblemService {
 
 
     public List<Problem> getAllPublicProblems() {
-        List<Sort.Order> orders = new ArrayList<>();
-        orders.add(new Sort.Order(Sort.Direction.ASC, "id"));
-        Sort sort = Sort.by(orders);
-        List<Problem> problems = problemRepository.findAll();
-        return problems;
-//        return problemRepository.findByTeacherAuthor_id(44L);
+//        List<Sort.Order> orders = new ArrayList<>();
+//        orders.add(new Sort.Order(Sort.Direction.ASC, "id"));
+//        Sort sort = Sort.by(orders);
+        return problemRepository.findByPubl(true);
     }
 
     public Set<TagProblem> setHashTagsToProblem(Problem problem, Map<HashTag, Boolean> hashTags) {

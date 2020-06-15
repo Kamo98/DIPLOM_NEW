@@ -15,7 +15,7 @@ public class SearchProblemForm {
         for (int i = 0; i < countTags; i++)
             tagList.add(false);
         for (int i = 0; i < countComplexities; i++)
-            complexityList.add(true);
+            complexityList.add(false);
     }
 
     public SearchProblemForm (int countTags, int countComplexities, SearchProblemForm searchProblemForm) {

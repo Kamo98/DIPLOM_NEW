@@ -301,6 +301,17 @@ hr {
     height: 3rem;
 }
 
+
+/******************
+****Пул задач*****/
+
+.block-search {
+    margin-right: 1rem;
+    padding: 0.5rem;
+}
+
+
+
 table.dataTable thead .sorting:after,
 table.dataTable thead .sorting:before,
 table.dataTable thead .sorting_asc:after,

@@ -3,8 +3,6 @@ package ru.vkr.vkr.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import ru.vkr.vkr.entity.Complexity;
 import ru.vkr.vkr.entity.HashTag;
 import ru.vkr.vkr.entity.Problem;
@@ -34,6 +32,9 @@ public class SearchService {
         SearchProblemForm searchProblemForm = new SearchProblemForm(hashTags.size(), complexities.size());
         model.addAttribute("searchProblemForm", searchProblemForm);
         model.addAttribute("isFirstRunPool", true);
+
+        List<Problem> problems = problemService.getAllPublicProblems();
+        model.addAttribute("problems", problems);
     }
 
     //Для страницы фильтрации задач
@@ -42,7 +43,7 @@ public class SearchService {
         model.addAttribute("hashTags", hashTags);
         List<Complexity> complexities = problemService.getAllComplexity();
         model.addAttribute("complexities", complexities);
-        filterProblemsByTags(model, searchProblemForm, hashTags, complexities, -1L);
+        filterProblems(model, searchProblemForm, hashTags, complexities, -1L);
     }
 
     //Для фильтрации по одному тегу
@@ -52,13 +53,13 @@ public class SearchService {
         List<Complexity> complexities = problemService.getAllComplexity();
         model.addAttribute("complexities", complexities);
         SearchProblemForm searchProblemForm = new SearchProblemForm(hashTags.size(), complexities.size());
-        filterProblemsByTags(model, searchProblemForm, hashTags, complexities, selectedTagId);
+        filterProblems(model, searchProblemForm, hashTags, complexities, selectedTagId);
     }
 
 
     //Непосредстванно фильтрация задач
     //Ищет как по одному тегу selectedTagId, так и по списку тегов из searchProblemForm
-    private void filterProblemsByTags(Model model, SearchProblemForm searchProblemForm, List<HashTag> hashTags, List<Complexity> complexities, Long selectedTagId) {
+    private void filterProblems(Model model, SearchProblemForm searchProblemForm, List<HashTag> hashTags, List<Complexity> complexities, Long selectedTagId) {
         Set<Problem> problems_1 = new HashSet<>();
         if (searchProblemForm.getTagList().size() == 0)
             problems_1.addAll(problemService.getAllPublicProblems());
@@ -70,16 +71,19 @@ public class SearchService {
                     problems_1.addAll(hashTags.get(i).getProblems());
             }
 
+
         Set<Complexity> needComplexity = new HashSet<>();       //Для быстрого поиска при фильтрации задач
         for (int i = 0; i < searchProblemForm.getComplexityList().size(); i++)
             if (searchProblemForm.getComplexityList().get(i) != null && searchProblemForm.getComplexityList().get(i))
                 needComplexity.add(complexities.get(i));
 
-
         List<Problem> problems = new ArrayList<>();
-        for (Problem problem : problems_1)
-            if (problem.isPubl() && (problem.getComplexity() == null || needComplexity.contains(problem.getComplexity())))
-                problems.add(problem);
+        if (needComplexity.size() == 0) {
+            problems.addAll(problems_1);
+        } else
+            for (Problem problem : problems_1)
+                if (problem.getComplexity() == null || needComplexity.contains(problem.getComplexity()))
+                    problems.add(problem);
 
         problemFacade.getStatisticForProblems(problems);
         model.addAttribute("problems", problems);
