@@ -34,6 +34,7 @@ public class SearchService {
         model.addAttribute("isFirstRunPool", true);
 
         List<Problem> problems = problemService.getAllPublicProblems();
+        problemFacade.getStatisticForProblems(problems);
         model.addAttribute("problems", problems);
     }
 
@@ -94,39 +95,6 @@ public class SearchService {
 
     //Для вставки в бд тегов
     public void genTags() {
-//        HashMap<String, Collection<String>> tag2child = new HashMap<>();
-//
-//        final String structData = "Структуры данных";
-//        final String grafs = "Графы";
-//
-//        tag2child.put(structData, new ArrayList<>());
-//        tag2child.put(grafs, new ArrayList<>());
-//
-//        tag2child.get(structData).add("Элементарные структуры данных");
-//        tag2child.get(structData).add("Хеш-таблицы");
-//        tag2child.get(structData).add("Бинарные деревья поиска");
-//        tag2child.get(structData).add("Красно-чёрные деревья");
-//        tag2child.get(structData).add("Красно-чёрные деревья");
-//
-//        tag2child.get(grafs).add("Минимальный остов");
-//        tag2child.get(grafs).add("Кратчайшие пути");
-//        tag2child.get(grafs).add("Обходы графов");
-//        tag2child.get(grafs).add("Максимальный поток");
-//
-//        for (Map.Entry<String, Collection<String>> unit : tag2child.entrySet()) {
-//            HashTag parent = new HashTag();
-//            parent.setName(unit.getKey());
-//            hashTagService.save(parent);
-//
-//            for(String item : unit.getValue()) {
-//                HashTag tag = new HashTag();
-//                tag.setName(item);
-//                tag.setParent(parent);
-//                hashTagService.save(tag);
-//            }
-//
-//        }
-
         hashTagService.deleteAll();
         Map<Integer, HashTag> level2tag = new HashMap<>();
         try {

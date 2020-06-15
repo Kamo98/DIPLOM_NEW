@@ -3,6 +3,7 @@ package ru.vkr.vkr.domain.run;
 import edu.csus.ecs.pc2.api.IClient;
 import edu.csus.ecs.pc2.api.IRun;
 import edu.csus.ecs.pc2.api.listener.IRunEventListener;
+import edu.csus.ecs.pc2.core.model.Run;
 import ru.vkr.vkr.domain.FileManager;
 
 public class RunStatisticListener implements IRunEventListener {
@@ -15,6 +16,10 @@ public class RunStatisticListener implements IRunEventListener {
 
     public void setSourceCode(boolean sourceCode) {
         this.isSourceCode = sourceCode;
+    }
+
+    public RunStatistic getRunStatistic() {
+        return runStatistic;
     }
 
     @Override

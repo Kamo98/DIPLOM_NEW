@@ -5,6 +5,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.List;
 
 @Entity
 @Table(name = "t_problem")
@@ -53,14 +54,17 @@ public class Problem {
 //    private Set<HashTag> hashTags;
 
     @OneToMany(mappedBy = "problem", fetch = FetchType.LAZY)
-    private Set<TagProblem> tagProblems;
+    private List<TagProblem> tagProblems;
 
     /*****
     * Поля для статистики
      * Не из БД*/
-    //Отношение кол-ва усепшных сдач к общему (%)
-    transient private Long countAccepted = 0L;
+    transient private Integer acceptedToTotal = 0;
+    transient private Long acceptedSubmit = 0L;
     transient private Long totalSubmit = 0L;
+    transient private Integer studentAcceptToTotal = 0;
+    transient private Long studentAccSubmit = 0L;
+    transient private Long totalStudentSubmit = 0L;
 
 
     public String getName() {
@@ -128,11 +132,11 @@ public class Problem {
         this.teacherAuthor = teacherAuthor;
     }
 
-    public Set<TagProblem> getTagProblems() {
+    public List<TagProblem> getTagProblems() {
         return tagProblems;
     }
 
-    public void setTagProblems(Set<TagProblem> tagProblems) {
+    public void setTagProblems(List<TagProblem> tagProblems) {
         this.tagProblems = tagProblems;
     }
 
@@ -153,28 +157,8 @@ public class Problem {
     }
 
 
-    public void setHashTags(Set<TagProblem> tagProblems) {
+    public void setHashTags(List<TagProblem> tagProblems) {
         this.tagProblems = tagProblems;
-    }
-
-
-    @Transient
-    public Long getCountAccepted() {
-        return countAccepted;
-    }
-    @Transient
-    public void setCountAccepted(Long countAccepted) {
-        this.countAccepted = countAccepted;
-    }
-
-    @Transient
-    public Long getTotalSubmit() {
-        return totalSubmit;
-    }
-
-    @Transient
-    public void setTotalSubmit(Long totalSubmit) {
-        this.totalSubmit = totalSubmit;
     }
 
     public Complexity getComplexity() {
@@ -191,5 +175,56 @@ public class Problem {
 
     public void setPubl(boolean publ) {
         this.publ = publ;
+    }
+
+    @Transient
+    public Long getTotalSubmit() {
+        return totalSubmit;
+    }
+
+    @Transient
+    public void setTotalSubmit(Long totalSubmit) {
+        this.totalSubmit = totalSubmit;
+    }
+
+    @Transient
+    public Long getTotalStudentSubmit() {
+        return totalStudentSubmit;
+    }
+    @Transient
+    public void setTotalStudentSubmit(Long totalStudentSubmit) {
+        this.totalStudentSubmit = totalStudentSubmit;
+    }
+    @Transient
+    public Integer getAcceptedToTotal() {
+        return acceptedToTotal;
+    }
+    @Transient
+    public void setAcceptedToTotal(Integer acceptedToTotal) {
+        this.acceptedToTotal = acceptedToTotal;
+    }
+    @Transient
+    public Integer getStudentAcceptToTotal() {
+        return studentAcceptToTotal;
+    }
+    @Transient
+    public void setStudentAcceptToTotal(Integer studentAcceptToTotal) {
+        this.studentAcceptToTotal = studentAcceptToTotal;
+    }
+    @Transient
+    public Long getAcceptedSubmit() {
+        return acceptedSubmit;
+    }
+    @Transient
+    public void setAcceptedSubmit(Long acceptedSubmit) {
+        this.acceptedSubmit = acceptedSubmit;
+    }
+    @Transient
+    public Long getStudentAccSubmit() {
+        return studentAccSubmit;
+    }
+    @Transient
+    public void setStudentAccSubmit(Long studentAccSubmit) {
+        this.studentAccSubmit = studentAccSubmit;
     }
 }

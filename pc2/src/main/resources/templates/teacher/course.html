@@ -19,8 +19,12 @@
 
 
         <div class="main-content col-9 border rounded-lg">
-            <h5 class="centered green-h" th:unless="${isCreate}">Курс "[[ ${course.name} ]]"</h5>
-            <h5 class="centered green-h" th:if="${isCreate}">Курс "Новый курс"</h5>
+
+            <h4 class="centered green-h" th:unless="${isCreate}">
+                <a th:href="@{'/teacher/course/' + ${course.id}}" th:text="${course.name}">
+                </a>
+            </h4>
+            <h4 class="centered green-h" th:if="${isCreate}">Новый курс</h4>
 
 
             <ul class="nav nav-pills tabs-menu">

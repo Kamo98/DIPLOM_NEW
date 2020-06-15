@@ -84,6 +84,10 @@ public class BridgePc2 {
         return serverConnection;
     }
 
+    public static RunStatistic getRunStatistic() {
+        return runStatisticListener.getRunStatistic();
+    }
+
     public static InternalController getInternalController() {
         return internalController;
     }

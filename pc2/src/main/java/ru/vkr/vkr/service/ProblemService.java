@@ -89,10 +89,10 @@ public class ProblemService {
         return problemRepository.findByPubl(true);
     }
 
-    public Set<TagProblem> setHashTagsToProblem(Problem problem, Map<HashTag, Boolean> hashTags) {
+    public List<TagProblem> setHashTagsToProblem(Problem problem, Map<HashTag, Boolean> hashTags) {
         tagProblemRepository.deleteByProblem_id(problem.getId());      //Очистить старые теги
         //todo: все теги задачи очищаются, а новые добавляются, нужно будет придумтаь что-то получше
-        Set<TagProblem> tagProblems = new HashSet<>();
+        List<TagProblem> tagProblems = new ArrayList<>();
         for (Map.Entry<HashTag, Boolean> newTag : hashTags.entrySet()) {
             TagProblem tagProblem = new TagProblem();
             tagProblem.setHashTag(newTag.getKey());
