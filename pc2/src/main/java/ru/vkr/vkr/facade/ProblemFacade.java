@@ -20,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import ru.vkr.vkr.domain.BridgePc2;
 import ru.vkr.vkr.domain.problem.ProblemFactory;
 import ru.vkr.vkr.domain.run.MonitorData;
+import ru.vkr.vkr.domain.run.RunStatistic;
 import ru.vkr.vkr.entity.Student;
 import ru.vkr.vkr.form.CheckerSettingsForm;
 import ru.vkr.vkr.form.LoadTestsForm;
@@ -351,8 +352,8 @@ public class ProblemFacade {
      * Скрипт для обновления задач в базе после экспорта
      */
     public void updateNumInProblems() {
-        problemService.getAllProblems();
-        System.out.println();
+//        problemService.getAllProblems();
+//        System.out.println();
     }
 
 
@@ -469,8 +470,25 @@ public class ProblemFacade {
     }
 
     public void getStatisticForProblems(Collection<ru.vkr.vkr.entity.Problem> problemsDb) {
-    }
+        HashMap<Long, RunStatistic.StatisticOfTask> statisticOfTask = BridgePc2.getRunStatistic().getStatisticOfTaskHashMap();
 
+        for(ru.vkr.vkr.entity.Problem pr : problemsDb) {
+            if (statisticOfTask.containsKey(pr.getId())) {
+                RunStatistic.StatisticOfTask stat = statisticOfTask.get(pr.getId());
+
+                Float acceptedToTotal = (stat.getCountYes() * (float)100.0) / stat.getCount();
+                pr.setAcceptedToTotal(Math.round(acceptedToTotal));
+                pr.setAcceptedSubmit(stat.getCountYes());
+                pr.setTotalSubmit(stat.getCount());
+
+                Long totalStudent = stat.getCountStudentYes() + stat.getCountStudentNo();
+                Float studentAccToTotal = (stat.getCountStudentYes() * (float)100.0) / totalStudent;
+                pr.setStudentAcceptToTotal(Math.round(studentAccToTotal));
+                pr.setStudentAccSubmit(stat.getCountStudentYes());
+                pr.setTotalStudentSubmit(totalStudent);
+            }
+        }
+    }
 }
 
 

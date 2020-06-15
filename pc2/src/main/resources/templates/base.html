@@ -97,6 +97,9 @@
                                 <i class="fa fa-arrow-right" aria-hidden="true"></i>&nbsp;
                                 <a th:href="@{'/teacher/problem/' + ${problem.id}}" th:text="${problem.name}">Задача</a>
                             </li>
+                            <li>
+                                <a th:href="@{/teacher/problems}">Ещё...</a>
+                            </li>
                             <!--<li><a th:href="@{'/teacher/problem'}"><i class="fa fa-shield fa-rotate-270"></i>&nbsp;Ещё...</a></li>-->
                         </ul>
                         <div class="link-new"><a th:href="@{'/teacher/problem-create'}"><i class="fa fa-plus" aria-hidden="true"></i>&nbsp;Создать задачу</a></div>

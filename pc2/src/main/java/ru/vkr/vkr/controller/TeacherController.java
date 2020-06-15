@@ -50,11 +50,11 @@ public class TeacherController {
     @ModelAttribute
     public void addAttributes(Model model) {
         Collection<Course> teacherCourses = courseService.getCoursesByCurrentTeacher();
-        List<Problem> teacherProblems_ = problemService.getProblemsByCurrentTeacher();
+        List<Problem> problems = problemService.getProblemsByCurrentTeacher();
         Collection<Problem> teacherProblems = new ArrayList<>();
-        if (!teacherProblems_.isEmpty()) {
+        if (!problems.isEmpty()) {
             for (int i = 0; i < 5; i++)
-                teacherProblems.add(teacherProblems_.get(i));
+                teacherProblems.add(problems.get(i));
         }
         model.addAttribute("teacherCourses", teacherCourses);
         model.addAttribute("teacherProblems", teacherProblems);
@@ -68,6 +68,14 @@ public class TeacherController {
     public String mainTeacher() {
         //return "teacher/main";
         return "redirect:/teacher/course/304";
+    }
+
+    @GetMapping("/teacher/problems")
+    public String allProblems(Model model) {
+        List<Problem> allTeacherProblems = problemService.getProblemsByCurrentTeacher();
+        problemFacade.getStatisticForProblems(allTeacherProblems);
+        model.addAttribute("allTeacherProblems", allTeacherProblems);
+        return "teacher/problems";
     }
 
     //Страница с курсом

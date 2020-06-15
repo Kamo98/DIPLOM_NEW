@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="base :: common_header(~{::title})">
+    <title>Тема</title>
+</head>
+
+<body>
+
+<div th:replace="base :: navigation"></div>
+
+<div class="container">
+    <div class="row row-margin-bottom">
+
+        <!--    Вставка боковой панели  -->
+        <div th:replace="base :: side-panels"></div>
+        <!-- *** -->
+
+
+        <div class="main-content col-9 border rounded-lg">
+            <h5 class="centered green-h">Мои задачи</h5>
+            <ul class="nav nav-pills tabs-menu">
+            </ul>
+            <div class="container" id="containerOfTabs">
+                <div class="col-align-centered">
+                    <div class="row row-table table-header">
+                        <div class="col">
+                            <i class="fa fa-tasks" aria-hidden="true"></i>&nbsp; Задача
+                        </div>
+                        <div class="col">
+                            <i class="fa fa-wrench" aria-hidden="true"></i>&nbsp; Сложность
+                        </div>
+                        <div class="col">
+                            <i class="fa fa-wrench" aria-hidden="true"></i>&nbsp; Решаемость (отправки)
+                        </div>
+                        <div class="col">
+                            <i class="fa fa-wrench" aria-hidden="true"></i>&nbsp; Решаемость (пользователи)
+                        </div>
+                        <div class="col">
+                            <i class="fa fa-users" aria-hidden="true"></i>&nbsp; Публикация
+                        </div>
+                    </div>
+
+                    <div class="row row-table" th:each="problem : ${allTeacherProblems}">
+                        <div class="col">
+                            <a th:href="@{'/teacher/problem/' + ${problem.id}}" th:text="${problem.name}">
+                                Задача
+                            </a>
+                        </div>
+                        <div class="col" th:text="${problem.getComplexity()} ? ${problem.getComplexity().getName()} : 'Не определена'">
+                            Средняя
+                        </div>
+                        <div class="col" title="Успешных / Всего отправок">
+                            <div class="block-stat-red">
+                                <div class="block-stat-green" th:style="'width:' + ${problem.acceptedToTotal} + '%;'"></div>
+                                <div class="block-stat-text" th:text="${problem.acceptedSubmit} + ' / ' + ${problem.totalSubmit}"></div>
+                            </div>
+                        </div>
+                        <div class="col" title="Сдавших / Всего пользователей">
+                            <div class="block-stat-red">
+                                <div class="block-stat-green" th:style="'width:' + ${problem.studentAcceptToTotal} + '%;'"></div>
+                                <div class="block-stat-text" th:text="${problem.studentAccSubmit} + ' / ' + ${problem.totalStudentSubmit}"></div>
+                            </div>
+                        </div>
+                        <div class="col">
+                           <span th:if="${problem.publ}">Опубкликоавна</span>
+                            <span th:unless="${problem.publ}">Нет</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+<footer th:replace="base :: footer"></footer>
+
+<script th:if="${isCreate}">
+    //Чтобы при запуске страницы создания активировалась вкладка с настройками
+    $(document).ready(function () {
+        $("#linkThemeSettings").click();
+    });
+</script>
+
+<script>
+    function getMonitor() {
+        $.ajax({
+             type: 'post',
+             url: "/teacher/theme/monitor",
+             data: {'idChapter': [[ ${chapter.id} ]] },
+             dataType: "html",
+             success: function (data) {
+                 $("#monitorTable").html(data);
+                 var dt = new Date();
+                 var time = dt.getHours() + ":" + dt.getMinutes() + ":" + dt.getSeconds();
+                 $("#timeLastRefresh").text(time);
+             }
+        });
+    }
+
+    //Клик по вкладке Теоретический материал
+    $('#linkTmOfChapter').click(function (e) {
+        $('#linkTmOfChapter').addClass('active');
+        $('#tmOfChapter').show();
+    });
+
+    //Клик по вкладке Задачи темы
+    $('#linkThemeProblems').click(function (e) {
+        $('#linkThemeProblems').addClass('active');
+        $('#problemsOfTheme').show();
+    });
+
+    //Клик по вкладке Монитор
+    $('#linkResultsForTheme').click(function (e) {
+        $('#linkResultsForTheme').addClass('active');
+        $('#resultForTheme').show();
+        getMonitor();
+    });
+
+    //Клик по вкладке Параметры
+    $('#linkThemeSettings').click(function (e) {
+        $('#linkThemeSettings').addClass('active');
+        $('#themeSettings').show();
+    });
+
+
+    //Обработка кликов по радио-кнопкам с выбором типа прикрепления задачи
+    $('#typeAddSelect').click(function (e) {
+        $('#selectProblems').attr('disabled', false);
+    });
+
+    $('#typeAddNew').click(function (e) {
+        $('#selectProblems').attr('disabled', true);
+    });
+
+
+
+    //Обновление монитора по клику
+    $('#refreshMonitor').click(function (e) {
+        getMonitor();
+    });
+
+    //Обновление монитора по таймеру
+    setInterval(function() {
+        if ($('#linkResultsForTheme').hasClass('active')) {
+            getMonitor();
+        }
+    }, 10000);
+
+</script>
+
+
+<script th:if="${activeTabMenu}">
+    $("#[[ ${activeTabMenu} ]]").click();
+</script>
+</body>
+</html>

@@ -165,12 +165,16 @@
                                 <i class="fa fa-wrench" aria-hidden="true"></i>&nbsp; Сложность
                             </div>
                             <div class="col">
-                                <i class="fa fa-wrench" aria-hidden="true"></i>&nbsp; Решаемость
+                                <i class="fa fa-wrench" aria-hidden="true"></i>&nbsp; Решаемость (отправки)
+                            </div>
+                            <div class="col">
+                                <i class="fa fa-wrench" aria-hidden="true"></i>&nbsp; Решаемость (пользователи)
                             </div>
                             <div class="col">
                                 <i class="fa fa-tags" aria-hidden="true"></i>&nbsp; Теги
                             </div>
-                            <div class="col-3">
+                            <div class="col-2">
+                                <i class="fa fa-cogs" aria-hidden="true"></i>&nbsp;
                                 Управление
                             </div>
                         </div>
@@ -183,7 +187,7 @@
                             </div>
                         </div>
 
-                        <div class="row row-table" th:each="problem : ${chapter.chapterProblems}">
+                        <div class="row row-table" th:each="problem : ${chapter.chapterProblems}" th:if="${problem.publ}">
                             <div class="col">
                                 <a th:href="@{'/teacher/problem/' + ${problem.id}}" th:text="${problem.name}">
                                     Задача
@@ -192,9 +196,20 @@
                             <div class="col" th:text="${problem.getComplexity()} ? ${problem.getComplexity().getName()} : 'Не определена'">
                                 Средняя
                             </div>
-                            <div class="col">
-                                [[ ${problem.countAccepted} ]]&nbsp; / [[ ${problem.totalSubmit} ]]
+
+                            <div class="col" title="Успешных / Всего отправок">
+                                <div class="block-stat-red">
+                                    <div class="block-stat-green" th:style="'width:' + ${problem.acceptedToTotal} + '%;'"></div>
+                                    <div class="block-stat-text" th:text="${problem.acceptedSubmit} + ' / ' + ${problem.totalSubmit}"></div>
+                                </div>
                             </div>
+                            <div class="col" title="Сдавших / Всего пользователей">
+                                <div class="block-stat-red">
+                                    <div class="block-stat-green" th:style="'width:' + ${problem.studentAcceptToTotal} + '%;'"></div>
+                                    <div class="block-stat-text" th:text="${problem.studentAccSubmit} + ' / ' + ${problem.totalStudentSubmit}"></div>
+                                </div>
+                            </div>
+
                             <div class="col">
                                 <span th:each="tag : ${problem.getHashTagsVisible()}">
                                     <a th:href="@{'/teacher/pool-problems/' + ${tag.id}}">
@@ -203,11 +218,10 @@
                                     &nbsp;
                                 </span>
                             </div>
-                            <div class="col-3">
-                                <a class="btn btn-danger"
+                            <div class="col-2">
+                                <a class="btn btn-danger" title="Открепить от темы"
                                    th:href="@{'/teacher/chapter/' + ${chapter.id} + '/dettach-problem/' + ${problem.id}}">
-                                    <i class="fa fa-trash-o fa-lg"></i>&nbsp;
-                                    Открепить от темы
+                                    <i class="fa fa-trash-o fa-lg"></i>
                                 </a>
                             </div>
                         </div>
