@@ -351,7 +351,8 @@ public class ProblemFacade {
      * Скрипт для обновления задач в базе после экспорта
      */
     public void updateNumInProblems() {
-
+        problemService.getAllProblems();
+        System.out.println();
     }
 
 
