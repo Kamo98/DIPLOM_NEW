@@ -5,10 +5,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 import ru.vkr.vkr.domain.run.RunStatistic;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.util.UUID;
 
 @Component
@@ -47,6 +44,25 @@ public class FileManager {
             String resultFilename = convertPathToString(newLocation + "\\" + file.getOriginalFilename());
             try {
                 file.transferTo(new File(resultFilename));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return resultFilename;
+        }
+        return "";
+    }
+
+    public static String loadSourceToServer(String source, String nameOfFolder, String format) {
+        if (!source.isEmpty()) {
+            String newLocation = location + nameOfFolder + "\\" + UUID.randomUUID().toString();
+            File uploadDir = new File(newLocation);
+            if (!uploadDir.exists()) {
+                uploadDir.mkdir();
+            }
+            String resultFilename = convertPathToString(newLocation + "\\" + "source" + format);
+            try (OutputStream outputStream = new FileOutputStream(resultFilename);
+                 BufferedOutputStream fileOutputStream = new BufferedOutputStream(outputStream)) {
+                fileOutputStream.write(source.getBytes());
             } catch (IOException e) {
                 e.printStackTrace();
             }
