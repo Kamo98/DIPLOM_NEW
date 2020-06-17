@@ -155,10 +155,20 @@ public class ProblemController {
         problem.setComplexity(newProblem.getComplexity());
         problemFacade.updateMainParams(newProblem.getName(), problem);
 
-        //problem.setName(newProblem.getName());
+        problem.setName(newProblem.getName());
         problemService.save(problem);
         return "redirect:/teacher/problem/" + problemId;
     }
+
+//    //Публикация задачи
+//    @GetMapping("/teacher/problem/{problemId}/publish")
+//    public String postProblem(@PathVariable Long problemId) {
+//        Problem problem = problemService.getProblemById(problemId);
+//
+//        //Проверка задачи на готовность к публикации
+//        problemFacade.check_tests(problem);
+//
+//    }
 
 
     //Обновление тегов задачи

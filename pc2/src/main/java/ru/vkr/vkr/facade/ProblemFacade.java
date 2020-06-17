@@ -489,6 +489,15 @@ public class ProblemFacade {
             }
         }
     }
+
+
+    //Проверка на наличие хотя бы одного теста
+    public boolean check_tests(ru.vkr.vkr.entity.Problem problemDb) {
+        Problem problem = findProblemInPC2(problemDb);
+        IInternalController internalController = BridgePc2.getInternalController();
+        ProblemDataFiles problemDataFiles = internalController.getProblemDataFiles(problem);
+        return problemDataFiles.getJudgesDataFiles().length > 0;
+    }
 }
 
 
