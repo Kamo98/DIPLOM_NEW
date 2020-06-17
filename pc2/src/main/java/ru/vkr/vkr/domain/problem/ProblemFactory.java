@@ -36,7 +36,7 @@ public class ProblemFactory {
     }
 
     public IProblem getIProblem(Long problemId) {
-        if (problemMap.containsKey(problemId)) {
+        if (iProblemMap.containsKey(problemId)) {
             return iProblemMap.get(problemId);
         } else {
             try {
