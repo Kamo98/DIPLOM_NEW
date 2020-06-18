@@ -488,6 +488,8 @@ public class ProblemFacade {
         ProblemDataFiles problemDataFiles = internalController.getProblemDataFiles(problem);
         return problemDataFiles.getJudgesDataFiles().length > 0;
     }
+
+
 }
 
 

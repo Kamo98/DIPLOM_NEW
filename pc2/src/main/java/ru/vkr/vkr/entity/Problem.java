@@ -45,7 +45,7 @@ public class Problem {
     private boolean publ;
 
     @ManyToMany(mappedBy = "chapterProblems", fetch = FetchType.LAZY)
-    private Set<Chapter> chapters;
+    private List<Chapter> chapters;
 
 //    @ManyToMany(fetch = FetchType.LAZY)
 //    @JoinTable(name="t_tag_problem",
@@ -108,11 +108,11 @@ public class Problem {
         this.pathToTextProblem = pathToTextProblem;
     }
 
-    public Set<Chapter> getChapters() {
+    public List<Chapter> getChapters() {
         return chapters;
     }
 
-    public void setChapters(Set<Chapter> chapters) {
+    public void setChapters(List<Chapter> chapters) {
         this.chapters = chapters;
     }
 

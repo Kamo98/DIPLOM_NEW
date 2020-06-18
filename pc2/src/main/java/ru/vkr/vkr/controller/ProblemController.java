@@ -75,7 +75,7 @@ public class ProblemController {
     @PostMapping("/teacher/problem-create")
     public String problemCreatePost(Model model, Problem problem) {
         problemService.setAuthorForNewCourse(problem);
-        problem.setPubl(true);
+        problem.setPubl(false);
         problemService.save(problem);
         //Инициализируем задачу в pc2
         problemFacade.initProblem(problem);
@@ -116,20 +116,21 @@ public class ProblemController {
         ChoiceTagsForm choiceTagsForm = new ChoiceTagsForm();
         //choiceTagsForm.setTagList(problem.getHashTags());
 
-        Set<HashTag> hashTagList = problem.getHashTagsVisible();
+        Set<HashTag> hashTagList = problem.getHashTags();
 
         //todo: костыли в студию, но это быстрее, чем то, как thymeleaf формировал checkbox из объектов HashTag
         for (int i = 0; i < hashTags.size(); i++)
             choiceTagsForm.getTagList().add(hashTagList.contains(hashTags.get(i)));
+
+//        for (int i = 0; i < hashTags.size(); i++)
+//            if (hashTagList.contains(hashTags.get(i)))
+//                choiceTagsForm.getTagList().add(hashTags.get(i).getId());
+//            else
+//                choiceTagsForm.getTagList().add(null);
         model.addAttribute("choiceTagsForm", choiceTagsForm);
 
 
         //Темы
-        Set<Chapter> chapters = new HashSet<>();
-        Collection<Course> teacherCourses = courseService.getCoursesByCurrentTeacher();
-        for (Course course : teacherCourses)
-            chapters.addAll(course.getChapters());
-        model.addAttribute("chapters", chapters);
         AttachProblemForm attachProblemForm = new AttachProblemForm();
         model.addAttribute("attachProblemForm", attachProblemForm);
 
@@ -155,6 +156,16 @@ public class ProblemController {
         problemService.save(problem);
         return "redirect:/teacher/problem/" + problemId;
     }
+
+//    //Публикация задачи
+//    @GetMapping("/teacher/problem/{problemId}/publish")
+//    public String postProblem(@PathVariable Long problemId) {
+//        Problem problem = problemService.getProblemById(problemId);
+//
+//        //Проверка задачи на готовность к публикации
+//        problemFacade.check_tests(problem);
+//
+//    }
 
 
     //Обновление тегов задачи
@@ -186,6 +197,8 @@ public class ProblemController {
 
         if (problemFacade.loadTestFiles(loadTestsForm, problem)) {
             problemFacade.addTestsToProblem(problem);
+        } else {
+            redirectAttributes.addFlashAttribute("errorUploadTests", true);
         }
 
         redirectAttributes.addFlashAttribute("activeTabMenu", "linkTestsProblem");
@@ -203,6 +216,16 @@ public class ProblemController {
     }
 
 
+    //Костыльная загрузка тестов через диск
+//    @GetMapping("/teacher/problem/{problemId}/tests-upload/pc2")
+//    public String uploadProblemTestsToPC2(@PathVariable Long problemId) throws IOException {
+//        Problem problem = problemService.getProblemById(problemId);
+//        problemFacade.addTestsToProblem(problem);
+//        return "redirect:/teacher/problem/" + problemId;
+//    }
+
+
+    //Удаление теста
     @GetMapping("/teacher/problem/{problemId}/test-delete/{testNum}")
     public String deleteProblemTest(RedirectAttributes redirectAttributes, @PathVariable Long problemId, @PathVariable Integer testNum) {
         Problem problem = problemService.getProblemById(problemId);
@@ -212,6 +235,7 @@ public class ProblemController {
         return "redirect:/teacher/problem/" + problemId;
     }
 
+    //Удаление всех тестов
     @GetMapping("/teacher/problem/{problemId}/test-deleteAll")
     public String deleteProblemAllTests(RedirectAttributes redirectAttributes, @PathVariable Long problemId) {
         Problem problem = problemService.getProblemById(problemId);
@@ -220,6 +244,7 @@ public class ProblemController {
         redirectAttributes.addFlashAttribute("activeTabMenu", "linkTestsProblem");
         return "redirect:/teacher/problem/" + problemId;
     }
+
     //Установка параметров чекера
     @PostMapping("/teacher/problem/{problemId}/checker-settings")
     public String checkerSettings(RedirectAttributes redirectAttributes, CheckerSettingsForm checkerSettingsForm, @PathVariable Long problemId) {
@@ -231,6 +256,7 @@ public class ProblemController {
         return "redirect:/teacher/problem/" + problemId;
     }
 
+    //Все теги
     @GetMapping("/teacher/tags")
     public String getAllTags(Model model) {
         Collection<HashTag> hashTags = hashTagService.getAllTags();
@@ -254,11 +280,11 @@ public class ProblemController {
     public String deleteChapter(RedirectAttributes redirectAttributes, Model model,
                                 @PathVariable Long problemId) {
         problemService.deleteStatement(problemService.getProblemById(problemId));
-
         redirectAttributes.addFlashAttribute("activeTabMenu", "linkStatementProblem");
         return "redirect:/teacher/problem/" + problemId;
     }
 
+    //Отправка решения
     @PostMapping("/teacher/submit/{problemId}")
     public String sendFileSubmit(RedirectAttributes redirectAttributes, Model model,
                                  @ModelAttribute("submitRunForm") SubmitRunForm submitRunForm,
@@ -267,4 +293,44 @@ public class ProblemController {
         redirectAttributes.addFlashAttribute("activeTabMenu", "linkViewRunsProblem");
         return "redirect:/teacher/problem/" + problemId;
     }
+
+    //Публикация задачи
+    @GetMapping("/teacher/problem/{problemId}/publish")
+    public String publishProblem(RedirectAttributes redirectAttributes,
+                                 @PathVariable Long problemId) {
+
+        Problem problem = problemService.getProblemById(problemId);
+
+        if (problem.isPubl())
+            return "redirect:/teacher/problem/" + problemId;
+
+        List<String> errorsPublish = new ArrayList<>();
+
+        //Валидация, если вдруг пригодится
+//        if (problem.getName().trim().equals(""))
+//            errorsPublish.add("Задача не может быть опубликована с пустым именем");
+//
+//        if (problem.getPathToTextProblem() == null || problem.getPathToTextProblem().trim().equals(""))
+//            errorsPublish.add("Задача не может быть опубликована без файла с условием");
+//
+//        if (!problemFacade.check_tests(problem))
+//            errorsPublish.add("Задача не может быть опубликована без тестовых файлов");
+
+        if (errorsPublish.size() == 0) {
+            problem.setPubl(true);
+            problemService.save(problem);
+        }
+        redirectAttributes.addFlashAttribute("errorsPublish", errorsPublish);
+        return "redirect:/teacher/problem/" + problemId;
+    }
+
+    //Публикация задачи
+    @GetMapping("/teacher/problem/{problemId}/depublish")
+    public String depublishProblem(@PathVariable Long problemId) {
+        Problem problem = problemService.getProblemById(problemId);
+        problem.setPubl(false);
+        problemService.save(problem);
+        return "redirect:/teacher/problem/" + problemId;
+    }
+
 }
