@@ -292,10 +292,13 @@
                                 </div>
                                 <div class="col-3">
                                     <select id="extensionIn" class="form-control" th:field="*{extensionIn}">
+                                        <option value="auto" title="Автоматически определить входные файлы">Определить</option>
+                                        <option value="">Без расширения</option>
                                         <option value=".in">.in</option>
                                         <option value=".dat">.dat</option>
                                         <option value=".txt">.txt</option>
                                         <option value=".inp">.inp</option>
+                                        <option value=".inex">.inex</option>
                                     </select>
                                 </div>
 
@@ -304,10 +307,17 @@
                                 </div>
                                 <div class="col-3">
                                     <select id="extensionAns" class="form-control" th:field="*{extensionAns}">
+                                        <option value="auto" title="Автоматически определить выходные файлы">Определить</option>
+                                        <option value="">Без расширения</option>
                                         <option value=".ans">.ans</option>
                                         <option value=".dat">.dat</option>
                                         <option value=".txt">.txt</option>
                                         <option value=".out">.out</option>
+                                        <option value=".diff">.diff</option>
+                                        <option value=".sol">.sol</option>
+                                        <option value=".judge">.judge</option>
+                                        <option value=".a">.a</option>
+                                        <option value=".outex">.outex</option>
                                     </select>
                                 </div>
                             </div>
