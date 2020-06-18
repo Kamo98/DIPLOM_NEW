@@ -45,12 +45,16 @@
 
                 </ul>
 
-
-
-
                 <div class="container" id="containerOfTabs">
 
                     <div id="problemSettings">
+                        <div class="alert alert-warning" role="alert" th:unless="${problem.publ}">
+                            Задача не опубликована! Опубликуйте, чтобы студенты могли сдавать её.
+                        </div>
+                        <div class="alert alert-danger" role="alert" th:each="error : ${errorsPublish}" th:text="${error}">
+                            Ошибка публикации
+                        </div>
+
                         <form th:action="${isCreate} ? @{'/teacher/problem-create'} : @{'/teacher/problem/' + ${problem.id}}"
                             th:object="${problem}" method="post">
                             <div class="row row-margin-top">
@@ -194,8 +198,14 @@
                         <hr class="row row-margin-top" th:unless="${isCreate}">
                         <div class="row row-margin-top" th:unless="${isCreate}">
                             <div class = "col" th:unless="${problem.publ}">
-                                <a class="btn btn-success">
+                                <a class="btn btn-success" th:href="@{'/teacher/problem/' + ${problem.id} + '/publish'}"
+                                title="После публикации студенты смогут сдавать задачу">
                                     <i class="fa fa-arrow-right" aria-hidden="true"></i>&nbsp;Опубликовать задачу
+                                </a>
+                            </div>
+                            <div class = "col" th:if="${problem.publ}">
+                                <a class="btn btn-danger" th:href="@{'/teacher/problem/' + ${problem.id} + '/depublish'}">
+                                    <i class="fa fa-arrow-right" aria-hidden="true"></i>&nbsp;Снять с публикации
                                 </a>
                             </div>
                             <!--<div class = "col col-align-right">-->

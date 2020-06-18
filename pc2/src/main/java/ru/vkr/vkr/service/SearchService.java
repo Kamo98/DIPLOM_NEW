@@ -64,13 +64,15 @@ public class SearchService {
         Set<Problem> problems_1 = new HashSet<>();
         if (searchProblemForm.getTagList().size() == 0)
             problems_1.addAll(problemService.getAllPublicProblems());
-        else
+        else {
             for (int i = 0; i < searchProblemForm.getTagList().size(); i++) {
                 if (selectedTagId != -1L && hashTags.get(i).getId().equals(selectedTagId))
                     searchProblemForm.getTagList().set(i, true);
                 if (searchProblemForm.getTagList().get(i) != null && searchProblemForm.getTagList().get(i))
                     problems_1.addAll(hashTags.get(i).getProblems());
             }
+        }
+
 
 
         Set<Complexity> needComplexity = new HashSet<>();       //Для быстрого поиска при фильтрации задач
@@ -86,8 +88,13 @@ public class SearchService {
                 if (problem.getComplexity() == null || needComplexity.contains(problem.getComplexity()))
                     problems.add(problem);
 
-        problemFacade.getStatisticForProblems(problems);
-        model.addAttribute("problems", problems);
+        List<Problem> problemsResult = new ArrayList<>();
+        for (Problem pr : problems)
+            if (pr.isPubl())
+                problemsResult.add(pr);
+
+        problemFacade.getStatisticForProblems(problemsResult);
+        model.addAttribute("problems", problemsResult);
         SearchProblemForm searchProblemForm_ = new SearchProblemForm(hashTags.size(), complexities.size(), searchProblemForm);
         model.addAttribute("searchProblemForm", searchProblemForm_);
     }

@@ -75,7 +75,7 @@ public class ProblemController {
     @PostMapping("/teacher/problem-create")
     public String problemCreatePost(Model model, Problem problem) {
         problemService.setAuthorForNewCourse(problem);
-        problem.setPubl(true);
+        problem.setPubl(false);
         problemService.save(problem);
         //Инициализируем задачу в pc2
         problemFacade.initProblem(problem);
@@ -278,7 +278,6 @@ public class ProblemController {
     public String deleteChapter(RedirectAttributes redirectAttributes, Model model,
                                 @PathVariable Long problemId) {
         problemService.deleteStatement(problemService.getProblemById(problemId));
-
         redirectAttributes.addFlashAttribute("activeTabMenu", "linkStatementProblem");
         return "redirect:/teacher/problem/" + problemId;
     }
@@ -291,4 +290,44 @@ public class ProblemController {
         redirectAttributes.addFlashAttribute("activeTabMenu", "linkViewRunsProblem");
         return "redirect:/teacher/problem/" + problemId;
     }
+
+    //Публикация задачи
+    @GetMapping("/teacher/problem/{problemId}/publish")
+    public String publishProblem(RedirectAttributes redirectAttributes,
+                                 @PathVariable Long problemId) {
+
+        Problem problem = problemService.getProblemById(problemId);
+
+        if (problem.isPubl())
+            return "redirect:/teacher/problem/" + problemId;
+
+        List<String> errorsPublish = new ArrayList<>();
+
+        //Валидация, если вдруг пригодится
+//        if (problem.getName().trim().equals(""))
+//            errorsPublish.add("Задача не может быть опубликована с пустым именем");
+//
+//        if (problem.getPathToTextProblem() == null || problem.getPathToTextProblem().trim().equals(""))
+//            errorsPublish.add("Задача не может быть опубликована без файла с условием");
+//
+//        if (!problemFacade.check_tests(problem))
+//            errorsPublish.add("Задача не может быть опубликована без тестовых файлов");
+
+        if (errorsPublish.size() == 0) {
+            problem.setPubl(true);
+            problemService.save(problem);
+        }
+        redirectAttributes.addFlashAttribute("errorsPublish", errorsPublish);
+        return "redirect:/teacher/problem/" + problemId;
+    }
+
+    //Публикация задачи
+    @GetMapping("/teacher/problem/{problemId}/depublish")
+    public String depublishProblem(@PathVariable Long problemId) {
+        Problem problem = problemService.getProblemById(problemId);
+        problem.setPubl(false);
+        problemService.save(problem);
+        return "redirect:/teacher/problem/" + problemId;
+    }
+
 }
