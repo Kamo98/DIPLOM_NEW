@@ -18,6 +18,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 import ru.vkr.vkr.domain.BridgePc2;
+import ru.vkr.vkr.domain.FileManager;
 import ru.vkr.vkr.domain.problem.ProblemFactory;
 import ru.vkr.vkr.domain.run.MonitorData;
 import ru.vkr.vkr.domain.run.RunStatistic;
@@ -50,33 +51,10 @@ public class ProblemFacade {
 
     //todo: надо разделить на несколько методов, чтобы вызывать отдельные там где требуется та или иная папка
     private void makeDirectory(Long problemId) {
-//        File pathTests = new File(uploadPath + "/tests");
-//        if (!pathTests.exists())
-//            pathTests.mkdir();
-
         String dirTests = uploadPath + "tests\\problem-" + problemId;
         File fileTests = new File(dirTests);
         if (!fileTests.exists())
             fileTests.mkdir();
-
-//        File pathChecker = new File(uploadPath + "/checkers");
-//        if (!pathChecker.exists())
-//            pathChecker.mkdir();
-
-//        String dirChecker = uploadPath + "/checkers/problem-" + problemId;
-//        File fileChecker = new File(dirChecker);
-//        if (!fileChecker.exists())
-//            fileChecker.mkdir();
-
-
-//        File pathStatement = new File(uploadPath + "/statement");
-//        if (!pathStatement.exists())
-//            pathStatement.mkdir();
-//
-//        String dirStatement = uploadPath + "/statements/problem-" + problemId;
-//        File fileStatement = new File(dirStatement);
-//        if (!fileStatement.exists())
-//            fileStatement.mkdir();
     }
 
 
@@ -211,46 +189,72 @@ public class ProblemFacade {
 
 
     //Загрузка тестов от преподавателя на сервер
-    public void loadTestFiles(LoadTestsForm loadTestsForm, ru.vkr.vkr.entity.Problem problemDb) throws IOException {
+    public boolean loadTestFiles(LoadTestsForm loadTestsForm, ru.vkr.vkr.entity.Problem problemDb)  {
         String extensionIn = loadTestsForm.getExtensionIn();
         String extensionAns = loadTestsForm.getExtensionAns();
-        String uloadDirPath = uploadPath + "tests\\problem-" + problemDb.getId();
+        String uloadDirPath = "tests\\problem-" + problemDb.getId();
 
-        //Изменение расширений файлов с extensionIn и extensionAns на .in и .ans
-        HashMap<String, MultipartFile> filesIn = new HashMap<>();
-        HashMap<String, MultipartFile> filesAns = new HashMap<>();
+        Map<String, MultipartFile> filesIn = new TreeMap<>();
+        Map<String, MultipartFile> filesAns = new TreeMap<>();
 
+        // попытка сформировать тесты автоматически
         for (int i = 0; i < loadTestsForm.getDirTests().length; i++) {
             MultipartFile file = loadTestsForm.getDirTests()[i];
-            String origFileName = file.getOriginalFilename();
-
-            if (origFileName.endsWith(extensionIn)) {           //Файл входной
-                String onlyName = origFileName.substring(0, origFileName.length() - extensionIn.length());
-                if (filesAns.containsKey(onlyName)) {
-                    //Нашли пару файлов, значит загружаем тест
-                    String resFileName = onlyName + ".in";
-                    file.transferTo(new File(uloadDirPath + "/" + resFileName));
-                    resFileName = onlyName + ".ans";
-                    filesAns.get(onlyName).transferTo(new File(uloadDirPath + "/" + resFileName));
-
-                    filesAns.remove(onlyName);
-                } else
-                    filesIn.put(onlyName, file);
-
-            } else if (origFileName.endsWith(extensionAns)) {   //Файл выходной
-                String onlyName = origFileName.substring(0, origFileName.length() - extensionAns.length());
-                if (filesIn.containsKey(onlyName)) {
-                    //Нашли пару файлов, значит загружаем тест
-                    String resFileName = onlyName + ".in";
-                    filesIn.get(onlyName).transferTo(new File(uloadDirPath + "/" + resFileName));
-                    resFileName = onlyName + ".ans";
-                    file.transferTo(new File(uloadDirPath + "/" + resFileName));
-
-                    filesIn.remove(onlyName);
-                } else
-                    filesAns.put(onlyName, file);
+            String fileName = file.getOriginalFilename();
+            if (isOutputTest(fileName)) {
+                filesAns.put(fileName, file);
+            } else {
+                filesIn.put(fileName, file);
             }
         }
+
+        if (filesIn.size() != filesAns.size()) {
+            filesIn.clear();
+            filesAns.clear();
+            // попытка сформировать тесты по типу, заданному пользователем
+            for (int i = 0; i < loadTestsForm.getDirTests().length; i++) {
+                MultipartFile file = loadTestsForm.getDirTests()[i];
+                String[] fileNameArray = file.getOriginalFilename().split("\\.");
+                String fileFormat = "." + fileNameArray[fileNameArray.length - 1];
+                if (fileFormat.equals(extensionIn)) {
+                    filesIn.put(file.getOriginalFilename(), file);
+                } else if (fileFormat.equals(extensionAns)) {
+                    filesAns.put(file.getOriginalFilename(), file);
+                }
+            }
+        }
+
+        if (filesIn.isEmpty() || filesAns.isEmpty() || filesIn.size() != filesAns.size()) {
+            return false;
+        }
+
+        FileManager.loadFileMapToServer(filesIn, uloadDirPath, ".in");
+        FileManager.loadFileMapToServer(filesAns, uloadDirPath, ".ans");
+        return true;
+    }
+
+
+    private static boolean isOutputTest(String fileName) {
+        return (fileName.contains(".ans")
+                || fileName.contains(".out")
+                || fileName.contains("out.")
+                || fileName.contains(".a")
+                || fileName.contains("output")
+                || isOutputSpecificTest(fileName));
+    }
+
+    private static boolean isOutputSpecificTest(String fileName) {
+        String[] fileNameArray = fileName.split("\\.");
+        for (String word : fileNameArray) {
+            for (int i = 0; i < word.length(); ++i) {
+                if (Character.isDigit(word.charAt(i)) && i < word.length() - 1
+                        && (word.charAt(i + 1) == 'a' || word.charAt(i + 1) == 'A'
+                        || word.charAt(i + 1) == 'o' || word.charAt(i + 1) == 'O')) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     //Добавление тестов к задаче в PC2
@@ -270,17 +274,6 @@ public class ProblemFacade {
     }
 
     public List<Pair<String, String>> getAllTestsById(ru.vkr.vkr.entity.Problem problemDb) {
-//        Set<String> filesList = new HashSet<>();
-//        File dirFile = new File(uploadPath + "tests\\problem-" + problemId);
-//        if (dirFile.exists()) {
-//            String[] filesArr = dirFile.list();
-//            if (filesArr != null) {
-//                for (String fileName : filesArr) {
-//                    if (fileName.endsWith(extensionInStandart))     //Файл входной
-//                        filesList.add(fileName.substring(0, fileName.length() - extensionInStandart.length()));
-//                }
-//            }
-//        }
         List<Pair<String, String>> filesList = new ArrayList<>();
         Problem problem = findProblemInPC2(problemDb);
         if (problem == null)
@@ -291,7 +284,6 @@ public class ProblemFacade {
         for (int i = 0; i < countTests; i++)
             filesList.add(new Pair<>(problemDataFiles.getJudgesDataFiles()[i].getName(),
                     problemDataFiles.getJudgesAnswerFiles()[i].getName()));
-
         return filesList;
     }
 
@@ -475,17 +467,17 @@ public class ProblemFacade {
     public void getStatisticForProblems(Collection<ru.vkr.vkr.entity.Problem> problemsDb) {
         HashMap<Long, RunStatistic.StatisticOfTask> statisticOfTask = BridgePc2.getRunStatistic().getStatisticOfTaskHashMap();
 
-        for(ru.vkr.vkr.entity.Problem pr : problemsDb) {
+        for (ru.vkr.vkr.entity.Problem pr : problemsDb) {
             if (statisticOfTask.containsKey(pr.getId())) {
                 RunStatistic.StatisticOfTask stat = statisticOfTask.get(pr.getId());
 
-                Float acceptedToTotal = (stat.getCountYes() * (float)100.0) / stat.getCount();
+                Float acceptedToTotal = (stat.getCountYes() * (float) 100.0) / stat.getCount();
                 pr.setAcceptedToTotal(Math.round(acceptedToTotal));
                 pr.setAcceptedSubmit(stat.getCountYes());
                 pr.setTotalSubmit(stat.getCount());
 
                 Long totalStudent = stat.getCountStudentYes() + stat.getCountStudentNo();
-                Float studentAccToTotal = (stat.getCountStudentYes() * (float)100.0) / totalStudent;
+                Float studentAccToTotal = (stat.getCountStudentYes() * (float) 100.0) / totalStudent;
                 pr.setStudentAcceptToTotal(Math.round(studentAccToTotal));
                 pr.setStudentAccSubmit(stat.getCountStudentYes());
                 pr.setTotalStudentSubmit(totalStudent);

@@ -1,6 +1,7 @@
 package ru.vkr.vkr.domain;
 
 import edu.csus.ecs.pc2.api.ILanguage;
+import javafx.util.Pair;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -8,6 +9,7 @@ import ru.vkr.vkr.domain.format.Format;
 import ru.vkr.vkr.domain.run.RunStatistic;
 
 import java.io.*;
+import java.util.Map;
 import java.util.UUID;
 
 @Component
@@ -36,14 +38,26 @@ public class FileManager {
         return resultBuild.toString();
     }
 
-    public static String loadFileToServer(MultipartFile file, String nameOfFolder) {
+    public static void loadFileMapToServer(Map<String, MultipartFile> stringMultipartFileMap, String nameOfFolder, String format) {
+        stringMultipartFileMap.forEach((x, y) -> loadFileToServer(y, nameOfFolder, format));
+    }
+
+    public static String loadFileNewRandomDirToServer(MultipartFile file, String nameOfFolder) {
+        return loadFileToServer(file, location + nameOfFolder + "\\" + UUID.randomUUID().toString());
+    }
+
+
+    private static String loadFileToServer(MultipartFile file, String nameOfFolder) {
+        return loadFileToServer(file, nameOfFolder, "");
+    }
+
+    private static String loadFileToServer(MultipartFile file, String nameOfFolder, String format) {
         if (file != null && !file.getOriginalFilename().isEmpty()) {
-            String newLocation = location + nameOfFolder + "\\" + UUID.randomUUID().toString();
-            File uploadDir = new File(newLocation);
+            File uploadDir = new File(nameOfFolder);
             if (!uploadDir.exists()) {
                 uploadDir.mkdir();
             }
-            String resultFilename = convertPathToString(newLocation + "\\" + file.getOriginalFilename());
+            String resultFilename = convertPathToString(nameOfFolder + "\\" + file.getOriginalFilename() + format);
             try {
                 file.transferTo(new File(resultFilename));
             } catch (IOException e) {

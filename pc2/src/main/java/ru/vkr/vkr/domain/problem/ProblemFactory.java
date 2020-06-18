@@ -26,7 +26,7 @@ public class ProblemFactory {
             String name = "problem-" + problemId;
             Problem[] problems = BridgePc2.getInternalContest().getProblems();
             for (Problem problem : problems) {
-                problemMap.put(Long.parseLong(problem.getShortName().split("-")[1]), problem);
+                //problemMap.put(Long.parseLong(problem.getShortName().split("-")[1]), problem);
                 if (problem.getShortName().equals(name)) {
                     return problem;
                 }
@@ -43,7 +43,7 @@ public class ProblemFactory {
                 String name = "problem-" + problemId;
                 IProblem[] iProblems = BridgePc2.getServerConnection().getContest().getProblems();
                 for (IProblem iProblem : iProblems) {
-                    iProblemMap.put(problemId, iProblem);
+                    iProblemMap.put(Long.parseLong(iProblem.getShortName().split("-")[1]), iProblem);
                     if (iProblem.getShortName().equals(name)) {
                         return iProblem;
                     }

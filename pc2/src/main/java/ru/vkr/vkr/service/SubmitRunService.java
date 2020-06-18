@@ -64,7 +64,7 @@ public class SubmitRunService {
         if (submitRunForm.isFlagSourceCode()) {
             fileName = FileManager.loadSourceToServer(submitRunForm.getSourceCode(), nameOfFolder, iLanguage);
         } else {
-            fileName = FileManager.loadFileToServer(submitRunForm.getMultipartFile(), nameOfFolder);
+            fileName = FileManager.loadFileNewRandomDirToServer(submitRunForm.getMultipartFile(), nameOfFolder);
         }
 
         if (!FileManager.fileExists(fileName)) {
@@ -101,17 +101,17 @@ public class SubmitRunService {
             e.printStackTrace();
         }
 
-        for (IRun run : iRuns) {
-            runSubmitDtos.add(new RunSubmitDto(
-                    -run.getNumber(),
-                    run.getNumber(),
-                    run.getProblem().getName(),
-                    run.getSubmissionTime(),
-                    run.getLanguage().getName(),
-                    run.isFinalJudged() ? getResultRun(getInternalRunMethod, contest, run)
-                            : "testing...",
-                    Long.parseLong(run.getProblem().getShortName().split("-")[1])));
-        }
+//        for (IRun run : iRuns) {
+//            runSubmitDtos.add(new RunSubmitDto(
+//                    -run.getNumber(),
+//                    run.getNumber(),
+//                    run.getProblem().getName(),
+//                    run.getSubmissionTime(),
+//                    run.getLanguage().getName(),
+//                    run.isFinalJudged() ? getResultRun(getInternalRunMethod, contest, run)
+//                            : "testing...",
+//                    Long.parseLong(run.getProblem().getShortName().split("-")[1])));
+//        }
         // в отсортированном порядке
         runSubmitDtos.sort(new RunSubmitDtoComparator());
         return runSubmitDtos;
