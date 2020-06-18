@@ -156,6 +156,13 @@
         getSubmitions();
     });
 
+    //Обновление таблицы посылок по таймеру
+    setInterval(function() {
+        if ($('#linkViewRuns').hasClass('active')) {
+            getSubmitions();
+        }
+    }, 5000);
+
 </script>
 
 

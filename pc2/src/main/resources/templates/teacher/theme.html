@@ -290,7 +290,7 @@
     });
 </script>
 
-<script>
+<script th:unless="${isCreate}">
     function getMonitor() {
         $.ajax({
              type: 'post',
@@ -305,7 +305,9 @@
              }
         });
     }
+</script>
 
+<script>
     //Клик по вкладке Теоретический материал
     $('#linkTmOfChapter').click(function (e) {
         $('#linkTmOfChapter').addClass('active');

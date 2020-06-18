@@ -16,7 +16,7 @@
             <!-- *** -->
             <div class="main-content col-9 border rounded-lg">
                 <h4 class="centered green-h dotted-bottom-border" th:unless="${isCreate}">
-                    <a th:href="@{'/student/course/' + ${chapter.courseChapters.id}}" th:text="${chapter.courseChapters.name}">
+                    <a th:href="@{'/student/course/'}" th:text="${chapter.courseChapters.name}">
                     </a>
                 </h4>
                 <h5 class="centered green-h">Тема "[[ ${chapter.name} ]]"</h5>

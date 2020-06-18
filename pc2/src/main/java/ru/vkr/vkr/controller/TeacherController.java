@@ -50,12 +50,11 @@ public class TeacherController {
     @ModelAttribute
     public void addAttributes(Model model) {
         Collection<Course> teacherCourses = courseService.getCoursesByCurrentTeacher();
-        List<Problem> problems = problemService.getProblemsByCurrentTeacher();
+        List<Problem> teacherProblems_ = problemService.getProblemsByCurrentTeacher();
+        int countVisibleProblems = Math.min(5, teacherProblems_.size());
         Collection<Problem> teacherProblems = new ArrayList<>();
-        if (!problems.isEmpty()) {
-            for (int i = 0; i < 5; i++)
-                teacherProblems.add(problems.get(i));
-        }
+        for (int i = 0; i < countVisibleProblems; i++)
+            teacherProblems.add(teacherProblems_.get(i));
         model.addAttribute("teacherCourses", teacherCourses);
         model.addAttribute("teacherProblems", teacherProblems);
         model.addAttribute("isTeacher", true);

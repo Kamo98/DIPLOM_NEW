@@ -26,7 +26,7 @@ public class ProblemFactory {
             String name = "problem-" + problemId;
             Problem[] problems = BridgePc2.getInternalContest().getProblems();
             for (Problem problem : problems) {
-                problemMap.put(problemId, problem);
+                problemMap.put(Long.parseLong(problem.getShortName().split("-")[1]), problem);
                 if (problem.getShortName().equals(name)) {
                     return problem;
                 }

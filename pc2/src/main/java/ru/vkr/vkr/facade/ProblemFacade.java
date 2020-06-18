@@ -66,7 +66,7 @@ public class ProblemFacade {
         Problem problem = new Problem(problemDb.getName());
         problem.setShortName("problem-" + problemDb.getId());
         problem.setTimeOutInSeconds(problemDb.getTimeLimit());
-        problem.setStopOnFirstFailedTestCase(true);
+        problem.setStopOnFirstFailedTestCase(false);
 
         //Поток для чтения
         problem.setReadInputDataFromSTDIN(true);
@@ -118,7 +118,8 @@ public class ProblemFacade {
     public void setTestsParamsToForm(TestSettingsForm testSettingsForm, ru.vkr.vkr.entity.Problem problemDb) {
         //Ищем задачу
         Problem problem = findProblemInPC2(problemDb);
-        testSettingsForm.setStopOnFirstFail(problem.isStopOnFirstFailedTestCase());
+        if (problem != null)
+            testSettingsForm.setStopOnFirstFail(problem.isStopOnFirstFailedTestCase());
     }
 
     //Установка параметров чекера
@@ -275,6 +276,8 @@ public class ProblemFacade {
     public List<Pair<String, String>> getAllTestsById(ru.vkr.vkr.entity.Problem problemDb) {
         List<Pair<String, String>> filesList = new ArrayList<>();
         Problem problem = findProblemInPC2(problemDb);
+        if (problem == null)
+            return filesList;
         IInternalController internalController = BridgePc2.getInternalController();
         ProblemDataFiles problemDataFiles = internalController.getProblemDataFiles(problem);
         int countTests = problemDataFiles.getJudgesDataFiles().length;
@@ -480,6 +483,15 @@ public class ProblemFacade {
                 pr.setTotalStudentSubmit(totalStudent);
             }
         }
+    }
+
+
+    //Проверка на наличие хотя бы одного теста
+    public boolean check_tests(ru.vkr.vkr.entity.Problem problemDb) {
+        Problem problem = findProblemInPC2(problemDb);
+        IInternalController internalController = BridgePc2.getInternalController();
+        ProblemDataFiles problemDataFiles = internalController.getProblemDataFiles(problem);
+        return problemDataFiles.getJudgesDataFiles().length > 0;
     }
 }
 

@@ -191,19 +191,19 @@
                         </form>
 
 
-                        <!--<hr class="row row-margin-top" th:unless="${isCreate}">-->
-                        <!--<div class="row row-margin-top" th:unless="${isCreate}">-->
-                            <!--<div class = "col">-->
-                                <!--<a class="btn btn-success">-->
-                                    <!--<i class="fa fa-arrow-right" aria-hidden="true"></i>&nbsp;Опубликовать задачу-->
-                                <!--</a>-->
-                            <!--</div>-->
+                        <hr class="row row-margin-top" th:unless="${isCreate}">
+                        <div class="row row-margin-top" th:unless="${isCreate}">
+                            <div class = "col" th:unless="${problem.publ}">
+                                <a class="btn btn-success">
+                                    <i class="fa fa-arrow-right" aria-hidden="true"></i>&nbsp;Опубликовать задачу
+                                </a>
+                            </div>
                             <!--<div class = "col col-align-right">-->
                                 <!--<a class="btn btn-danger">-->
                                     <!--<i class="fa fa-trash-o fa-lg"></i>&nbsp;Удалить задачу-->
                                 <!--</a>-->
                             <!--</div>-->
-                        <!--</div>-->
+                        </div>
                     </div>
 
                     <div id="statementProblem"  style="display:none;" th:unless="${isCreate}">
@@ -292,10 +292,13 @@
                                 </div>
                                 <div class="col-3">
                                     <select id="extensionIn" class="form-control" th:field="*{extensionIn}">
+                                        <option value="auto" title="Автоматически определить входные файлы">Определить</option>
+                                        <option value="">Без расширения</option>
                                         <option value=".in">.in</option>
                                         <option value=".dat">.dat</option>
                                         <option value=".txt">.txt</option>
                                         <option value=".inp">.inp</option>
+                                        <option value=".inex">.inex</option>
                                     </select>
                                 </div>
 
@@ -304,10 +307,17 @@
                                 </div>
                                 <div class="col-3">
                                     <select id="extensionAns" class="form-control" th:field="*{extensionAns}">
+                                        <option value="auto" title="Автоматически определить выходные файлы">Определить</option>
+                                        <option value="">Без расширения</option>
                                         <option value=".ans">.ans</option>
                                         <option value=".dat">.dat</option>
                                         <option value=".txt">.txt</option>
                                         <option value=".out">.out</option>
+                                        <option value=".diff">.diff</option>
+                                        <option value=".sol">.sol</option>
+                                        <option value=".judge">.judge</option>
+                                        <option value=".a">.a</option>
+                                        <option value=".outex">.outex</option>
                                     </select>
                                 </div>
                             </div>
@@ -559,6 +569,13 @@
             getSubmitions();
         });
 
+
+        //Обновление таблицы посылок по таймеру
+        setInterval(function() {
+            if ($('#linkViewRunsProblem').hasClass('active')) {
+                getSubmitions();
+            }
+        }, 5000);
 
 
         //События кликов в настройках чекера

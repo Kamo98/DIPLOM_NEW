@@ -96,6 +96,18 @@ $(document).ready(function () {
         $(classChild).prop('checked', $(this).is(':checked'));
     });
 
+    $('#radioSourceFileSubmit').click(function (e) {
+        $('#file').prop('disabled', false);
+        $('#codeSolutionSend').prop('disabled', true);
+        $('#flagSourceCodeNo').val(false);
+    });
+
+    $('#radioSourceCodeSubmit').click(function (e) {
+        $('#file').prop('disabled', true)
+        $('#codeSolutionSend').prop('disabled', false);
+        $('#flagSourceCodeNo').val(true);
+    });
+
 });
 
 

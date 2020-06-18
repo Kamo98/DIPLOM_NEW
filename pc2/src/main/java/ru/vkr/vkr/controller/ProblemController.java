@@ -48,7 +48,8 @@ public class ProblemController {
         Collection<Course> teacherCourses = courseService.getCoursesByCurrentTeacher();
         List<Problem> teacherProblems_ = problemService.getProblemsByCurrentTeacher();
         Collection<Problem> teacherProblems = new ArrayList<>();
-        for (int i = 0; i < 5; i++)
+        int countVisibleProblems = Math.min(5, teacherProblems_.size());
+        for (int i = 0; i < countVisibleProblems; i++)
             teacherProblems.add(teacherProblems_.get(i));
         TheoryMaterialForm theoryMaterialForm = new TheoryMaterialForm();
         SubmitRunForm submitRunForm = new SubmitRunForm();
@@ -74,6 +75,7 @@ public class ProblemController {
     @PostMapping("/teacher/problem-create")
     public String problemCreatePost(Model model, Problem problem) {
         problemService.setAuthorForNewCourse(problem);
+        problem.setPubl(true);
         problemService.save(problem);
         //Инициализируем задачу в pc2
         problemFacade.initProblem(problem);
@@ -155,10 +157,20 @@ public class ProblemController {
         problem.setComplexity(newProblem.getComplexity());
         problemFacade.updateMainParams(newProblem.getName(), problem);
 
-        //problem.setName(newProblem.getName());
+        problem.setName(newProblem.getName());
         problemService.save(problem);
         return "redirect:/teacher/problem/" + problemId;
     }
+
+//    //Публикация задачи
+//    @GetMapping("/teacher/problem/{problemId}/publish")
+//    public String postProblem(@PathVariable Long problemId) {
+//        Problem problem = problemService.getProblemById(problemId);
+//
+//        //Проверка задачи на готовность к публикации
+//        problemFacade.check_tests(problem);
+//
+//    }
 
 
     //Обновление тегов задачи
