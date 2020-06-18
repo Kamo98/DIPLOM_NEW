@@ -129,11 +129,6 @@ public class ProblemFacade {
         //Ищем задачу
         Problem problem = findProblemInPC2(problemDb);
 
-//        problem.setValidatorType(Problem.VALIDATOR_TYPE.PC2VALIDATOR);
-//        PC2ValidatorSettings pc2ValidatorSettings = new PC2ValidatorSettings();
-//        pc2ValidatorSettings.setWhichPC2Validator(1);
-//        problem.setPC2ValidatorSettings(pc2ValidatorSettings);
-
         if (checkerSettingsForm.isClicsValidator()) {
             problem.setValidatorType(Problem.VALIDATOR_TYPE.CLICSVALIDATOR);
 

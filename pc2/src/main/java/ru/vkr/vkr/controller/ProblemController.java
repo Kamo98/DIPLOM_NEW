@@ -121,12 +121,6 @@ public class ProblemController {
         //todo: костыли в студию, но это быстрее, чем то, как thymeleaf формировал checkbox из объектов HashTag
         for (int i = 0; i < hashTags.size(); i++)
             choiceTagsForm.getTagList().add(hashTagList.contains(hashTags.get(i)));
-
-//        for (int i = 0; i < hashTags.size(); i++)
-//            if (hashTagList.contains(hashTags.get(i)))
-//                choiceTagsForm.getTagList().add(hashTags.get(i).getId());
-//            else
-//                choiceTagsForm.getTagList().add(null);
         model.addAttribute("choiceTagsForm", choiceTagsForm);
 
 
@@ -161,16 +155,6 @@ public class ProblemController {
         problemService.save(problem);
         return "redirect:/teacher/problem/" + problemId;
     }
-
-//    //Публикация задачи
-//    @GetMapping("/teacher/problem/{problemId}/publish")
-//    public String postProblem(@PathVariable Long problemId) {
-//        Problem problem = problemService.getProblemById(problemId);
-//
-//        //Проверка задачи на готовность к публикации
-//        problemFacade.check_tests(problem);
-//
-//    }
 
 
     //Обновление тегов задачи
@@ -217,15 +201,6 @@ public class ProblemController {
         redirectAttributes.addFlashAttribute("activeTabMenu", "linkTestsProblem");
         return "redirect:/teacher/problem/" + problemId;
     }
-
-
-    //Костыльная загрузка тестов через диск
-//    @GetMapping("/teacher/problem/{problemId}/tests-upload/pc2")
-//    public String uploadProblemTestsToPC2(@PathVariable Long problemId) throws IOException {
-//        Problem problem = problemService.getProblemById(problemId);
-//        problemFacade.addTestsToProblem(problem);
-//        return "redirect:/teacher/problem/" + problemId;
-//    }
 
 
     @GetMapping("/teacher/problem/{problemId}/test-delete/{testNum}")

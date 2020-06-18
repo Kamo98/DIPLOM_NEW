@@ -137,19 +137,6 @@
                                             <label th:for="'hashTag-' + ${tag.id}" th:text="${tag.name}">Тег</label>
                                         </div>
 
-
-                                        <!--<div class="col">-->
-                                        <!--<div th:each="tag : ${hashTags}" th:style="'margin-left: ' + ${tag.level}*2 + 'rem;'">-->
-                                        <!--<input type="checkbox" th:field="*{tagList}" th:value="${tag.id}" />-->
-                                        <!--<label th:for="${#ids.prev('tagList')}" th:text="${tag.name}">Тег</label>-->
-                                        <!--</div>-->
-                                        <!--</div>-->
-
-                                        <!--<div th:each="tag, iStat : ${hashTags}" th:style="'margin-left: ' + ${tag.level}*2 + 'rem;'">-->
-                                            <!--<input type="checkbox" th:id="'hashTag-' + ${tag.id}" th:field="*{tagList}" th:value="*{tagList[__${iStat.index}__]}">-->
-                                            <!--<label th:for="'hashTag-' + ${tag.id}" th:text="${tag.name}">Тег</label>-->
-
-                                        <!--</div>-->
                                     </div>
                                 </div>
                                 <div class="row row-margin-top">
@@ -335,9 +322,6 @@
                                 <div class="col">
                                     <button type="submit" class="btn btn-primary">Загрузить</button>
                                 </div>
-                                <!--<div class="col">-->
-                                    <!--<a class="btn btn-success" th:href="@{'/teacher/problem/' + ${problem.id} + '/tests-upload/pc2'}">Загрузить тесты в PC2</a>-->
-                                <!--</div>-->
                             </div>
                         </form>
 
