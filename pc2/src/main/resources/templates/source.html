@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
+
+<head th:replace="base :: common_header(~{::title})">
     <meta charset="UTF-8">
     <title>Source</title>
 </head>
 <body>
-<div th:text="${source}">
-</div>
+<pre><code th:text="${source}">
+</code></pre>
+<footer th:replace="base :: footer"></footer>
 </body>
 </html>
