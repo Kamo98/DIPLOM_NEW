@@ -18,6 +18,19 @@ $(document).ready(function () {
 
     $('#sourceTM2').hide();
 
+    $('#radioSourceFileSubmit').click(function (e) {
+        $('#file').prop('disabled', false);
+        $('#codeSolutionSend').prop('disabled', true);
+        $('#flagSourceCodeNo').val(false);
+    });
+
+    $('#radioSourceCodeSubmit').click(function (e) {
+        $('#file').prop('disabled', true)
+        $('#codeSolutionSend').prop('disabled', false);
+        $('#flagSourceCodeNo').val(true);
+    });
+
+
     $("#submit").click(function () {
         $("#form").submit();
     });
