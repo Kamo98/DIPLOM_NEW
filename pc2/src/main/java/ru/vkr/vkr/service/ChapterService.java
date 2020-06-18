@@ -47,7 +47,7 @@ public class ChapterService {
 
     public void loadTheory(Chapter chapter, TheoryMaterialForm theoryMaterialForm) {
         if (theoryMaterialForm.getLink().equals("")) {
-            String sourceChapter = FileManager.loadFileToServer(theoryMaterialForm.getMultipartFile(), nameOfFolder);
+            String sourceChapter = FileManager.loadFileNewRandomDirToServer(theoryMaterialForm.getMultipartFile(), nameOfFolder);
             if (FileManager.fileExists(sourceChapter)) {
                 Theory theory = new Theory();
                 theory.setName(theoryMaterialForm.getName());

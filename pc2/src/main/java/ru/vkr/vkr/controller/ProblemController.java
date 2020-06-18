@@ -188,8 +188,9 @@ public class ProblemController {
 
         Problem problem = problemService.getProblemById(problemId);
 
-        problemFacade.loadTestFiles(loadTestsForm, problem);
-        problemFacade.addTestsToProblem(problem);
+        if (problemFacade.loadTestFiles(loadTestsForm, problem)) {
+            problemFacade.addTestsToProblem(problem);
+        }
 
         redirectAttributes.addFlashAttribute("activeTabMenu", "linkTestsProblem");
         return "redirect:/teacher/problem/" + problemId;

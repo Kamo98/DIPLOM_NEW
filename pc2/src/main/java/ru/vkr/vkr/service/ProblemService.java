@@ -33,7 +33,7 @@ public class ProblemService {
     private ComplexityRepository complexityRepository;
 
     public void loadStatement(Problem problem, TheoryMaterialForm theoryMaterialForm) {
-        String sourceStatement = FileManager.loadFileToServer(theoryMaterialForm.getMultipartFile(), nameOfFolder);
+        String sourceStatement = FileManager.loadFileNewRandomDirToServer(theoryMaterialForm.getMultipartFile(), nameOfFolder);
         problem.setNameOfTextProblem(theoryMaterialForm.getName());
         problem.setPathToTextProblem(sourceStatement);
         problemRepository.save(problem);
