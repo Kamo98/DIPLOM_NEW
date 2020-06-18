@@ -1,5 +1,6 @@
 package ru.vkr.vkr.domain;
 
+import edu.csus.ecs.pc2.api.ILanguage;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -52,14 +53,14 @@ public class FileManager {
         return "";
     }
 
-    public static String loadSourceToServer(String source, String nameOfFolder, String format) {
-        if (!source.isEmpty()) {
+    public static String loadSourceToServer(String source, String nameOfFolder, ILanguage iLanguage) {
+        if (iLanguage != null && !source.isEmpty()) {
             String newLocation = location + nameOfFolder + "\\" + UUID.randomUUID().toString();
             File uploadDir = new File(newLocation);
             if (!uploadDir.exists()) {
                 uploadDir.mkdir();
             }
-            String resultFilename = convertPathToString(newLocation + "\\" + "source" + format);
+            String resultFilename = convertPathToString(newLocation + "\\" + "source" + Format.getFormat(iLanguage.getName()));
             try (OutputStream outputStream = new FileOutputStream(resultFilename);
                  BufferedOutputStream fileOutputStream = new BufferedOutputStream(outputStream)) {
                 fileOutputStream.write(source.getBytes());

@@ -275,10 +275,7 @@ public class ProblemController {
     public String sendFileSubmit(RedirectAttributes redirectAttributes, Model model,
                                  @ModelAttribute("submitRunForm") SubmitRunForm submitRunForm,
                                  @PathVariable Long problemId) {
-        submitRunService.submitRun(problemId,
-                submitRunForm.getLanguage(),
-                submitRunForm.getMultipartFile());
-
+        submitRunService.submitRun(problemId, submitRunForm);
         redirectAttributes.addFlashAttribute("activeTabMenu", "linkViewRunsProblem");
         return "redirect:/teacher/problem/" + problemId;
     }

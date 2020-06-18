@@ -9,6 +9,26 @@ public class SubmitRunForm {
 
     private MultipartFile multipartFile;
 
+    private String sourceCode;
+
+    private boolean flagSourceCode;
+
+    public boolean isFlagSourceCode() {
+        return flagSourceCode;
+    }
+
+    public void setFlagSourceCode(boolean flagSourceCode) {
+        this.flagSourceCode = flagSourceCode;
+    }
+
+    public String getSourceCode() {
+        return sourceCode;
+    }
+
+    public void setSourceCode(String sourceCode) {
+        this.sourceCode = sourceCode;
+    }
+
     public int getProblem() {
         return problem;
     }
