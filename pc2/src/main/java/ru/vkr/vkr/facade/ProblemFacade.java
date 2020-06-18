@@ -215,16 +215,16 @@ public class ProblemFacade {
             for (int i = 0; i < loadTestsForm.getDirTests().length; i++) {
                 MultipartFile file = loadTestsForm.getDirTests()[i];
                 String[] fileNameArray = file.getOriginalFilename().split("\\.");
-                String fileFormat = fileNameArray[fileNameArray.length - 1];
+                String fileFormat = "." + fileNameArray[fileNameArray.length - 1];
                 if (fileFormat.equals(extensionIn)) {
                     filesIn.put(file.getOriginalFilename(), file);
-                } else if (fileFormat.equals(fileFormat.equals(extensionAns))) {
+                } else if (fileFormat.equals(extensionAns)) {
                     filesAns.put(file.getOriginalFilename(), file);
                 }
             }
         }
 
-        if (filesIn.size() != filesAns.size()) {
+        if (filesIn.isEmpty() || filesAns.isEmpty() || filesIn.size() != filesAns.size()) {
             return false;
         }
 
