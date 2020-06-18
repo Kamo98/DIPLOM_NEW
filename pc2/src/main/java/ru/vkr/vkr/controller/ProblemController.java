@@ -116,7 +116,7 @@ public class ProblemController {
         ChoiceTagsForm choiceTagsForm = new ChoiceTagsForm();
         //choiceTagsForm.setTagList(problem.getHashTags());
 
-        Set<HashTag> hashTagList = problem.getHashTagsVisible();
+        Set<HashTag> hashTagList = problem.getHashTags();
 
         //todo: костыли в студию, но это быстрее, чем то, как thymeleaf формировал checkbox из объектов HashTag
         for (int i = 0; i < hashTags.size(); i++)
@@ -131,11 +131,6 @@ public class ProblemController {
 
 
         //Темы
-        Set<Chapter> chapters = new HashSet<>();
-        Collection<Course> teacherCourses = courseService.getCoursesByCurrentTeacher();
-        for (Course course : teacherCourses)
-            chapters.addAll(course.getChapters());
-        model.addAttribute("chapters", chapters);
         AttachProblemForm attachProblemForm = new AttachProblemForm();
         model.addAttribute("attachProblemForm", attachProblemForm);
 
@@ -202,6 +197,8 @@ public class ProblemController {
 
         if (problemFacade.loadTestFiles(loadTestsForm, problem)) {
             problemFacade.addTestsToProblem(problem);
+        } else {
+            redirectAttributes.addFlashAttribute("errorUploadTests", true);
         }
 
         redirectAttributes.addFlashAttribute("activeTabMenu", "linkTestsProblem");
@@ -228,6 +225,7 @@ public class ProblemController {
 //    }
 
 
+    //Удаление теста
     @GetMapping("/teacher/problem/{problemId}/test-delete/{testNum}")
     public String deleteProblemTest(RedirectAttributes redirectAttributes, @PathVariable Long problemId, @PathVariable Integer testNum) {
         Problem problem = problemService.getProblemById(problemId);
@@ -237,6 +235,7 @@ public class ProblemController {
         return "redirect:/teacher/problem/" + problemId;
     }
 
+    //Удаление всех тестов
     @GetMapping("/teacher/problem/{problemId}/test-deleteAll")
     public String deleteProblemAllTests(RedirectAttributes redirectAttributes, @PathVariable Long problemId) {
         Problem problem = problemService.getProblemById(problemId);
@@ -245,6 +244,7 @@ public class ProblemController {
         redirectAttributes.addFlashAttribute("activeTabMenu", "linkTestsProblem");
         return "redirect:/teacher/problem/" + problemId;
     }
+
     //Установка параметров чекера
     @PostMapping("/teacher/problem/{problemId}/checker-settings")
     public String checkerSettings(RedirectAttributes redirectAttributes, CheckerSettingsForm checkerSettingsForm, @PathVariable Long problemId) {
@@ -256,6 +256,7 @@ public class ProblemController {
         return "redirect:/teacher/problem/" + problemId;
     }
 
+    //Все теги
     @GetMapping("/teacher/tags")
     public String getAllTags(Model model) {
         Collection<HashTag> hashTags = hashTagService.getAllTags();
@@ -283,6 +284,7 @@ public class ProblemController {
         return "redirect:/teacher/problem/" + problemId;
     }
 
+    //Отправка решения
     @PostMapping("/teacher/submit/{problemId}")
     public String sendFileSubmit(RedirectAttributes redirectAttributes, Model model,
                                  @ModelAttribute("submitRunForm") SubmitRunForm submitRunForm,

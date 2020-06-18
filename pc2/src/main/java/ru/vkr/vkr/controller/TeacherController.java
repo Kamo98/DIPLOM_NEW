@@ -1,5 +1,6 @@
 package ru.vkr.vkr.controller;
 
+import javafx.util.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -208,19 +209,32 @@ public class TeacherController {
     }
 
 
+    @ResponseBody
+    @PostMapping("/teacher/themes-for-course/")
+    public String getThemeOfCourse(@RequestParam(value = "id_course") Long idCourse) {
+        Course course = courseService.getCourseById(idCourse);
+        String options = "";
+        for (Chapter chapter : course.getChapters())
+            options +=  "<option value=\"" + chapter.getId() + "\">"
+                + chapter.getName() + "</option>";
+        return options;
+    }
+
     //Пикрепление задачи к теме
     @PostMapping("/teacher/problem/{problemId}/attach-to-chapter")
     public String attachProblemToChapter(Model model,
                                          AttachProblemForm attachProblemForm,
                                          @PathVariable Long problemId) {
-        Problem problem = problemService.getProblemById(problemId);
-        chapterService.attachProblem(attachProblemForm.getChapter(), problem);
+        if (attachProblemForm.getChapter() != null) {
+            Problem problem = problemService.getProblemById(problemId);
+            chapterService.attachProblem(attachProblemForm.getChapter(), problem);
+        }
         return "redirect:/teacher/problem/" + problemId;
     }
 
-    //Открепление задачи от темы
+    //Открепление задачи от темы на странице темы
     @GetMapping("/teacher/chapter/{chapterId}/dettach-problem/{problemId}")
-    public String dettachProblemToChapter(RedirectAttributes redirectAttributes, Model model,
+    public String dettachProblemFromChapter(RedirectAttributes redirectAttributes,
                                           @PathVariable Long chapterId,
                                           @PathVariable Long problemId) {
         Problem problem = problemService.getProblemById(problemId);
@@ -231,6 +245,15 @@ public class TeacherController {
         return "redirect:/teacher/course/" + chapter.getCourseChapters().getId() + "/chapter/" + chapterId;
     }
 
+    //Открепление задачи от темы на странцие задачи
+    @GetMapping("/teacher/problem/{problemId}/dettach-problem/{chapterId}")
+    public String dettachChapterFromProblem(@PathVariable Long chapterId,
+                                            @PathVariable Long problemId) {
+        Problem problem = problemService.getProblemById(problemId);
+        Chapter chapter = chapterService.getChapterById(chapterId);
+        chapterService.dettachProblem(chapter, problem);
+        return "redirect:/teacher/problem/" + problemId;
+    }
 
     // добавление теоретического материала
     @PostMapping("/teacher/course/{course_id}/chapter/{chapter_id}/add-theory")

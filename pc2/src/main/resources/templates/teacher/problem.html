@@ -48,7 +48,7 @@
                 <div class="container" id="containerOfTabs">
 
                     <div id="problemSettings">
-                        <div class="alert alert-warning" role="alert" th:unless="${problem.publ}">
+                        <div class="alert alert-warning" role="alert" th:if="!${problem.publ} and !${isCreate}">
                             Задача не опубликована! Опубликуйте, чтобы студенты могли сдавать её.
                         </div>
                         <div class="alert alert-danger" role="alert" th:each="error : ${errorsPublish}" th:text="${error}">
@@ -166,33 +166,69 @@
 
                         </div>
 
-                        <div class="row row-margin-top"  th:unless="${isCreate}">
-                            <h6><i class="fa fa-paperclip" aria-hidden="true"></i>&nbsp;Прикрепить задачу к теме</h6>
-                        </div>
-                        <form  th:unless="${isCreate}" th:action="@{'/teacher/problem/' + ${problem.id} + '/attach-to-chapter'}" th:object="${attachProblemForm}" method="post">
-                            <div class="row">
+
+
+                        <div id="themes">
+                            <div class="row row-table row-margin-top table-header col-align-centered">
                                 <div class="col">
-                                    <div class="form-group">
-                                        <div class="row">
-                                            <div class="col">
-                                                <label for="selectThemes">Выберите тему: </label>
-                                            </div>
-                                            <div class="col">
-                                                <select class="form-control" id="selectThemes" th:field="*{chapter}">
-                                                    <option th:each="chapter : ${chapters}" th:text="${chapter.name}"
-                                                            th:value="${chapter.id}">Задача 1</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    <i class="fa fa-book fa-fw" aria-hidden="true"></i>&nbsp;Наименование темы
+                                </div>
+                                <div class="col-3">
+                                    <i class="fa fa-cogs" aria-hidden="true"></i>&nbsp;Управление
                                 </div>
                             </div>
-                            <div class="row">
-                                <button class="btn btn-success" type="submit"><i class="fa fa-paperclip"
-                                                                                 aria-hidden="true"></i>&nbsp;Прикрепить
-                                </button>
+
+                            <div th:if="${#lists.isEmpty(problem.chapters)}" class="alert alert-warning row-margin-top" role="alert">
+                                Задача пока не прикреплена ни к одной теме
                             </div>
-                        </form>
+
+                            <div th:class="'row row-table col-align-centered ' + ((${iState.index} % 2 == 1) ? 'dark-row' : '')" th:each="chapter, iState : ${problem.chapters}">
+                                <div class="col">
+                                    <a th:href="@{'/teacher/course/'+ ${chapter.getCourseChapters().getId()}+'/chapter/'+ ${chapter.id}}">
+                                        [[ ${chapter.name} ]]
+                                    </a>
+                                </div>
+                                <div class="col-3">
+                                    <a class="btn btn-danger" title="Открепить от темы"
+                                       th:href="@{'/teacher/problem/' + ${problem.id} + '/dettach-problem/' + ${chapter.id}}">
+                                        <i class="fa fa-trash-o fa-lg"></i>&nbsp;Открепить от темы
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="row row-margin-top"  th:unless="${isCreate}">
+                                <h6><i class="fa fa-paperclip" aria-hidden="true"></i>&nbsp;Прикрепить задачу к теме</h6>
+                            </div>
+
+                            <form  th:unless="${isCreate}" th:action="@{'/teacher/problem/' + ${problem.id} + '/attach-to-chapter'}" th:object="${attachProblemForm}" method="post">
+                                <div class="row">
+                                    <div class="col">
+                                        <label for="selectThemes">Выберите тему: </label>
+                                    </div>
+                                    <div class="col">
+                                        <select class="form-control" id="selectCourse">
+                                            <option></option>
+                                            <option th:each="course : ${teacherCourses}" th:text="${course.name}"
+                                                    th:value="${course.id}">Курс</option>
+                                        </select>
+                                    </div>
+                                    <div class="col">
+                                        <select class="form-control" id="selectThemes" th:field="*{chapter}">
+                                            <option th:each="chapter : ${chapters}" th:text="${chapter.name}"
+                                                    th:value="${chapter.id}">Тема</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <button class="btn btn-success" type="submit"><i class="fa fa-paperclip"
+                                                                                         aria-hidden="true"></i>&nbsp;Прикрепить
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+
 
 
                         <hr class="row row-margin-top" th:unless="${isCreate}">
@@ -294,6 +330,12 @@
                     </div>
 
                     <div id="testsProblem" style="display:none;" th:unless="${isCreate}">
+
+                        <div class="alert alert-danger" role="alert" th:if="${errorUploadTests}">
+                            Произошла ошибка при загрузке тестов! Попробуйте ещё раз
+                        </div>
+
+
                         <form th:action="@{'/teacher/problem/'+ ${problem.id} +'/tests-upload'}" th:object="${loadTestsForm}" method="post" enctype="multipart/form-data">
 
                             <div class="row row-margin-top">
@@ -609,6 +651,21 @@
                 $('#relativeTolerance').prop('disabled', false);
                 $('#absoluteTolerance').prop('disabled', true);
             }
+        });
+
+
+         //Событие изенения значения в селекте с курсом для прикрепления к теме
+        $("#selectCourse").change(function() {
+            var idCoutse = $(this).val();
+            $.ajax({
+                type: 'post',
+                url: "/teacher/themes-for-course/",
+                data: {'id_course': idCoutse},
+                dataType: "html",
+                success: function (chapters) {
+                    $("#selectThemes").html(chapters);
+                }
+            });
         });
 
     </script>
