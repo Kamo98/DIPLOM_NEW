@@ -114,13 +114,6 @@ public class ProblemFacade {
         }
         ProblemDataFiles problemDataFiles = new ProblemDataFiles(problem);
         internalController.addNewProblem(problem, problemDataFiles);
-
-        Problem newProblem = findProblemInPC2(problemDb);
-        int k = 0;
-        while (newProblem == null && k < 10000) {
-            newProblem = findProblemInPC2(problemDb);
-            k++;
-        }
     }
 
     public void updateMainParams(String newName, ru.vkr.vkr.entity.Problem problemDb) {
@@ -147,7 +140,8 @@ public class ProblemFacade {
     public void setTestsParamsToForm(TestSettingsForm testSettingsForm, ru.vkr.vkr.entity.Problem problemDb) {
         //Ищем задачу
         Problem problem = findProblemInPC2(problemDb);
-        testSettingsForm.setStopOnFirstFail(problem.isStopOnFirstFailedTestCase());
+        if (problem != null)
+            testSettingsForm.setStopOnFirstFail(problem.isStopOnFirstFailedTestCase());
     }
 
     //Установка параметров чекера
@@ -289,6 +283,8 @@ public class ProblemFacade {
 //        }
         List<Pair<String, String>> filesList = new ArrayList<>();
         Problem problem = findProblemInPC2(problemDb);
+        if (problem == null)
+            return filesList;
         IInternalController internalController = BridgePc2.getInternalController();
         ProblemDataFiles problemDataFiles = internalController.getProblemDataFiles(problem);
         int countTests = problemDataFiles.getJudgesDataFiles().length;

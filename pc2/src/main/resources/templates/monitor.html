@@ -15,9 +15,9 @@
     <div class="col-1" th:text="${record.countOfPass}">-</div>
     <div class="col-1" th:text="${record.timeSolve}">-</div>
     <div class="col" th:each="problemInfo : ${record.iProblemDetailsList}">
-        <span th:unless="${problemInfo}"> *
+        <span th:if="${problemInfo.getAttempts()} == 0"> *
         </span>
-        <span th:if="${problemInfo}">
+        <span th:if="${problemInfo.getAttempts()} != 0 and ${problemInfo}">
             <span th:if="${problemInfo.isSolved()}" class="cell-task-plus">
                 +[[ (${problemInfo.getAttempts() - 1}) != 0 ? ${problemInfo.getAttempts() - 1} : '' ]]
             </span>

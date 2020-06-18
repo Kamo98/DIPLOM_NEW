@@ -46,10 +46,11 @@ public class ProblemController {
     @ModelAttribute
     public void addAttributes(Model model) throws NotLoggedInException {
         Collection<Course> teacherCourses = courseService.getCoursesByCurrentTeacher();
-        List<Problem> teacherProblems = problemService.getProblemsByCurrentTeacher();
-//        Collection<Problem> teacherProblems = new ArrayList<>();
-//        for (int i = 0; i < 5; i++)
-//            teacherProblems.add(teacherProblems_.get(i));
+        List<Problem> teacherProblems_ = problemService.getProblemsByCurrentTeacher();
+        Collection<Problem> teacherProblems = new ArrayList<>();
+        int countVisibleProblems = Math.min(5, teacherProblems_.size());
+        for (int i = 0; i < countVisibleProblems; i++)
+            teacherProblems.add(teacherProblems_.get(i));
         TheoryMaterialForm theoryMaterialForm = new TheoryMaterialForm();
         SubmitRunForm submitRunForm = new SubmitRunForm();
 
