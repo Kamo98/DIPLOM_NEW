@@ -4,6 +4,7 @@ import edu.csus.ecs.pc2.api.ILanguage;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
+import ru.vkr.vkr.domain.format.Format;
 import ru.vkr.vkr.domain.run.RunStatistic;
 
 import java.io.*;
@@ -60,7 +61,7 @@ public class FileManager {
             if (!uploadDir.exists()) {
                 uploadDir.mkdir();
             }
-            String resultFilename = convertPathToString(newLocation + "\\" + "source" + Format.getFormat(iLanguage.getName()));
+            String resultFilename = convertPathToString(newLocation + "\\" + Format.getName(iLanguage.getName(), source) + Format.getFormat(iLanguage.getName()));
             try (OutputStream outputStream = new FileOutputStream(resultFilename);
                  BufferedOutputStream fileOutputStream = new BufferedOutputStream(outputStream)) {
                 fileOutputStream.write(source.getBytes());
