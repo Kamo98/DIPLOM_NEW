@@ -19,6 +19,7 @@ import ru.vkr.vkr.domain.FileManager;
 import ru.vkr.vkr.domain.problem.ProblemFactory;
 import ru.vkr.vkr.domain.run.RunSubmitDto;
 import ru.vkr.vkr.domain.run.RunSubmitDtoComparator;
+import ru.vkr.vkr.form.SubmitRunForm;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
@@ -34,18 +35,18 @@ public class SubmitRunService {
     @Autowired
     private ApplicationContext applicationContext;
 
-    public void submitRun(Long problemId, int languageIndex, MultipartFile file) {
-        IProblem iProblem = null;
-        ILanguage iLanguage = null;
+    public void submitRun(Long problemId, SubmitRunForm submitRunForm) {
+        IProblem iProblem;
+        ILanguage iLanguage;
         try {
             iProblem = ((ProblemFactory)applicationContext.getBean("getProblemFactory")).getIProblem(problemId);
-            iLanguage = BridgePc2.getServerConnection().getContest().getLanguages()[languageIndex];
+            iLanguage = BridgePc2.getServerConnection().getContest().getLanguages()[submitRunForm.getLanguage()];
         } catch (NotLoggedInException e) {
             e.printStackTrace();
             return;
         }
 
-        String fileName = getFileNameSubmitRun(file);
+        String fileName = getFileNameSubmitRun(submitRunForm, iLanguage);
 
         try {
             logger.info("submitRun for " + iProblem + " " + iLanguage + " file: " + fileName);
@@ -58,8 +59,14 @@ public class SubmitRunService {
         }
     }
 
-    private String getFileNameSubmitRun(MultipartFile file) {
-        String fileName = FileManager.loadFileToServer(file, nameOfFolder);
+    private String getFileNameSubmitRun(SubmitRunForm submitRunForm, ILanguage iLanguage) {
+        String fileName = "";
+        if (submitRunForm.isFlagSourceCode()) {
+            fileName = FileManager.loadSourceToServer(submitRunForm.getSourceCode(), nameOfFolder, iLanguage);
+        } else {
+            fileName = FileManager.loadFileToServer(submitRunForm.getMultipartFile(), nameOfFolder);
+        }
+
         if (!FileManager.fileExists(fileName)) {
             File curdir = new File(".");
             String message = fileName + " not found";

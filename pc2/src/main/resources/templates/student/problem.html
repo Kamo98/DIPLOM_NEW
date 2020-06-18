@@ -45,7 +45,7 @@
 
                     <div class="row row-table" th:if="${statement}">
                         <div class="col">
-                            <a href="javascript://" th:attr="onclick=|loadFileByPath('${problem.pathToTextProblem}')|" >
+                            <a href="javascript://" th:attr="onclick=|loadFileByPath('${problem.pathToTextProblem}')|">
                                 <i class="fa fa-book fa-fw" aria-hidden="true"></i>&nbsp;
                                 [[ ${problem.nameOfTextProblem} ]]
                             </a>
@@ -75,11 +75,15 @@
                             </div>
                         </div>
 
+
                         <div class="row row-margin-top">
                             <div class="col-3 col-align-center">
                                 <label for="file">Выберите файл:</label>
+                                <input type="radio" id="radioSourceFileSubmit" name="chooseSubmitType"
+                                       checked="checked">
                             </div>
                             <div class="col">
+                                <input type="hidden" th:field="*{flagSourceCode}" id="flagSourceCodeNo">
                                 <input type="file" th:field="*{multipartFile}" class="form-control" id="file"
                                        name="file">
                             </div>
@@ -89,11 +93,15 @@
                         <div class="row row-margin-top">
                             <div class="col-3 col-align-center">
                                 <label for="codeSolutionSend">Или вставье код:</label>
+                                <input type="radio" id="radioSourceCodeSubmit" name="chooseSubmitType">
                             </div>
                             <div class="col">
-                                <textarea rows="15" class="form-control" id="codeSolutionSend"></textarea>
+                                <input type="hidden" th:field="*{flagSourceCode}" id="flagSourceCodeYes">
+                                <textarea rows="15" th:field="*{sourceCode}" class="form-control"
+                                          id="codeSolutionSend" disabled></textarea>
                             </div>
                         </div>
+
                         <div class="row row-margin-top">
                             <div class="col">
                                 <button type="submit" class="btn btn-success">Отправить решение</button>
@@ -110,7 +118,8 @@
                             <div>Время последнего обновления: <span id="timeLastRefreshTableSubmitions"></span></div>
                         </div>
                         <div class="col col-align-right">
-                            <a class="btn btn-primary" id="refreshTableSubmitions"><i class="fa fa-refresh" aria-hidden="true"></i></a>
+                            <a class="btn btn-primary" id="refreshTableSubmitions"><i class="fa fa-refresh"
+                                                                                      aria-hidden="true"></i></a>
                         </div>
                     </div>
                     <div id="tableSubmitions"></div>
@@ -145,6 +154,18 @@
         $('#linkViewRuns').addClass('active');
         $('#ViewRuns').show();
         getSubmitions();
+    });
+
+    $('#radioSourceFileSubmit').click(function (e) {
+        $('#file').prop('disabled', false);
+        $('#codeSolutionSend').prop('disabled', true);
+        $('#flagSourceCodeNo').val(false);
+    });
+
+    $('#radioSourceCodeSubmit').click(function (e) {
+        $('#file').prop('disabled', true)
+        $('#codeSolutionSend').prop('disabled', false);
+        $('#flagSourceCodeNo').val(true);
     });
 
 </script>

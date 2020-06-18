@@ -462,11 +462,16 @@
                                     </select>
                                 </div>
                             </div>
+
+
                             <div class="row row-margin-top">
                                 <div class="col-3 col-align-center">
                                     <label for="file">Выберите файл:</label>
+                                    <input type="radio" id="radioSourceFileSubmit" name="chooseSubmitType"
+                                           checked="checked">
                                 </div>
                                 <div class="col">
+                                    <input type="hidden" th:field="*{flagSourceCode}" id="flagSourceCodeNo">
                                     <input type="file" th:field="*{multipartFile}" class="form-control" id="file"
                                            name="file">
                                 </div>
@@ -476,11 +481,15 @@
                             <div class="row row-margin-top">
                                 <div class="col-3 col-align-center">
                                     <label for="codeSolutionSend">Или вставье код:</label>
+                                    <input type="radio" id="radioSourceCodeSubmit" name="chooseSubmitType">
                                 </div>
                                 <div class="col">
-                                    <textarea rows="15" class="form-control" id="codeSolutionSend"></textarea>
+                                    <input type="hidden" th:field="*{flagSourceCode}" id="flagSourceCodeYes">
+                                    <textarea rows="15" th:field="*{sourceCode}" class="form-control"
+                                              id="codeSolutionSend" disabled></textarea>
                                 </div>
                             </div>
+
                             <div class="row row-margin-top">
                                 <div class="col">
                                     <button type="submit" class="btn btn-success">Отправить решение</button>
