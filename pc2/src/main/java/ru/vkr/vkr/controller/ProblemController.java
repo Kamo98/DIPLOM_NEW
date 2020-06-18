@@ -74,6 +74,7 @@ public class ProblemController {
     @PostMapping("/teacher/problem-create")
     public String problemCreatePost(Model model, Problem problem) {
         problemService.setAuthorForNewCourse(problem);
+        problem.setPubl(true);
         problemService.save(problem);
         //Инициализируем задачу в pc2
         problemFacade.initProblem(problem);

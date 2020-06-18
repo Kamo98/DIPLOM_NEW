@@ -193,7 +193,7 @@
 
                         <hr class="row row-margin-top" th:unless="${isCreate}">
                         <div class="row row-margin-top" th:unless="${isCreate}">
-                            <div class = "col">
+                            <div class = "col" th:unless="${problem.publ}">
                                 <a class="btn btn-success">
                                     <i class="fa fa-arrow-right" aria-hidden="true"></i>&nbsp;Опубликовать задачу
                                 </a>
@@ -559,6 +559,13 @@
             getSubmitions();
         });
 
+
+        //Обновление таблицы посылок по таймеру
+        setInterval(function() {
+            if ($('#linkViewRunsProblem').hasClass('active')) {
+                getSubmitions();
+            }
+        }, 5000);
 
 
         //События кликов в настройках чекера

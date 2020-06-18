@@ -88,7 +88,7 @@ public class ProblemFacade {
         Problem problem = new Problem(problemDb.getName());
         problem.setShortName("problem-" + problemDb.getId());
         problem.setTimeOutInSeconds(problemDb.getTimeLimit());
-        problem.setStopOnFirstFailedTestCase(true);
+        problem.setStopOnFirstFailedTestCase(false);
 
         //Поток для чтения
         problem.setReadInputDataFromSTDIN(true);
@@ -114,6 +114,13 @@ public class ProblemFacade {
         }
         ProblemDataFiles problemDataFiles = new ProblemDataFiles(problem);
         internalController.addNewProblem(problem, problemDataFiles);
+
+        Problem newProblem = findProblemInPC2(problemDb);
+        int k = 0;
+        while (newProblem == null && k < 10000) {
+            newProblem = findProblemInPC2(problemDb);
+            k++;
+        }
     }
 
     public void updateMainParams(String newName, ru.vkr.vkr.entity.Problem problemDb) {

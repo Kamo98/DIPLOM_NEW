@@ -8,6 +8,7 @@ public final class Format {
     static {
         format = new HashMap<>();
         format.put("Java", ".java");
+        format.put("GNU C++", ".cpp");
         format.put("C++", ".cpp");
         format.put("Python", ".py");
     }
