@@ -23,7 +23,7 @@ public class SearchService {
     private ProblemFacade problemFacade;
 
 
-    //Для страницы пула задач с пустым списком задач
+    //Для страницы пула задач со списком всех задач
     public void poolProblemsGet(Model model) {
         List<HashTag> hashTags = hashTagService.getAllTags();
         model.addAttribute("hashTags", hashTags);
@@ -61,7 +61,7 @@ public class SearchService {
     //Непосредстванно фильтрация задач
     //Ищет как по одному тегу selectedTagId, так и по списку тегов из searchProblemForm
     private void filterProblems(Model model, SearchProblemForm searchProblemForm, List<HashTag> hashTags, List<Complexity> complexities, Long selectedTagId) {
-        Set<Problem> problems_1 = new HashSet<>();
+        Set<Problem> problems_1 = new TreeSet<>();
         if (searchProblemForm.getTagList().size() == 0)
             problems_1.addAll(problemService.getAllPublicProblems());
         else {
@@ -74,7 +74,6 @@ public class SearchService {
         }
 
 
-
         Set<Complexity> needComplexity = new HashSet<>();       //Для быстрого поиска при фильтрации задач
         for (int i = 0; i < searchProblemForm.getComplexityList().size(); i++)
             if (searchProblemForm.getComplexityList().get(i) != null && searchProblemForm.getComplexityList().get(i))
@@ -83,14 +82,22 @@ public class SearchService {
         List<Problem> problems = new ArrayList<>();
         if (needComplexity.size() == 0) {
             problems.addAll(problems_1);
-        } else
+        } else {
             for (Problem problem : problems_1)
                 if (problem.getComplexity() == null || needComplexity.contains(problem.getComplexity()))
                     problems.add(problem);
+        }
+
+        problemFacade.getStatisticForProblems(problems);
 
         List<Problem> problemsResult = new ArrayList<>();
         for (Problem pr : problems)
-            if (pr.isPubl())
+            if (pr.isPubl()
+                && (pr.getTotalStudentSubmit() == 0 ||
+                (pr.getStudentAcceptToTotal() >= searchProblemForm.getSolvabilityStudentFrom()
+                && pr.getStudentAcceptToTotal() <= searchProblemForm.getSolvabilityStudentTo()
+                && pr.getAcceptedToTotal() >= searchProblemForm.getSolvabilitySubmitFrom()
+                && pr.getAcceptedToTotal() <= searchProblemForm.getSolvabilitySubmitTo())))
                 problemsResult.add(pr);
 
         problemFacade.getStatisticForProblems(problemsResult);
