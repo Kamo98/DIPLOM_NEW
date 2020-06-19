@@ -3,6 +3,7 @@ package ru.vkr.vkr.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
+import ru.vkr.vkr.entity.Chapter;
 import ru.vkr.vkr.entity.Complexity;
 import ru.vkr.vkr.entity.HashTag;
 import ru.vkr.vkr.entity.Problem;
@@ -21,6 +22,8 @@ public class SearchService {
     private HashTagService hashTagService;
     @Autowired
     private ProblemFacade problemFacade;
+    @Autowired
+    private ChapterService chapterService;
 
 
     //Для страницы пула задач со списком всех задач
@@ -104,6 +107,12 @@ public class SearchService {
         model.addAttribute("problems", problemsResult);
         SearchProblemForm searchProblemForm_ = new SearchProblemForm(hashTags.size(), complexities.size(), searchProblemForm);
         model.addAttribute("searchProblemForm", searchProblemForm_);
+    }
+
+    //Для страницы пула тем со списком всех тем
+    public void poolChaptersGet(Model model) {
+        List<Chapter> chapters = chapterService.getAll();
+        model.addAttribute("chapters", chapters);
     }
 
 

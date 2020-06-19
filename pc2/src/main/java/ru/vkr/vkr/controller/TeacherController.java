@@ -466,13 +466,18 @@ public class TeacherController {
     }
 
 
-
     @GetMapping("/teacher/pool-problems/{hashTagId}")
     public String poolProblemOneHashtag(@PathVariable("hashTagId") Long hashTagId, Model model) {
         searchService.poolSearchProblems(model, hashTagId);
         return "/pool-problems";
     }
 
+
+    @GetMapping("/teacher/pool-chapters")
+    public String poolChapters(Model model) {
+        searchService.poolChaptersGet(model);
+        return "/pool-chapters";
+    }
 
     @GetMapping("/teacher/submitions")
     public String showSubmitions(Model model) {

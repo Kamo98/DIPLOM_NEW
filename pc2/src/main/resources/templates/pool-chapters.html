@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="base :: common_header(~{::title})">
+    <title>Пул задач</title>
+
+</head>
+
+<body>
+
+    <div th:replace="base :: navigation"></div>
+
+    <div class="container">
+        <div class="row row-margin-bottom">
+
+            <!--    Вставка боковой панели  -->
+            <div th:replace="base :: side-panels"></div>
+            <!-- *** -->
+
+
+            <div class="main-content col-9 border rounded-lg">
+                <h5 class="centered green-h">Пул тем</h5>
+
+                <div class="container" id="containerOfTabs">
+
+                    <div class="col-align-centered row-margin-top">
+
+                        <div class="row row-table table-header">
+                            <div class="col">
+                                <i class="fa fa-book fa-fw" aria-hidden="true"></i>&nbsp;Наименование темы
+                            </div>
+                            <div class="col-2">
+                                <i class="fa fa-tasks"aria-hidden="true"></i>&nbsp;Количество задач
+                            </div>
+                            <div class="col-2">
+                                <i class="fa fa-book fa-fw" aria-hidden="true"></i>&nbsp;Количество материалов
+                            </div>
+                        </div>
+
+                        <div class="row row-margin-top" th:if="${#lists.isEmpty(chapters)}">
+                            <div class="col">
+                                <div  class="alert alert-warning" role="alert">
+                                    Не найдено ни одной темы
+                                </div>
+                            </div>
+                        </div>
+
+                        <div th:class="'row row-table ' + ((${iState.index} % 2 == 1) ? 'dark-row' : '')" th:each="chapter, iState : ${chapters}">
+                            <div class="col">
+                                <a th:href="${isTeacher} ? @{'/teacher/course/' + ${chapter.getCourseChapters().getId()} + '/chapter/' + ${chapter.id}} : (${isStudent} ? @{'/student/chapter/' + ${chapter.id}} : @{'#'})"
+                                   th:text="${chapter.name}">
+                                </a>
+                            </div>
+                            <div class="col-2" th:text="${chapter.getChapterProblems().size()}">
+                            </div>
+                            <div class="col-2" th:text="${chapter.getChapterTheories().size()}">
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+
+    <footer th:replace="base :: footer"></footer>
+
+
+    <script>
+
+
+    </script>
+</body>
+</html>

@@ -127,6 +127,14 @@ public class StudentController {
         return "/pool-problems";
     }
 
+
+    @GetMapping("/student/pool-chapters")
+    public String poolChapters(Model model) {
+        searchService.poolChaptersGet(model);
+        return "/pool-chapters";
+    }
+
+
     @GetMapping("/student/submitions")
     public String showSubmitions(Model model) {
         return "/submitions";

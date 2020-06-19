@@ -43,7 +43,7 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="#"><i class="fa fa-book fa-fw" aria-hidden="true"></i>&nbsp;Пул тем</a>
+                                <a class="nav-link" th:href="${isTeacher} ? @{'/teacher/pool-chapters'} : (${isStudent} ? @{'/student/pool-chapters'} : @{'#'})"><i class="fa fa-book fa-fw" aria-hidden="true"></i>&nbsp;Пул тем</a>
                             </li>
 
                             <!--<li class="nav-item">-->

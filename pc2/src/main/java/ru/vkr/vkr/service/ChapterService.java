@@ -16,6 +16,7 @@ import ru.vkr.vkr.repository.TheoryRepository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.List;
 
 @Service
 public class ChapterService {
@@ -68,6 +69,10 @@ public class ChapterService {
 
     public Chapter getChapterById(Long id) {
         return chapterRepository.findById(id).get();
+    }
+
+    public List<Chapter> getAll(){
+        return chapterRepository.findAll();
     }
 
     public void setCourse(Chapter chapter, Course course) {
