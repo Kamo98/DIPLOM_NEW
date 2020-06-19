@@ -56,6 +56,10 @@ public class Problem {
     @OneToMany(mappedBy = "problem", fetch = FetchType.LAZY)
     private List<TagProblem> tagProblems;
 
+    @OneToMany(mappedBy = "problem", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<PerfectSolution> perfectSolutions;
+
+
     /*****
     * Поля для статистики
      * Не из БД*/
@@ -156,6 +160,13 @@ public class Problem {
         return hashTags;
     }
 
+    public List<PerfectSolution> getPerfectSolutions() {
+        return perfectSolutions;
+    }
+
+    public void setPerfectSolutions(List<PerfectSolution> perfectSolutions) {
+        this.perfectSolutions = perfectSolutions;
+    }
 
     public void setHashTags(List<TagProblem> tagProblems) {
         this.tagProblems = tagProblems;

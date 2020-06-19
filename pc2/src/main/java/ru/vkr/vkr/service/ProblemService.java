@@ -11,6 +11,7 @@ import ru.vkr.vkr.entity.*;
 import ru.vkr.vkr.facade.AuthenticationFacade;
 import ru.vkr.vkr.form.TheoryMaterialForm;
 import ru.vkr.vkr.repository.ComplexityRepository;
+import ru.vkr.vkr.repository.PerfectSolutionRepository;
 import ru.vkr.vkr.repository.ProblemRepository;
 import ru.vkr.vkr.repository.TagProblemRepository;
 
@@ -31,6 +32,8 @@ public class ProblemService {
     private TagProblemRepository tagProblemRepository;
     @Autowired
     private ComplexityRepository complexityRepository;
+    @Autowired
+    private PerfectSolutionRepository perfectSolutionRepository;
 
     public void loadStatement(Problem problem, TheoryMaterialForm theoryMaterialForm) {
         String sourceStatement = FileManager.loadFileNewRandomDirToServer(theoryMaterialForm.getMultipartFile(), nameOfFolder);
@@ -124,4 +127,10 @@ public class ProblemService {
         complexity.setName("Очень высокая");
         complexityRepository.save(complexity);
     }
+
+
+    public void deletePerfectSolution(Long perfectSolId) {
+        perfectSolutionRepository.deleteById(perfectSolId);
+    }
+
 }

@@ -1,5 +1,6 @@
 package ru.vkr.vkr.facade;
 
+import edu.csus.ecs.pc2.api.ILanguage;
 import edu.csus.ecs.pc2.api.IProblemDetails;
 import edu.csus.ecs.pc2.api.IStanding;
 import edu.csus.ecs.pc2.api.ITeam;
@@ -22,11 +23,14 @@ import ru.vkr.vkr.domain.FileManager;
 import ru.vkr.vkr.domain.problem.ProblemFactory;
 import ru.vkr.vkr.domain.run.MonitorData;
 import ru.vkr.vkr.domain.run.RunStatistic;
+import ru.vkr.vkr.entity.PerfectSolution;
 import ru.vkr.vkr.entity.Student;
 import ru.vkr.vkr.form.CheckerSettingsForm;
 import ru.vkr.vkr.form.LoadTestsForm;
+import ru.vkr.vkr.form.SubmitRunForm;
 import ru.vkr.vkr.form.TestSettingsForm;
 import ru.vkr.vkr.service.ProblemService;
+import ru.vkr.vkr.service.SubmitRunService;
 
 import java.io.File;
 import java.io.IOException;
@@ -489,17 +493,26 @@ public class ProblemFacade {
         return problemDataFiles.getJudgesDataFiles().length > 0;
     }
 
+    public boolean addPerfectSolution(Long problemId, SubmitRunForm submitRunForm) {
+        ru.vkr.vkr.entity.Problem problem = problemService.getProblemById(problemId);
+        PerfectSolution perfectSolution = new PerfectSolution();
+        ILanguage iLanguage = null;
+        try {
+            iLanguage = BridgePc2.getServerConnection().getContest().getLanguages()[submitRunForm.getLanguage()];
+            perfectSolution.setLanguage(iLanguage.getName());
+            if (submitRunForm.isFlagSourceCode()) {
+                perfectSolution.setSource(submitRunForm.getSourceCode());
+            } else {
+                perfectSolution.setSource(new String(submitRunForm.getMultipartFile().getBytes()));
+            }
+            perfectSolution.setProblem(problem);
+        } catch (NotLoggedInException | IOException e) {
+            e.printStackTrace();
+        }
+        problem.getPerfectSolutions().add(perfectSolution);
+        problemService.save(problem);
+        return true;
+    }
+
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
