@@ -15,6 +15,7 @@ import ru.vkr.vkr.repository.PerfectSolutionRepository;
 import ru.vkr.vkr.repository.ProblemRepository;
 import ru.vkr.vkr.repository.TagProblemRepository;
 
+import javax.persistence.EntityManager;
 import java.util.*;
 
 @Service
@@ -88,20 +89,18 @@ public class ProblemService {
         return problemRepository.findByPubl(true);
     }
 
-    public List<TagProblem> setHashTagsToProblem(Problem problem, Map<HashTag, Boolean> hashTags) {
-        tagProblemRepository.deleteByProblem_id(problem.getId());      //Очистить старые теги
-        //todo: все теги задачи очищаются, а новые добавляются, нужно будет придумтаь что-то получше
-        List<TagProblem> tagProblems = new ArrayList<>();
+    public void setHashTagsToProblem(Problem problem, Map<HashTag, Boolean> hashTags) {
+        //Очистить старые теги
+        for(TagProblem tagProblem : problem.getTagProblems())
+            tagProblemRepository.delete(tagProblem);
+        //Добавить новые
         for (Map.Entry<HashTag, Boolean> newTag : hashTags.entrySet()) {
             TagProblem tagProblem = new TagProblem();
             tagProblem.setHashTag(newTag.getKey());
             tagProblem.setProblem(problem);
             tagProblem.setVisible(newTag.getValue());
             tagProblemRepository.save(tagProblem);
-
-            tagProblems.add(tagProblem);
         }
-        return  tagProblems;
     }
 
 

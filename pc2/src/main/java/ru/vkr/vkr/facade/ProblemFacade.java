@@ -132,32 +132,18 @@ public class ProblemFacade {
 
         //Ищем задачу
         Problem problem = findProblemInPC2(problemDb);
+        problem.setValidatorType(Problem.VALIDATOR_TYPE.CLICSVALIDATOR);
 
-        if (checkerSettingsForm.isClicsValidator()) {
-            problem.setValidatorType(Problem.VALIDATOR_TYPE.CLICSVALIDATOR);
+        ClicsValidatorSettings clicsValidatorSettings = new ClicsValidatorSettings();
+        if (checkerSettingsForm.isFloatAbsoluteTolerance())
+            clicsValidatorSettings.setFloatAbsoluteTolerance(checkerSettingsForm.getAbsoluteTolerance());
 
-            ClicsValidatorSettings clicsValidatorSettings = new ClicsValidatorSettings();
+        if (checkerSettingsForm.isFloatRelativeTolerance())
+            clicsValidatorSettings.setFloatRelativeTolerance(checkerSettingsForm.getRelativeTolerance());
 
-            if (checkerSettingsForm.isFloatAbsoluteTolerance())
-                clicsValidatorSettings.setFloatAbsoluteTolerance(checkerSettingsForm.getAbsoluteTolerance());
-
-            if (checkerSettingsForm.isFloatRelativeTolerance())
-                clicsValidatorSettings.setFloatRelativeTolerance(checkerSettingsForm.getRelativeTolerance());
-
-            clicsValidatorSettings.setCaseSensitive(checkerSettingsForm.isCaseSensitive());
-            clicsValidatorSettings.setSpaceSensitive(checkerSettingsForm.isSpaceSensitive());
-            problem.setCLICSValidatorSettings(clicsValidatorSettings);
-        } else {
-            problem.setValidatorType(Problem.VALIDATOR_TYPE.CUSTOMVALIDATOR);
-
-            CustomValidatorSettings customValidatorSettings = new CustomValidatorSettings();
-
-            //todo: тут надо загружать чекер и компилировать его
-            customValidatorSettings.setUseClicsValidatorInterface();
-            customValidatorSettings.setValidatorCommandLine("{:validator} {:infile} {:outfile} {:ansfile} {:resfile}");
-            //customValidatorSettings.setValidatorProgramName();
-            problem.setCustomValidatorSettings(customValidatorSettings);
-        }
+        clicsValidatorSettings.setCaseSensitive(checkerSettingsForm.isCaseSensitive());
+        clicsValidatorSettings.setSpaceSensitive(checkerSettingsForm.isSpaceSensitive());
+        problem.setCLICSValidatorSettings(clicsValidatorSettings);
 
         problem.setShowValidationToJudges(true);
         internalController.updateProblem(problem);
@@ -170,14 +156,19 @@ public class ProblemFacade {
 
         if (problem != null) {
             if (problem.getValidatorType() == Problem.VALIDATOR_TYPE.CLICSVALIDATOR) {
-                checkerSettingsForm.setClicsValidator(true);
 
                 ClicsValidatorSettings clicsValidatorSettings = problem.getClicsValidatorSettings();
 
-                checkerSettingsForm.setFloatAbsoluteTolerance(clicsValidatorSettings.isFloatAbsoluteToleranceSpecified());
-                checkerSettingsForm.setAbsoluteTolerance(clicsValidatorSettings.getFloatAbsoluteTolerance());
-                checkerSettingsForm.setFloatRelativeTolerance(clicsValidatorSettings.isFloatRelativeToleranceSpecified());
-                checkerSettingsForm.setRelativeTolerance(clicsValidatorSettings.getFloatRelativeTolerance());
+                if (!clicsValidatorSettings.isFloatAbsoluteToleranceSpecified() &&
+                        !clicsValidatorSettings.isFloatRelativeToleranceSpecified())
+                    checkerSettingsForm.setExactMatch(true);
+                else {
+                    checkerSettingsForm.setExactMatch(false);
+                    checkerSettingsForm.setFloatAbsoluteTolerance(clicsValidatorSettings.isFloatAbsoluteToleranceSpecified());
+                    checkerSettingsForm.setAbsoluteTolerance(clicsValidatorSettings.getFloatAbsoluteTolerance());
+                    checkerSettingsForm.setFloatRelativeTolerance(clicsValidatorSettings.isFloatRelativeToleranceSpecified());
+                    checkerSettingsForm.setRelativeTolerance(clicsValidatorSettings.getFloatRelativeTolerance());
+                }
                 checkerSettingsForm.setCaseSensitive(clicsValidatorSettings.isCaseSensitive());
                 checkerSettingsForm.setSpaceSensitive(clicsValidatorSettings.isSpaceSensitive());
             }

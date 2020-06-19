@@ -49,6 +49,49 @@
                                     </div>
                                 </div>
                             </div>
+
+                            <div class="row border rounded-lg block-search row-margin-top">
+                                <div class="col" title="Отношение количества успешных отправок к общему количеству отправок">
+                                    Решаемость (по отправкам)
+                                </div>
+                                <div class="col">
+                                    <label for="selectComplexityFrom">От: </label>
+                                    <select class="form-control" id="selectComplexityFrom" th:field="*{solvabilitySubmitFrom}">
+                                        <option th:each="i: ${#numbers.sequence(0, 10)}"
+                                                th:value="${i*10}" th:text="${i*10} + '%'">0%</option>
+                                    </select>
+                                </div>
+                                <div class="col">
+                                    <label for="selectComplexityTo">До: </label>
+                                    <select class="form-control" id="selectComplexityTo" th:field="*{solvabilitySubmitTo}">
+                                        <option th:each="i: ${#numbers.sequence(0, 10)}"
+                                                th:value="${i*10}" th:text="${i*10} + '%'">0%</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="row border rounded-lg block-search row-margin-top">
+                                <div class="col"
+                                     title="Отношение количества пользователей, успешно сдавших задачу, к общему количеству пользователей, сдававших задачу">
+                                    Решаемость (по пользователям)
+                                </div>
+                                <div class="col">
+                                    <label for="solvabilityStudentFrom">От: </label>
+                                    <select class="form-control" id="solvabilityStudentFrom" th:field="*{solvabilityStudentFrom}">
+                                        <option th:each="i: ${#numbers.sequence(0, 10)}"
+                                                th:value="${i*10}" th:text="${i*10} + '%'">0%</option>
+                                    </select>
+                                </div>
+                                <div class="col">
+                                    <label for="solvabilityStudentTo">До: </label>
+                                    <select class="form-control" id="solvabilityStudentTo" th:field="*{solvabilityStudentTo}">
+                                        <option th:each="i: ${#numbers.sequence(0, 10)}"
+                                                th:value="${i*10}" th:text="${i*10} + '%'">0%</option>
+                                    </select>
+                                </div>
+                            </div>
+
+
                             <div class="row row-margin-top">
                                 <div class="col">
                                     <button type="submit" class="btn btn-success"><i class="fa fa-search" aria-hidden="true"></i>&nbsp; Найти</button>

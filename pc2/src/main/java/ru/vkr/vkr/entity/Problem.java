@@ -9,7 +9,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "t_problem")
-public class Problem {
+public class Problem implements Comparable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -237,5 +237,15 @@ public class Problem {
     @Transient
     public void setStudentAccSubmit(Long studentAccSubmit) {
         this.studentAccSubmit = studentAccSubmit;
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        Problem pr = (Problem) o;
+        if (id < pr.id)
+            return -1;
+        else if (id > pr.id)
+            return 1;
+        return 0;
     }
 }

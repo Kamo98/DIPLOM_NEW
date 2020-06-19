@@ -5,5 +5,4 @@ import ru.vkr.vkr.entity.Problem;
 import ru.vkr.vkr.entity.TagProblem;
 
 public interface TagProblemRepository extends JpaRepository<TagProblem, Long> {
-    void deleteByProblem_id(Long problemId);
 }
