@@ -181,8 +181,7 @@ public class ProblemController {
 
         //Формируем список тегов для базы
         Map<HashTag, Boolean> hashTagVisibleMap = hashTagService.checkAndAddParents(tagsFromUser);
-        problem.setHashTags(problemService.setHashTagsToProblem(problem, hashTagVisibleMap));
-        problemService.save(problem);
+        problemService.setHashTagsToProblem(problem, hashTagVisibleMap);
         return "redirect:/teacher/problem/" + problemId;
     }
 
