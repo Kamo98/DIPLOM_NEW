@@ -31,6 +31,19 @@ $(document).ready(function () {
     });
 
 
+    $('#radioSourceFilePerfect').click(function (e) {
+        $('#filePerfect').prop('disabled', false);
+        $('#codeSolutionPerfect').prop('disabled', true);
+        $('#flagSourceCodePerfectNo').val(false);
+    });
+
+    $('#radioSourceCodePerfect').click(function (e) {
+        $('#filePerfect').prop('disabled', true)
+        $('#codeSolutionPerfect').prop('disabled', false);
+        $('#flagSourceCodePerfectNo').val(true);
+    });
+
+
     $("#submit").click(function () {
         $("#form").submit();
     });

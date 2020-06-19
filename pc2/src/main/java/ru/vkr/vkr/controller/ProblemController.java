@@ -53,6 +53,7 @@ public class ProblemController {
             teacherProblems.add(teacherProblems_.get(i));
         TheoryMaterialForm theoryMaterialForm = new TheoryMaterialForm();
         SubmitRunForm submitRunForm = new SubmitRunForm();
+        SubmitRunForm submitRunFormPerfectSolution = new SubmitRunForm();
 
         model.addAttribute("runs", submitRunService.getRunSummit());
         model.addAttribute("theoryMaterialForm", theoryMaterialForm);
@@ -61,6 +62,7 @@ public class ProblemController {
         model.addAttribute("isTeacher", true);
         model.addAttribute("langs", BridgePc2.getServerConnection().getContest().getLanguages());
         model.addAttribute("submitRunForm", submitRunForm);
+        model.addAttribute("perfectSolution", submitRunFormPerfectSolution);
     }
 
     @GetMapping("/teacher/problem-create")
@@ -138,6 +140,10 @@ public class ProblemController {
         //Сложность задачи
         List<Complexity> complexities = problemService.getAllComplexity();
         model.addAttribute("complexities", complexities);
+
+        // Идеальные решения задачи
+        model.addAttribute("perfectSolutions", problem.getPerfectSolutions());
+
         return "teacher/problem";
     }
 
@@ -332,4 +338,24 @@ public class ProblemController {
         return "redirect:/teacher/problem/" + problemId;
     }
 
+
+    // Добавить идеальное решение
+    @PostMapping("/teacher/problem/{problemId}/add-perfect-sol")
+    public String addPerfectSolutionProblem(RedirectAttributes redirectAttributes,
+                                            @ModelAttribute("perfectSolution") SubmitRunForm submitRunForm,
+                                            @PathVariable Long problemId) {
+        problemFacade.addPerfectSolution(problemId, submitRunForm);
+        redirectAttributes.addFlashAttribute("activeTabMenu", "linkViewPerfectSolution");
+        return "redirect:/teacher/problem/" + problemId;
+    }
+
+    //Удаление идеального решения
+    @GetMapping("/teacher/problem/{problemId}/perfSol-delete/{perfectSolId}")
+    public String deletePerfectSolution(RedirectAttributes redirectAttributes,
+                                        @PathVariable Long problemId,
+                                        @PathVariable Long perfectSolId) {
+        problemService.deletePerfectSolution(perfectSolId);
+        redirectAttributes.addFlashAttribute("activeTabMenu", "linkViewPerfectSolution");
+        return "redirect:/teacher/problem/" + problemId;
+    }
 }
