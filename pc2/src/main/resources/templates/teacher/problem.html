@@ -8,670 +8,799 @@
 
 <body>
 
-    <div th:replace="base :: navigation"></div>
+<div th:replace="base :: navigation"></div>
 
-    <div class="container">
-        <div class="row row-margin-bottom">
+<div class="container">
+    <div class="row row-margin-bottom">
 
-            <!--    Вставка боковой панели  -->
-            <div th:replace="base :: side-panels"></div>
-            <!-- *** -->
-
-
-            <div class="main-content col-9 border rounded-lg">
-                <h5 class="centered green-h" th:unless="${isCreate}">Задача "[[ ${problem.name} ]]"</h5>
-                <h5 class="centered green-h" th:if="${isCreate}">Задача "Без названия"</h5>
+        <!--    Вставка боковой панели  -->
+        <div th:replace="base :: side-panels"></div>
+        <!-- *** -->
 
 
-                <ul class="nav nav-pills tabs-menu">
-                    <li>
-                        <a class="nav-link active" href="" id="linkGeneralSetting"><i class="fa fa-cogs" aria-hidden="true"></i>&nbsp;Общие настройки</a>
-                    </li>
-                    <li th:unless="${isCreate}">
-                        <a class="nav-link" href="" id="linkStatementProblem">Условие</a>
-                    </li>
-                    <li th:unless="${isCreate}">
-                        <a class="nav-link" href="" id="linkTestsProblem">Тесты</a>
-                    </li>
-                    <li th:unless="${isCreate}">
-                        <a class="nav-link" href="" id="linkCheckerProblem">Чекер</a>
-                    </li>
-                    <li th:unless="${isCreate}">
-                        <a class="nav-link" href="" id="linkSendProblem">Сдать</a>
-                    </li>
-                    <li th:unless="${isCreate}">
-                        <a class="nav-link" href="" id="linkViewRunsProblem">Посылки</a>
-                    </li>
-
-                </ul>
-
-                <div class="container" id="containerOfTabs">
-
-                    <div id="problemSettings">
-                        <div class="alert alert-warning" role="alert" th:if="!${problem.publ} and !${isCreate}">
-                            Задача не опубликована! Опубликуйте, чтобы студенты могли сдавать её.
-                        </div>
-                        <div class="alert alert-danger" role="alert" th:each="error : ${errorsPublish}" th:text="${error}">
-                            Ошибка публикации
-                        </div>
-
-                        <form th:action="${isCreate} ? @{'/teacher/problem-create'} : @{'/teacher/problem/' + ${problem.id}}"
-                            th:object="${problem}" method="post">
-                            <div class="row row-margin-top">
-                                <div class="col-3 col-align-center">
-                                    <label for="nameOfProblem">Наименование задачи:</label>
-                                </div>
-                                <div class="col">
-                                    <input type="text" id="nameOfProblem" class="form-control" th:field="*{name}">
-                                </div>
-                            </div>
-                            <div class="row row-margin-top">
-                                <div class="col-3 col-align-center">
-                                    <label for="timeLimit">Ограничение по времени (сек):</label>
-                                </div>
-                                <div class="col-3">
-                                    <input type="text" id="timeLimit" class="form-control" th:field="*{timeLimit}">
-                                </div>
-                                <div class="col-3 col-align-center">
-                                    <label for="memoryLimit">Ограничение по памяти (Мб):</label>
-                                </div>
-                                <div class="col-3">
-                                    <input type="text" id="memoryLimit" class="form-control"  th:field="*{memoryLimit}">
-                                </div>
-                            </div>
-
-                            <div class="row row-margin-top">
-                                <div class="col col-align-center">
-                                    <label for="selectComplexity">Сложность задачи: </label>
-                                </div>
-                                <div class="col">
-                                    <select class="form-control" id="selectComplexity" th:field="*{complexity}">
-                                        <option th:each="complexity : ${complexities}" th:text="${complexity.name}"
-                                                th:value="${complexity.id}">Средняя</option>
-                                    </select>
-                                </div>
-                            </div>
+        <div class="main-content col-9 border rounded-lg">
+            <h5 class="centered green-h" th:unless="${isCreate}">Задача "[[ ${problem.name} ]]"</h5>
+            <h5 class="centered green-h" th:if="${isCreate}">Задача "Без названия"</h5>
 
 
-                            <div class="row row-margin-top">
-                                <div class = "col col-align-right">
-                                    <button class="btn btn-primary" type="submit" th:unless="${isCreate}">
-                                        <i class="fa fa-floppy-o" aria-hidden="true"></i>&nbsp;Сохранить
-                                    </button>
+            <ul class="nav nav-pills tabs-menu">
+                <li>
+                    <a class="nav-link active" href="" id="linkGeneralSetting"><i class="fa fa-cogs"
+                                                                                  aria-hidden="true"></i>&nbsp;Общие
+                        настройки</a>
+                </li>
+                <li th:unless="${isCreate}">
+                    <a class="nav-link" href="" id="linkStatementProblem">Условие</a>
+                </li>
+                <li th:unless="${isCreate}">
+                    <a class="nav-link" href="" id="linkTestsProblem">Тесты</a>
+                </li>
+                <li th:unless="${isCreate}">
+                    <a class="nav-link" href="" id="linkCheckerProblem">Чекер</a>
+                </li>
+                <li th:unless="${isCreate}">
+                    <a class="nav-link" href="" id="linkSendProblem">Сдать</a>
+                </li>
+                <li th:unless="${isCreate}">
+                    <a class="nav-link" href="" id="linkViewRunsProblem">Посылки</a>
+                </li>
+                <li th:unless="${isCreate}">
+                    <a class="nav-link" href="" id="linkViewPerfectSolution">Идеальное решение</a>
+                </li>
+            </ul>
 
-                                    <button class="btn btn-primary" type="submit" th:if="${isCreate}">
-                                        <i class="fa fa-plus" aria-hidden="true"></i>&nbsp;Создать
-                                    </button>
-                                </div>
-                            </div>
-                        </form>
+            <div class="container" id="containerOfTabs">
 
-
-                        <div id="tagsProblems" th:unless="${isCreate}">
-                            <div class="row row-margin-top">
-                                <div class="col"><h6 ><i class="fa fa-tags" aria-hidden="true"></i>&nbsp;Теги задачи</h6 ></div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col" th:if="${#lists.isEmpty(problem.getHashTagsVisible())}">
-                                    <div  class="alert alert-warning" role="alert">
-                                        Прикрепите теги к задаче, чтобы облегчить её поиск в пуле задач
-                                    </div>
-                                </div>
-                                <div class="col-4" th:each="pTag : ${problem.getHashTagsVisible()}">
-                                    <a th:href="@{'/teacher/pool-problems/' + ${pTag.id}}">#[[ ${pTag.name} ]]</a>
-                                    <!--&nbsp;&nbsp;-->
-                                    <!--<a href="#" class="hash-tag-remove"><i class="fa fa-times" aria-hidden="true"></i></a>-->
-                                </div>
-                            </div>
-
-
-
-                            <form th:action="'/teacher/problem/' + ${problem.id} + '/update-tags'" th:object="${choiceTagsForm}" method="post">
-                                <div class="row row-margin-top">
-                                    <div class="col">
-                                        <label for="tags-scrolling">Можете изменить список тегов данной задачи</label>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-6 border rounded-lg" id="tags-scrolling">
-                                        <div th:each="tag, iStat : ${hashTags}" th:style="'margin-left: ' + ${tag.level}*2 + 'rem;'">
-                                            <input type="checkbox" th:class="'tag-checkbox parent-' + ((${tag.parent}) ? (${tag.parent.id}) : '')"
-                                                    th:id="'hashTag-' + ${tag.id}" th:field="*{tagList[__${iStat.index}__]}">
-                                            <label th:for="'hashTag-' + ${tag.id}" th:text="${tag.name}">Тег</label>
-                                        </div>
-
-                                    </div>
-                                </div>
-                                <div class="row row-margin-top">
-                                    <div class="col">
-                                        <button type="submit" class="btn btn-success"><i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;Обновить список тегов</button>
-                                    </div>
-                                </div>
-                            </form>
-
-
-                        </div>
-
-
-                        <div id="themes">
-                            <div class="row row-table row-margin-top table-header col-align-centered">
-                                <div class="col">
-                                    <i class="fa fa-book fa-fw" aria-hidden="true"></i>&nbsp;Наименование темы
-                                </div>
-                                <div class="col-3">
-                                    <i class="fa fa-cogs" aria-hidden="true"></i>&nbsp;Управление
-                                </div>
-                            </div>
-
-                            <div th:if="${#lists.isEmpty(problem.chapters)}" class="alert alert-warning row-margin-top" role="alert">
-                                Задача пока не прикреплена ни к одной теме
-                            </div>
-
-                            <div th:class="'row row-table col-align-centered ' + ((${iState.index} % 2 == 1) ? 'dark-row' : '')" th:each="chapter, iState : ${problem.chapters}">
-                                <div class="col">
-                                    <a th:href="@{'/teacher/course/'+ ${chapter.getCourseChapters().getId()}+'/chapter/'+ ${chapter.id}}">
-                                        [[ ${chapter.name} ]]
-                                    </a>
-                                </div>
-                                <div class="col-3">
-                                    <a class="btn btn-danger" title="Открепить от темы"
-                                       th:href="@{'/teacher/problem/' + ${problem.id} + '/dettach-problem/' + ${chapter.id}}">
-                                        <i class="fa fa-trash-o fa-lg"></i>&nbsp;Открепить от темы
-                                    </a>
-                                </div>
-                            </div>
-
-                            <div class="row row-margin-top"  th:unless="${isCreate}">
-                                <h6><i class="fa fa-paperclip" aria-hidden="true"></i>&nbsp;Прикрепить задачу к теме</h6>
-                            </div>
-
-                            <form  th:unless="${isCreate}" th:action="@{'/teacher/problem/' + ${problem.id} + '/attach-to-chapter'}" th:object="${attachProblemForm}" method="post">
-                                <div class="row">
-                                    <div class="col">
-                                        <label for="selectThemes">Выберите тему: </label>
-                                    </div>
-                                    <div class="col">
-                                        <select class="form-control" id="selectCourse">
-                                            <option></option>
-                                            <option th:each="course : ${teacherCourses}" th:text="${course.name}"
-                                                    th:value="${course.id}">Курс</option>
-                                        </select>
-                                    </div>
-                                    <div class="col">
-                                        <select class="form-control" id="selectThemes" th:field="*{chapter}">
-                                            <option th:each="chapter : ${chapters}" th:text="${chapter.name}"
-                                                    th:value="${chapter.id}">Тема</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col">
-                                        <button class="btn btn-success" type="submit"><i class="fa fa-paperclip"
-                                                                                         aria-hidden="true"></i>&nbsp;Прикрепить
-                                        </button>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-
-
-
-                        <hr class="row row-margin-top" th:unless="${isCreate}">
-                        <div class="row row-margin-top" th:unless="${isCreate}">
-                            <div class = "col" th:unless="${problem.publ}">
-                                <a class="btn btn-success" th:href="@{'/teacher/problem/' + ${problem.id} + '/publish'}"
-                                title="После публикации студенты смогут сдавать задачу">
-                                    <i class="fa fa-arrow-right" aria-hidden="true"></i>&nbsp;Опубликовать задачу
-                                </a>
-                            </div>
-                            <div class = "col" th:if="${problem.publ}">
-                                <a class="btn btn-danger" th:href="@{'/teacher/problem/' + ${problem.id} + '/depublish'}">
-                                    <i class="fa fa-arrow-right" aria-hidden="true"></i>&nbsp;Снять с публикации
-                                </a>
-                            </div>
-                            <!--<div class = "col col-align-right">-->
-                                <!--<a class="btn btn-danger">-->
-                                    <!--<i class="fa fa-trash-o fa-lg"></i>&nbsp;Удалить задачу-->
-                                <!--</a>-->
-                            <!--</div>-->
-                        </div>
+                <div id="problemSettings">
+                    <div class="alert alert-warning" role="alert" th:if="!${problem.publ} and !${isCreate}">
+                        Задача не опубликована! Опубликуйте, чтобы студенты могли сдавать её.
+                    </div>
+                    <div class="alert alert-danger" role="alert" th:each="error : ${errorsPublish}" th:text="${error}">
+                        Ошибка публикации
                     </div>
 
-                    <div id="statementProblem"  style="display:none;" th:unless="${isCreate}">
-
-                        <div th:unless="${statement}" class="alert alert-warning" role="alert">
-                            Добавьте, пожалуйста, условие.
-                        </div>
-
-                        <div class="row row-table" th:if="${statement}">
-                            <div class="col">
-                                <a href="javascript://" th:attr="onclick=|loadFileByPath('${problem.pathToTextProblem}')|" >
-                                    <i class="fa fa-book fa-fw" aria-hidden="true"></i>&nbsp;
-                                    [[ ${problem.nameOfTextProblem} ]]
-                                </a>
-                            </div>
-
-                            <div class="col-2">
-                                <a class="btn btn-danger" th:href="@{'/teacher/problem/'+${problemId}+'/delete-statement'}">
-                                    <i class="fa fa-trash-o fa-lg"></i></a>
-                            </div>
-                        </div>
-
-                        <div class="row row-margin-top" th:unless="${statement}">
-                            <div class="col">
-                                <a class="btn btn-success" data-toggle="modal" data-target="#modalLoadFileStatement"
-                                   data-whatever="@mdo">
-                                    <i class="fa fa-plus" aria-hidden="true"></i>&nbsp;Добавить условие к задаче
-                                </a>
-
-                                <div class="modal fade" id="modalLoadFileStatement" tabindex="-1" role="dialog"
-                                     aria-labelledby="modalLoadFileStatementLabel" aria-hidden="true">
-                                    <div class="modal-dialog">
-                                        <div class="modal-content">
-                                            <form th:action="@{'/teacher/problem/'+${problem.id}+'/add-statement'}"
-                                                  th:object="${theoryMaterialForm}"
-                                                  method="POST"
-                                                  enctype="multipart/form-data">
-
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title" id="modalLoadFileStatementLabel">Условие задачи</h5>
-                                                    <button type="button" class="close" data-dismiss="modal"
-                                                            aria-label="Close">
-                                                        <span aria-hidden="true">&times;</span>
-                                                    </button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <div class="form-group">
-                                                        <label for="recipient-name"
-                                                               class="col-form-label">Наименование</label>
-                                                        <input type="text" th:field="*{name}" class="form-control"
-                                                               id="recipient-name">
-                                                    </div>
-                                                    <div class="form-group" id="sourceTM1">
-                                                        <label for="source-text1" class="col-form-label">Источник</label>
-                                                        <input type="file" th:field="*{multipartFile}" class="form-control" id="source-text1" name="file">
-                                                    </div>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">
-                                                        Закрыть
-                                                    </button>
-                                                    <button type="submit" class="btn btn-primary" id="loadTheoryFile">
-                                                        Сохранить
-                                                    </button>
-                                                </div>
-
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
-
-
-                            </div>
-                            <div class="col"></div>
-                        </div>
-
-
-                    </div>
-
-                    <div id="testsProblem" style="display:none;" th:unless="${isCreate}">
-
-                        <div class="alert alert-danger" role="alert" th:if="${errorUploadTests}">
-                            Произошла ошибка при загрузке тестов! Попробуйте ещё раз
-                        </div>
-
-
-                        <form th:action="@{'/teacher/problem/'+ ${problem.id} +'/tests-upload'}" th:object="${loadTestsForm}" method="post" enctype="multipart/form-data">
-
-                            <div class="row row-margin-top">
-                                <div class="col-3 col-align-center">
-                                    <label for="extensionIn">Расширение входных файлов:</label>
-                                </div>
-                                <div class="col-3">
-                                    <select id="extensionIn" class="form-control" th:field="*{extensionIn}">
-                                        <option value="auto" title="Автоматически определить входные файлы">Определить</option>
-                                        <option value="">Без расширения</option>
-                                        <option value=".in">.in</option>
-                                        <option value=".dat">.dat</option>
-                                        <option value=".txt">.txt</option>
-                                        <option value=".inp">.inp</option>
-                                        <option value=".inex">.inex</option>
-                                    </select>
-                                </div>
-
-                                <div class="col-3 col-align-center">
-                                    <label for="extensionAns">Расширение выходных файлов:</label>
-                                </div>
-                                <div class="col-3">
-                                    <select id="extensionAns" class="form-control" th:field="*{extensionAns}">
-                                        <option value="auto" title="Автоматически определить выходные файлы">Определить</option>
-                                        <option value="">Без расширения</option>
-                                        <option value=".ans">.ans</option>
-                                        <option value=".dat">.dat</option>
-                                        <option value=".txt">.txt</option>
-                                        <option value=".out">.out</option>
-                                        <option value=".diff">.diff</option>
-                                        <option value=".sol">.sol</option>
-                                        <option value=".judge">.judge</option>
-                                        <option value=".a">.a</option>
-                                        <option value=".outex">.outex</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="row row-margin-top">
-                                <div class="col-3 col-align-center">
-                                    <label for="dirTests">Выберите файлы с тестами:</label>
-                                </div>
-                                <div class="col">
-                                    <input type="file" id="dirTests" class="form-control" multiple="multiple" th:field="*{dirTests}">
-                                </div>
-                            </div>
-
-                            <div class="row row-margin-top">
-                                <div class="col">
-                                    <button type="submit" class="btn btn-primary">Загрузить</button>
-                                </div>
-                            </div>
-                        </form>
-
-                        <form th:action="@{'/teacher/problem/'+ ${problem.id} +'/tests-settings'}"
-                              th:object="${testSettingsForm}" method="post">
-                            <div class="row row-margin-top">
-                                <div class="col">
-                                    <input type="checkbox" id="stopOnFirstFail" th:field="*{stopOnFirstFail}">
-                                    <label for="stopOnFirstFail">Остановить выполнение на первом неудачном тесте</label>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col">
-                                    <button class="btn btn-primary" type="submit">
-                                        <i class="fa fa-floppy-o" aria-hidden="true"></i>&nbsp;Сохранить
-                                    </button>
-                                </div>
-                            </div>
-                        </form>
-
+                    <form th:action="${isCreate} ? @{'/teacher/problem-create'} : @{'/teacher/problem/' + ${problem.id}}"
+                          th:object="${problem}" method="post">
                         <div class="row row-margin-top">
+                            <div class="col-3 col-align-center">
+                                <label for="nameOfProblem">Наименование задачи:</label>
+                            </div>
                             <div class="col">
-                                <h6 ><i class="fa fa-list" aria-hidden="true"></i>&nbsp;Тесты к задаче</h6 >
-                                <div class="container col-align-centered">
-                                    <div class="row table-header row-table">
-                                        <div class="col-1">№</div>
-                                        <div class="col">Входный файл</div>
-                                        <div class="col">Выходный файл</div>
-                                        <div class="col-3">Управление</div>
-                                    </div>
-
-                                    <div th:class="'row row-table ' + ((${iState.index} % 2 == 1) ? 'dark-row' : '')"
-                                         th:each="test, iState : ${fileTests}">
-                                        <div class="col-1" th:text="${iState.index} + 1"></div>
-                                        <div class="col" th:text="${test.getKey()}"></div>
-                                        <div class="col" th:text="${test.getValue()}"></div>
-                                        <div class="col-3">
-                                            <a class="btn btn-danger" th:href="@{'/teacher/problem/' + ${problem.id} + '/test-delete/' + ${iState.index+1}}"><i class="fa fa-trash-o fa-lg"></i></a>
-                                        </div>
-                                    </div>
-                                </div>
+                                <input type="text" id="nameOfProblem" class="form-control" th:field="*{name}">
                             </div>
                         </div>
                         <div class="row row-margin-top">
-                            <div class="col">
-                                <a class="btn btn-danger" th:href="@{'/teacher/problem/' + ${problem.id} + '/test-deleteAll'}"><i class="fa fa-trash-o fa-lg"></i>&nbsp; Удалить все</a>
+                            <div class="col-3 col-align-center">
+                                <label for="timeLimit">Ограничение по времени (сек):</label>
+                            </div>
+                            <div class="col-3">
+                                <input type="text" id="timeLimit" class="form-control" th:field="*{timeLimit}">
+                            </div>
+                            <div class="col-3 col-align-center">
+                                <label for="memoryLimit">Ограничение по памяти (Мб):</label>
+                            </div>
+                            <div class="col-3">
+                                <input type="text" id="memoryLimit" class="form-control" th:field="*{memoryLimit}">
                             </div>
                         </div>
 
-                    </div>
-
-                    <div id="checkerProblem" style="display:none;" th:unless="${isCreate}">
-                        <form th:action="@{'/teacher/problem/'+ ${problem.id} +'/checker-settings'}" th:object="${checkerSettingsForm}" method="post" enctype="multipart/form-data">
-
-                            <div class="row row-margin-top">
-                                <div class="col">
-                                    <input type="radio" id="exactMatch"  th:field="*{exactMatch}" value="true">
-                                    <label for="exactMatch">Точное совпадение</label>
-                                </div>
+                        <div class="row row-margin-top">
+                            <div class="col col-align-center">
+                                <label for="selectComplexity">Сложность задачи: </label>
                             </div>
-
-                            <div class="row row-margin-top">
-                                <div class="col">
-                                    <input type="radio" id="hasTolerance" th:field="*{exactMatch}" value="false">
-                                    <label for="hasTolerance">Ответ с погрешностью</label>
-                                </div>
+                            <div class="col">
+                                <select class="form-control" id="selectComplexity" th:field="*{complexity}">
+                                    <option th:each="complexity : ${complexities}" th:text="${complexity.name}"
+                                            th:value="${complexity.id}">Средняя
+                                    </option>
+                                </select>
                             </div>
+                        </div>
 
-                            <div class="row row-margin-top">
-                                <div class="col">
-                                    <input type="checkbox" disabled="disabled" id="floatAbsoluteTolerance" th:field="*{floatAbsoluteTolerance}">
-                                    <label for="floatAbsoluteTolerance">Установаить допустимую абсолютную погрешность</label>
-                                </div>
-                                <div class="col">
-                                    <input id="absoluteTolerance"  type="text" disabled="disabled" class="form-control" th:field="*{absoluteTolerance}">
-                                </div>
+
+                        <div class="row row-margin-top">
+                            <div class="col col-align-right">
+                                <button class="btn btn-primary" type="submit" th:unless="${isCreate}">
+                                    <i class="fa fa-floppy-o" aria-hidden="true"></i>&nbsp;Сохранить
+                                </button>
+
+                                <button class="btn btn-primary" type="submit" th:if="${isCreate}">
+                                    <i class="fa fa-plus" aria-hidden="true"></i>&nbsp;Создать
+                                </button>
                             </div>
+                        </div>
+                    </form>
 
-                            <div class="row row-margin-top">
-                                <div class="col">
-                                    <input type="checkbox" disabled="disabled" id="floatRelativeTolerance" th:field="*{floatRelativeTolerance}">
-                                    <label for="floatRelativeTolerance">Установаить допустимую относительную погрешность</label>
-                                </div>
-                                <div class="col">
-                                    <input id="relativeTolerance" type="text" disabled="disabled" class="form-control" th:field="*{relativeTolerance}">
-                                </div>
+
+                    <div id="tagsProblems" th:unless="${isCreate}">
+                        <div class="row row-margin-top">
+                            <div class="col"><h6><i class="fa fa-tags" aria-hidden="true"></i>&nbsp;Теги задачи</h6>
                             </div>
-
-                            <div class="row row-margin-top">
-                                <div class="col">
-                                    <input type="checkbox" id="caseSensitive" th:field="*{caseSensitive}">
-                                    <label for="caseSensitive">Чувствительный к регистру</label>
-                                </div>
-                                <div class="col">
-                                    <input type="checkbox" id="spaceSensitive" th:field="*{spaceSensitive}">
-                                    <label for="spaceSensitive">Чувствительный к пробелам</label>
-                                </div>
-                            </div>
-
-                            <!--todo: кастомный чекер оставляем на потом-->
-                            <!--<div class="row row-margin-top">-->
-                                <!--<div class="col">-->
-                                    <!--<input type="radio" name="typeChecker" id="customValidator" th:value="false" th:field="*{clicsValidator}">-->
-                                    <!--<label for="customValidator">Использовать собственный чекер</label>-->
-                                <!--</div>-->
-                            <!--</div>-->
-
-                            <div class="row row-margin-top">
-                                <div class = "col col-align-right">
-                                    <button class="btn btn-primary" type="submit">
-                                        <i class="fa fa-floppy-o" aria-hidden="true"></i>&nbsp;Сохранить
-                                    </button>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-
-                    <div id="sendProblem" style="display:none;" th:unless="${isCreate}">
-                        <form th:action="@{'/teacher/submit/'+${problem.id}}"
-                              th:object="${submitRunForm}"
-                              method="POST"
-                              enctype="multipart/form-data">
-
-                            <div class="row row-margin-top">
-                                <div class="col-3 col-align-center">
-                                    <label for="compilerSend">Компилятор:</label>
-                                </div>
-                                <div class="col">
-                                    <select id="compilerSend" class="form-control" th:field="*{language}">
-                                        <option th:each="lang, state : ${langs}"
-                                                th:value="${state.index}"
-                                                th:text="${lang.name}"/>
-                                    </select>
-                                </div>
-                            </div>
-
-
-                            <div class="row row-margin-top">
-                                <div class="col-3 col-align-center">
-                                    <label for="file">Выберите файл:</label>
-                                    <input type="radio" id="radioSourceFileSubmit" name="chooseSubmitType"
-                                           checked="checked">
-                                </div>
-                                <div class="col">
-                                    <input type="hidden" th:field="*{flagSourceCode}" id="flagSourceCodeNo">
-                                    <input type="file" th:field="*{multipartFile}" class="form-control" id="file"
-                                           name="file">
-                                </div>
-                            </div>
-
-
-                            <div class="row row-margin-top">
-                                <div class="col-3 col-align-center">
-                                    <label for="codeSolutionSend">Или вставье код:</label>
-                                    <input type="radio" id="radioSourceCodeSubmit" name="chooseSubmitType">
-                                </div>
-                                <div class="col">
-                                    <input type="hidden" th:field="*{flagSourceCode}" id="flagSourceCodeYes">
-                                    <textarea rows="15" th:field="*{sourceCode}" class="form-control"
-                                              id="codeSolutionSend" disabled></textarea>
-                                </div>
-                            </div>
-
-                            <div class="row row-margin-top">
-                                <div class="col">
-                                    <button type="submit" class="btn btn-success">Отправить решение</button>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-
-                    <div id="ViewRunsProblem" style="display:none;">
+                        </div>
 
                         <div class="row">
-                            <div class="col col-align-center">
-                                <div>Время последнего обновления: <span id="timeLastRefreshTableSubmitions"></span></div>
+                            <div class="col" th:if="${#lists.isEmpty(problem.getHashTagsVisible())}">
+                                <div class="alert alert-warning" role="alert">
+                                    Прикрепите теги к задаче, чтобы облегчить её поиск в пуле задач
+                                </div>
                             </div>
-                            <div class="col col-align-right">
-                                <a class="btn btn-primary" id="refreshTableSubmitions"><i class="fa fa-refresh" aria-hidden="true"></i></a>
+                            <div class="col-4" th:each="pTag : ${problem.getHashTagsVisible()}">
+                                <a th:href="@{'/teacher/pool-problems/' + ${pTag.id}}">#[[ ${pTag.name} ]]</a>
+                                <!--&nbsp;&nbsp;-->
+                                <!--<a href="#" class="hash-tag-remove"><i class="fa fa-times" aria-hidden="true"></i></a>-->
                             </div>
                         </div>
-                        <div id="tableSubmitions"></div>
 
+
+                        <form th:action="'/teacher/problem/' + ${problem.id} + '/update-tags'"
+                              th:object="${choiceTagsForm}" method="post">
+                            <div class="row row-margin-top">
+                                <div class="col">
+                                    <label for="tags-scrolling">Можете изменить список тегов данной задачи</label>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-6 border rounded-lg" id="tags-scrolling">
+                                    <div th:each="tag, iStat : ${hashTags}"
+                                         th:style="'margin-left: ' + ${tag.level}*2 + 'rem;'">
+                                        <input type="checkbox"
+                                               th:class="'tag-checkbox parent-' + ((${tag.parent}) ? (${tag.parent.id}) : '')"
+                                               th:id="'hashTag-' + ${tag.id}" th:field="*{tagList[__${iStat.index}__]}">
+                                        <label th:for="'hashTag-' + ${tag.id}" th:text="${tag.name}">Тег</label>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="row row-margin-top">
+                                <div class="col">
+                                    <button type="submit" class="btn btn-success"><i class="fa fa-pencil"
+                                                                                     aria-hidden="true"></i>&nbsp;Обновить
+                                        список тегов
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+
+
+                    </div>
+
+
+                    <div id="themes">
+                        <div class="row row-table row-margin-top table-header col-align-centered">
+                            <div class="col">
+                                <i class="fa fa-book fa-fw" aria-hidden="true"></i>&nbsp;Наименование темы
+                            </div>
+                            <div class="col-3">
+                                <i class="fa fa-cogs" aria-hidden="true"></i>&nbsp;Управление
+                            </div>
+                        </div>
+
+                        <div th:if="${#lists.isEmpty(problem.chapters)}" class="alert alert-warning row-margin-top"
+                             role="alert">
+                            Задача пока не прикреплена ни к одной теме
+                        </div>
+
+                        <div th:class="'row row-table col-align-centered ' + ((${iState.index} % 2 == 1) ? 'dark-row' : '')"
+                             th:each="chapter, iState : ${problem.chapters}">
+                            <div class="col">
+                                <a th:href="@{'/teacher/course/'+ ${chapter.getCourseChapters().getId()}+'/chapter/'+ ${chapter.id}}">
+                                    [[ ${chapter.name} ]]
+                                </a>
+                            </div>
+                            <div class="col-3">
+                                <a class="btn btn-danger" title="Открепить от темы"
+                                   th:href="@{'/teacher/problem/' + ${problem.id} + '/dettach-problem/' + ${chapter.id}}">
+                                    <i class="fa fa-trash-o fa-lg"></i>&nbsp;Открепить от темы
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="row row-margin-top" th:unless="${isCreate}">
+                            <h6><i class="fa fa-paperclip" aria-hidden="true"></i>&nbsp;Прикрепить задачу к теме</h6>
+                        </div>
+
+                        <form th:unless="${isCreate}"
+                              th:action="@{'/teacher/problem/' + ${problem.id} + '/attach-to-chapter'}"
+                              th:object="${attachProblemForm}" method="post">
+                            <div class="row">
+                                <div class="col">
+                                    <label for="selectThemes">Выберите тему: </label>
+                                </div>
+                                <div class="col">
+                                    <select class="form-control" id="selectCourse">
+                                        <option></option>
+                                        <option th:each="course : ${teacherCourses}" th:text="${course.name}"
+                                                th:value="${course.id}">Курс
+                                        </option>
+                                    </select>
+                                </div>
+                                <div class="col">
+                                    <select class="form-control" id="selectThemes" th:field="*{chapter}">
+                                        <option th:each="chapter : ${chapters}" th:text="${chapter.name}"
+                                                th:value="${chapter.id}">Тема
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <button class="btn btn-success" type="submit"><i class="fa fa-paperclip"
+                                                                                     aria-hidden="true"></i>&nbsp;Прикрепить
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+
+                    <hr class="row row-margin-top" th:unless="${isCreate}">
+                    <div class="row row-margin-top" th:unless="${isCreate}">
+                        <div class="col" th:unless="${problem.publ}">
+                            <a class="btn btn-success" th:href="@{'/teacher/problem/' + ${problem.id} + '/publish'}"
+                               title="После публикации студенты смогут сдавать задачу">
+                                <i class="fa fa-arrow-right" aria-hidden="true"></i>&nbsp;Опубликовать задачу
+                            </a>
+                        </div>
+                        <div class="col" th:if="${problem.publ}">
+                            <a class="btn btn-danger" th:href="@{'/teacher/problem/' + ${problem.id} + '/depublish'}">
+                                <i class="fa fa-arrow-right" aria-hidden="true"></i>&nbsp;Снять с публикации
+                            </a>
+                        </div>
+                        <!--<div class = "col col-align-right">-->
+                        <!--<a class="btn btn-danger">-->
+                        <!--<i class="fa fa-trash-o fa-lg"></i>&nbsp;Удалить задачу-->
+                        <!--</a>-->
+                        <!--</div>-->
+                    </div>
+                </div>
+
+                <div id="statementProblem" style="display:none;" th:unless="${isCreate}">
+
+                    <div th:unless="${statement}" class="alert alert-warning" role="alert">
+                        Добавьте, пожалуйста, условие.
+                    </div>
+
+                    <div class="row row-table" th:if="${statement}">
+                        <div class="col">
+                            <a href="javascript://" th:attr="onclick=|loadFileByPath('${problem.pathToTextProblem}')|">
+                                <i class="fa fa-book fa-fw" aria-hidden="true"></i>&nbsp;
+                                [[ ${problem.nameOfTextProblem} ]]
+                            </a>
+                        </div>
+
+                        <div class="col-2">
+                            <a class="btn btn-danger" th:href="@{'/teacher/problem/'+${problemId}+'/delete-statement'}">
+                                <i class="fa fa-trash-o fa-lg"></i></a>
+                        </div>
+                    </div>
+
+                    <div class="row row-margin-top" th:unless="${statement}">
+                        <div class="col">
+                            <a class="btn btn-success" data-toggle="modal" data-target="#modalLoadFileStatement"
+                               data-whatever="@mdo">
+                                <i class="fa fa-plus" aria-hidden="true"></i>&nbsp;Добавить условие к задаче
+                            </a>
+
+                            <div class="modal fade" id="modalLoadFileStatement" tabindex="-1" role="dialog"
+                                 aria-labelledby="modalLoadFileStatementLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <form th:action="@{'/teacher/problem/'+${problem.id}+'/add-statement'}"
+                                              th:object="${theoryMaterialForm}"
+                                              method="POST"
+                                              enctype="multipart/form-data">
+
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="modalLoadFileStatementLabel">Условие
+                                                    задачи</h5>
+                                                <button type="button" class="close" data-dismiss="modal"
+                                                        aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="form-group">
+                                                    <label for="recipient-name"
+                                                           class="col-form-label">Наименование</label>
+                                                    <input type="text" th:field="*{name}" class="form-control"
+                                                           id="recipient-name">
+                                                </div>
+                                                <div class="form-group" id="sourceTM1">
+                                                    <label for="source-text1" class="col-form-label">Источник</label>
+                                                    <input type="file" th:field="*{multipartFile}" class="form-control"
+                                                           id="source-text1" name="file">
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                                                    Закрыть
+                                                </button>
+                                                <button type="submit" class="btn btn-primary" id="loadTheoryFile">
+                                                    Сохранить
+                                                </button>
+                                            </div>
+
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </div>
+                        <div class="col"></div>
+                    </div>
+
+
+                </div>
+
+                <div id="testsProblem" style="display:none;" th:unless="${isCreate}">
+
+                    <div class="alert alert-danger" role="alert" th:if="${errorUploadTests}">
+                        Произошла ошибка при загрузке тестов! Попробуйте ещё раз
+                    </div>
+
+
+                    <form th:action="@{'/teacher/problem/'+ ${problem.id} +'/tests-upload'}"
+                          th:object="${loadTestsForm}" method="post" enctype="multipart/form-data">
+
+                        <div class="row row-margin-top">
+                            <div class="col-3 col-align-center">
+                                <label for="extensionIn">Расширение входных файлов:</label>
+                            </div>
+                            <div class="col-3">
+                                <select id="extensionIn" class="form-control" th:field="*{extensionIn}">
+                                    <option value="auto" title="Автоматически определить входные файлы">Определить
+                                    </option>
+                                    <option value="">Без расширения</option>
+                                    <option value=".in">.in</option>
+                                    <option value=".dat">.dat</option>
+                                    <option value=".txt">.txt</option>
+                                    <option value=".inp">.inp</option>
+                                    <option value=".inex">.inex</option>
+                                </select>
+                            </div>
+
+                            <div class="col-3 col-align-center">
+                                <label for="extensionAns">Расширение выходных файлов:</label>
+                            </div>
+                            <div class="col-3">
+                                <select id="extensionAns" class="form-control" th:field="*{extensionAns}">
+                                    <option value="auto" title="Автоматически определить выходные файлы">Определить
+                                    </option>
+                                    <option value="">Без расширения</option>
+                                    <option value=".ans">.ans</option>
+                                    <option value=".dat">.dat</option>
+                                    <option value=".txt">.txt</option>
+                                    <option value=".out">.out</option>
+                                    <option value=".diff">.diff</option>
+                                    <option value=".sol">.sol</option>
+                                    <option value=".judge">.judge</option>
+                                    <option value=".a">.a</option>
+                                    <option value=".outex">.outex</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row row-margin-top">
+                            <div class="col-3 col-align-center">
+                                <label for="dirTests">Выберите файлы с тестами:</label>
+                            </div>
+                            <div class="col">
+                                <input type="file" id="dirTests" class="form-control" multiple="multiple"
+                                       th:field="*{dirTests}">
+                            </div>
+                        </div>
+
+                        <div class="row row-margin-top">
+                            <div class="col">
+                                <button type="submit" class="btn btn-primary">Загрузить</button>
+                            </div>
+                        </div>
+                    </form>
+
+                    <form th:action="@{'/teacher/problem/'+ ${problem.id} +'/tests-settings'}"
+                          th:object="${testSettingsForm}" method="post">
+                        <div class="row row-margin-top">
+                            <div class="col">
+                                <input type="checkbox" id="stopOnFirstFail" th:field="*{stopOnFirstFail}">
+                                <label for="stopOnFirstFail">Остановить выполнение на первом неудачном тесте</label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <button class="btn btn-primary" type="submit">
+                                    <i class="fa fa-floppy-o" aria-hidden="true"></i>&nbsp;Сохранить
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+
+                    <div class="row row-margin-top">
+                        <div class="col">
+                            <h6><i class="fa fa-list" aria-hidden="true"></i>&nbsp;Тесты к задаче</h6>
+                            <div class="container col-align-centered">
+                                <div class="row table-header row-table">
+                                    <div class="col-1">№</div>
+                                    <div class="col">Входный файл</div>
+                                    <div class="col">Выходный файл</div>
+                                    <div class="col-3">Управление</div>
+                                </div>
+
+                                <div th:class="'row row-table ' + ((${iState.index} % 2 == 1) ? 'dark-row' : '')"
+                                     th:each="test, iState : ${fileTests}">
+                                    <div class="col-1" th:text="${iState.index} + 1"></div>
+                                    <div class="col" th:text="${test.getKey()}"></div>
+                                    <div class="col" th:text="${test.getValue()}"></div>
+                                    <div class="col-3">
+                                        <a class="btn btn-danger"
+                                           th:href="@{'/teacher/problem/' + ${problem.id} + '/test-delete/' + ${iState.index+1}}"><i
+                                                class="fa fa-trash-o fa-lg"></i></a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row row-margin-top">
+                        <div class="col">
+                            <a class="btn btn-danger"
+                               th:href="@{'/teacher/problem/' + ${problem.id} + '/test-deleteAll'}"><i
+                                    class="fa fa-trash-o fa-lg"></i>&nbsp; Удалить все</a>
+                        </div>
                     </div>
 
                 </div>
+
+                <div id="checkerProblem" style="display:none;" th:unless="${isCreate}">
+                    <form th:action="@{'/teacher/problem/'+ ${problem.id} +'/checker-settings'}"
+                          th:object="${checkerSettingsForm}" method="post" enctype="multipart/form-data">
+
+                        <div class="row row-margin-top">
+                            <div class="col">
+                                <input type="radio" id="exactMatch" th:field="*{exactMatch}" value="true">
+                                <label for="exactMatch">Точное совпадение</label>
+                            </div>
+                        </div>
+
+                        <div class="row row-margin-top">
+                            <div class="col">
+                                <input type="radio" id="hasTolerance" th:field="*{exactMatch}" value="false">
+                                <label for="hasTolerance">Ответ с погрешностью</label>
+                            </div>
+                        </div>
+
+                        <div class="row row-margin-top">
+                            <div class="col">
+                                <input type="checkbox" disabled="disabled" id="floatAbsoluteTolerance"
+                                       th:field="*{floatAbsoluteTolerance}">
+                                <label for="floatAbsoluteTolerance">Установаить допустимую абсолютную
+                                    погрешность</label>
+                            </div>
+                            <div class="col">
+                                <input id="absoluteTolerance" type="text" disabled="disabled" class="form-control"
+                                       th:field="*{absoluteTolerance}">
+                            </div>
+                        </div>
+
+                        <div class="row row-margin-top">
+                            <div class="col">
+                                <input type="checkbox" disabled="disabled" id="floatRelativeTolerance"
+                                       th:field="*{floatRelativeTolerance}">
+                                <label for="floatRelativeTolerance">Установаить допустимую относительную
+                                    погрешность</label>
+                            </div>
+                            <div class="col">
+                                <input id="relativeTolerance" type="text" disabled="disabled" class="form-control"
+                                       th:field="*{relativeTolerance}">
+                            </div>
+                        </div>
+
+                        <div class="row row-margin-top">
+                            <div class="col">
+                                <input type="checkbox" id="caseSensitive" th:field="*{caseSensitive}">
+                                <label for="caseSensitive">Чувствительный к регистру</label>
+                            </div>
+                            <div class="col">
+                                <input type="checkbox" id="spaceSensitive" th:field="*{spaceSensitive}">
+                                <label for="spaceSensitive">Чувствительный к пробелам</label>
+                            </div>
+                        </div>
+
+                        <!--todo: кастомный чекер оставляем на потом-->
+                        <!--<div class="row row-margin-top">-->
+                        <!--<div class="col">-->
+                        <!--<input type="radio" name="typeChecker" id="customValidator" th:value="false" th:field="*{clicsValidator}">-->
+                        <!--<label for="customValidator">Использовать собственный чекер</label>-->
+                        <!--</div>-->
+                        <!--</div>-->
+
+                        <div class="row row-margin-top">
+                            <div class="col col-align-right">
+                                <button class="btn btn-primary" type="submit">
+                                    <i class="fa fa-floppy-o" aria-hidden="true"></i>&nbsp;Сохранить
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div id="sendProblem" style="display:none;" th:unless="${isCreate}">
+                    <form th:action="@{'/teacher/submit/'+${problem.id}}"
+                          th:object="${submitRunForm}"
+                          method="POST"
+                          enctype="multipart/form-data">
+
+                        <div class="row row-margin-top">
+                            <div class="col-3 col-align-center">
+                                <label for="compilerSend">Компилятор:</label>
+                            </div>
+                            <div class="col">
+                                <select id="compilerSend" class="form-control" th:field="*{language}">
+                                    <option th:each="lang, state : ${langs}"
+                                            th:value="${state.index}"
+                                            th:text="${lang.name}"/>
+                                </select>
+                            </div>
+                        </div>
+
+
+                        <div class="row row-margin-top">
+                            <div class="col-3 col-align-center">
+                                <label for="file">Выберите файл:</label>
+                                <input type="radio" id="radioSourceFileSubmit" name="chooseSubmitType"
+                                       checked="checked">
+                            </div>
+                            <div class="col">
+                                <input type="hidden" th:field="*{flagSourceCode}" id="flagSourceCodeNo">
+                                <input type="file" th:field="*{multipartFile}" class="form-control" id="file"
+                                       name="file">
+                            </div>
+                        </div>
+
+
+                        <div class="row row-margin-top">
+                            <div class="col-3 col-align-center">
+                                <label for="codeSolutionSend">Или вставье код:</label>
+                                <input type="radio" id="radioSourceCodeSubmit" name="chooseSubmitType">
+                            </div>
+                            <div class="col">
+                                <input type="hidden" th:field="*{flagSourceCode}" id="flagSourceCodeYes">
+                                <textarea rows="15" th:field="*{sourceCode}" class="form-control"
+                                          id="codeSolutionSend" disabled></textarea>
+                            </div>
+                        </div>
+
+                        <div class="row row-margin-top">
+                            <div class="col">
+                                <button type="submit" class="btn btn-success">Отправить решение</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div id="ViewRunsProblem" style="display:none;">
+
+                    <div class="row">
+                        <div class="col col-align-center">
+                            <div>Время последнего обновления: <span id="timeLastRefreshTableSubmitions"></span></div>
+                        </div>
+                        <div class="col col-align-right">
+                            <a class="btn btn-primary" id="refreshTableSubmitions"><i class="fa fa-refresh"
+                                                                                      aria-hidden="true"></i></a>
+                        </div>
+                    </div>
+                    <div id="tableSubmitions"></div>
+
+                </div>
+
+                <div id="perfectSolution" style="display:none;" th:unless="${isCreate}">
+
+                    <div th:if="${#lists.isEmpty(perfectSolutions)}" class="alert alert-warning row-margin-top"
+                         role="alert">
+                        Задача пока не имеет идеального решения
+                    </div>
+
+                    <div id="accordion" th:unless="${#lists.isEmpty(perfectSolutions)}">
+
+                        <div class="card" th:each="sol, state : ${perfectSolutions}">
+                            <div class="card-header" id="headingOne">
+                                <div class="row">
+                                    <div class="col-11">
+                                        <h5 class="mb-0">
+                                            <button class="btn btn-link" data-toggle="collapse"
+                                                    th:data-target="'#collapseTwo'+${state.index}"
+                                                    aria-expanded="false" aria-controls="collapseOne"
+                                                    th:text="${sol.language}">
+                                            </button>
+                                        </h5>
+                                    </div>
+                                    <div class="col-1 col-align-right">
+                                        <h5 class="col-align-right">
+                                            <a class="btn btn-danger "
+                                               th:href="@{'/teacher/problem/'+${problem.id}+'/perfSol-delete/'+${sol.id}}">
+                                                <i class="fa fa-trash-o fa-lg"></i></a>
+                                        </h5>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div th:id="'collapseTwo'+${state.index}" class="collapse" aria-labelledby="headingOne"
+                                 data-parent="#accordion">
+                                <div class="card-body">
+                                    <pre><code th:text="${sol.source}"></code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <form th:action="@{'/teacher/problem/'+${problem.id}+'/add-perfect-sol'}"
+                          th:object="${perfectSolution}"
+                          method="POST"
+                          enctype="multipart/form-data">
+
+                        <div class="row row-margin-top">
+                            <div class="col-3 col-align-center">
+                                <label for="compilerSend">Компилятор:</label>
+                            </div>
+                            <div class="col">
+                                <select class="form-control" th:field="*{language}">
+                                    <option th:each="lang, state : ${langs}"
+                                            th:value="${state.index}"
+                                            th:text="${lang.name}"/>
+                                </select>
+                            </div>
+                        </div>
+
+
+                        <div class="row row-margin-top">
+                            <div class="col-3 col-align-center">
+                                <label for="filePerfect">Выберите файл:</label>
+                                <input type="radio" id="radioSourceFilePerfect" name="chooseSolPerfectType"
+                                       checked="checked">
+                            </div>
+                            <div class="col">
+                                <input type="hidden" th:field="*{flagSourceCode}" id="flagSourceCodePerfectNo">
+                                <input type="file" th:field="*{multipartFile}" class="form-control" id="filePerfect"
+                                       name="file">
+                            </div>
+                        </div>
+
+
+                        <div class="row row-margin-top">
+                            <div class="col-3 col-align-center">
+                                <label for="codeSolutionPerfect">Или вставье код:</label>
+                                <input type="radio" id="radioSourceCodePerfect" name="chooseSolPerfectType">
+                            </div>
+                            <div class="col">
+                                <textarea rows="15" th:field="*{sourceCode}" class="form-control"
+                                          id="codeSolutionPerfect" disabled></textarea>
+                            </div>
+                        </div>
+
+                        <div class="row row-margin-top">
+                            <div class="col">
+                                <button type="submit" class="btn btn-success">Добавить идеальное решение</button>
+                            </div>
+                        </div>
+                    </form>
+
+                </div>
+
             </div>
-
         </div>
+
     </div>
+</div>
 
 
-
-    <footer th:replace="base :: footer"></footer>
-
+<footer th:replace="base :: footer"></footer>
 
 
-    <script>
+<script>
 
-        $('#linkGeneralSetting').click(function(e){
-            $('#linkGeneralSetting').addClass('active');
-            $('#problemSettings').show();
-        });
+    $('#linkGeneralSetting').click(function (e) {
+        $('#linkGeneralSetting').addClass('active');
+        $('#problemSettings').show();
+    });
 
-        $('#linkStatementProblem').click(function(e){
-            $('#linkStatementProblem').addClass('active');
-            $('#statementProblem').show();
-        });
+    $('#linkStatementProblem').click(function (e) {
+        $('#linkStatementProblem').addClass('active');
+        $('#statementProblem').show();
+    });
 
-        $('#linkTestsProblem').click(function(e){
-            $('#linkTestsProblem').addClass('active');
-            $('#testsProblem').show();
-        });
-
-
-        $('#linkCheckerProblem').click(function(e){
-            $('#linkCheckerProblem').addClass('active');
-            $('#checkerProblem').show();
-        });
+    $('#linkTestsProblem').click(function (e) {
+        $('#linkTestsProblem').addClass('active');
+        $('#testsProblem').show();
+    });
 
 
-        $('#linkSendProblem').click(function(e){
-            $('#linkSendProblem').addClass('active');
-            $('#sendProblem').show();
-        });
+    $('#linkCheckerProblem').click(function (e) {
+        $('#linkCheckerProblem').addClass('active');
+        $('#checkerProblem').show();
+    });
 
-        $('#linkViewRunsProblem').click(function (e) {
-            $('#linkViewRunsProblem').addClass('active');
-            $('#ViewRunsProblem').show();
+
+    $('#linkSendProblem').click(function (e) {
+        $('#linkSendProblem').addClass('active');
+        $('#sendProblem').show();
+    });
+
+    $('#linkViewRunsProblem').click(function (e) {
+        $('#linkViewRunsProblem').addClass('active');
+        $('#ViewRunsProblem').show();
+        getSubmitions();
+    });
+
+    $('#linkViewPerfectSolution').click(function (e) {
+        $('#linkViewPerfectSolution').addClass('active');
+        $('#perfectSolution').show();
+    });
+
+    //Обновление таблицы посылок по таймеру
+    setInterval(function () {
+        if ($('#linkViewRunsProblem').hasClass('active')) {
             getSubmitions();
-        });
-
-
-        //Обновление таблицы посылок по таймеру
-        setInterval(function() {
-            if ($('#linkViewRunsProblem').hasClass('active')) {
-                getSubmitions();
-            }
-        }, 5000);
-
-
-        //События кликов в настройках чекера
-
-        $('#exactMatch').click(function(e){
-            $('#absoluteTolerance').prop('disabled', true);
-            $('#relativeTolerance').prop('disabled', true);
-            $('#floatAbsoluteTolerance').prop('disabled', true);
-            $('#floatRelativeTolerance').prop('disabled', true);
-        });
-
-        $('#hasTolerance').click(function () {
-            $('#floatAbsoluteTolerance').prop('disabled', false);
-            $('#floatRelativeTolerance').prop('disabled', false);
-        });
-
-
-        $('#floatAbsoluteTolerance').click(function(e){
-            if ($(this).is(':checked'))
-                $('#absoluteTolerance').prop('disabled', false);
-            else
-                $('#absoluteTolerance').prop('disabled', true);
-        });
-
-         $('#floatRelativeTolerance').click(function(e){
-            if ($(this).is(':checked'))
-                $('#relativeTolerance').prop('disabled', false);
-            else
-                $('#relativeTolerance').prop('disabled', true);
-        });
-
-        if ($('#hasTolerance').is(':checked')) {
-            $('#floatAbsoluteTolerance').prop('disabled', false);
-            $('#floatRelativeTolerance').prop('disabled', false);
-            if ($('#floatAbsoluteTolerance').is(':checked'))
-                $('#absoluteTolerance').prop('disabled', false);
-            if ($('#floatRelativeTolerance').is(':checked'))
-                $('#relativeTolerance').prop('disabled', false);
         }
+    }, 5000);
 
-         //Событие изенения значения в селекте с курсом для прикрепления к теме
-        $("#selectCourse").change(function() {
-            var idCoutse = $(this).val();
-            $.ajax({
-                type: 'post',
-                url: "/teacher/themes-for-course/",
-                data: {'id_course': idCoutse},
-                dataType: "html",
-                success: function (chapters) {
-                    $("#selectThemes").html(chapters);
-                }
-            });
+
+    //События кликов в настройках чекера
+
+    $('#exactMatch').click(function (e) {
+        $('#absoluteTolerance').prop('disabled', true);
+        $('#relativeTolerance').prop('disabled', true);
+        $('#floatAbsoluteTolerance').prop('disabled', true);
+        $('#floatRelativeTolerance').prop('disabled', true);
+    });
+
+    $('#hasTolerance').click(function () {
+        $('#floatAbsoluteTolerance').prop('disabled', false);
+        $('#floatRelativeTolerance').prop('disabled', false);
+    });
+
+
+    $('#floatAbsoluteTolerance').click(function (e) {
+        if ($(this).is(':checked'))
+            $('#absoluteTolerance').prop('disabled', false);
+        else
+            $('#absoluteTolerance').prop('disabled', true);
+    });
+
+    $('#floatRelativeTolerance').click(function (e) {
+        if ($(this).is(':checked'))
+            $('#relativeTolerance').prop('disabled', false);
+        else
+            $('#relativeTolerance').prop('disabled', true);
+    });
+
+    if ($('#hasTolerance').is(':checked')) {
+        $('#floatAbsoluteTolerance').prop('disabled', false);
+        $('#floatRelativeTolerance').prop('disabled', false);
+        if ($('#floatAbsoluteTolerance').is(':checked'))
+            $('#absoluteTolerance').prop('disabled', false);
+        if ($('#floatRelativeTolerance').is(':checked'))
+            $('#relativeTolerance').prop('disabled', false);
+    }
+
+    //Событие изенения значения в селекте с курсом для прикрепления к теме
+    $("#selectCourse").change(function () {
+        var idCoutse = $(this).val();
+        $.ajax({
+            type: 'post',
+            url: "/teacher/themes-for-course/",
+            data: {'id_course': idCoutse},
+            dataType: "html",
+            success: function (chapters) {
+                $("#selectThemes").html(chapters);
+            }
         });
+    });
 
-    </script>
+</script>
 
 
-    <script th:if="${activeTabMenu}">
-        $("#[[ ${activeTabMenu} ]]").click();
-    </script>
+<script th:if="${activeTabMenu}">
+    $("#[[ ${activeTabMenu} ]]").click();
+</script>
 
 </body>
 </html>
