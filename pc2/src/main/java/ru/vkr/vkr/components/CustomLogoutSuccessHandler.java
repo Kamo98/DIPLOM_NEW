@@ -11,6 +11,7 @@ import org.springframework.security.web.authentication.logout.SimpleUrlLogoutSuc
 import org.springframework.stereotype.Component;
 import ru.vkr.vkr.domain.BridgePc2;
 import ru.vkr.vkr.entity.User;
+import ru.vkr.vkr.facade.AuthenticationFacade;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -29,7 +30,7 @@ public class CustomLogoutSuccessHandler extends
             HttpServletRequest request,
             HttpServletResponse response,
             Authentication authentication) throws IOException, ServletException {
-        BridgePc2.logoff();
+        BridgePc2.logoff(authentication.getName());
         super.onLogoutSuccess(request, response, authentication);
     }
 }
