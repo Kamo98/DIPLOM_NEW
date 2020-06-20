@@ -20,6 +20,13 @@
 
 	<dependencies>
 
+
+		<dependency>
+			<groupId>pc2.com</groupId>
+			<artifactId>pc2-diplom</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+
 		<!-- https://mvnrepository.com/artifact/com.itextpdf/itextpdf -->
 		<dependency>
 			<groupId>com.itextpdf</groupId>
