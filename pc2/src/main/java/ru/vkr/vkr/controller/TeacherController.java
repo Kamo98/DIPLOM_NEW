@@ -1,6 +1,5 @@
 package ru.vkr.vkr.controller;
 
-import javafx.util.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -456,27 +455,27 @@ public class TeacherController {
     @GetMapping("/teacher/pool-problems")
     public String poolProblems(Model model) {
         searchService.poolProblemsGet(model);
-        return "/pool-problems";
+        return "poolproblems";
     }
 
     @PostMapping("/teacher/pool-problems")
     public String poolSearchProblems(Model model, SearchProblemForm searchProblemForm) {
         searchService.poolSearchProblems(model, searchProblemForm);
-        return "/pool-problems";
+        return "poolproblems";
     }
 
 
     @GetMapping("/teacher/pool-problems/{hashTagId}")
     public String poolProblemOneHashtag(@PathVariable("hashTagId") Long hashTagId, Model model) {
         searchService.poolSearchProblems(model, hashTagId);
-        return "/pool-problems";
+        return "poolproblems";
     }
 
 
     @GetMapping("/teacher/pool-chapters")
     public String poolChapters(Model model) {
         searchService.poolChaptersGet(model);
-        return "/pool-chapters";
+        return "poolchapters";
     }
 
     @GetMapping("/teacher/submitions")

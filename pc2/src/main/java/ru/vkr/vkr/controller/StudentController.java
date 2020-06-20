@@ -1,7 +1,6 @@
 package ru.vkr.vkr.controller;
 
 import edu.csus.ecs.pc2.api.exceptions.NotLoggedInException;
-import edu.csus.ecs.pc2.core.InternalController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -118,26 +117,26 @@ public class StudentController {
     @GetMapping("/student/pool-problems")
     public String poolProblems(Model model) {
         searchService.poolProblemsGet(model);
-        return "/pool-problems";
+        return "poolproblems";
     }
 
     @PostMapping("/student/pool-problems")
     public String poolSearchProblems(Model model, SearchProblemForm searchProblemForm) {
         searchService.poolSearchProblems(model, searchProblemForm);
-        return "/pool-problems";
+        return "poolproblems";
     }
 
     @GetMapping("/student/pool-problems/{hashTagId}")
     public String poolProblemOneHashtag(@PathVariable("hashTagId") Long hashTagId, Model model) {
         searchService.poolSearchProblems(model, hashTagId);
-        return "/pool-problems";
+        return "poolproblems";
     }
 
 
     @GetMapping("/student/pool-chapters")
     public String poolChapters(Model model) {
         searchService.poolChaptersGet(model);
-        return "/pool-chapters";
+        return "poolchapters";
     }
 
 
