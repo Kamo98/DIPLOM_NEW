@@ -26,7 +26,8 @@
                     <div>Время последнего обновления: <span id="timeLastRefreshTableSubmitions"></span></div>
                 </div>
                 <div class="col col-align-right">
-                    <a class="btn btn-primary" id="refreshTableSubmitions"><i class="fa fa-refresh" aria-hidden="true"></i></a>
+                    <a class="btn btn-primary" id="refreshTableSubmitions"><i class="fa fa-refresh"
+                                                                              aria-hidden="true"></i></a>
                 </div>
             </div>
 
@@ -38,16 +39,18 @@
 </div>
 
 
+<footer th:replace="base :: footer"></footer>
 
-<footer th:replace="base :: footer">
-</footer>
 <script>
-getSubmitions();
-    //Обновление таблицы посылок по таймеру
-    setInterval(function() {
+    $(document).ready(function () {
         getSubmitions();
-    }, 5000);
-
+//Обновление таблицы посылок по таймеру
+        setInterval(function () {
+            getSubmitions();
+        }, 5000);
+    });
 </script>
+
+
 </body>
 </html>
