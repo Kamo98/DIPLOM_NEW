@@ -601,7 +601,7 @@
 
                     <div id="accordion" th:unless="${#lists.isEmpty(perfectSolutions)}">
 
-                        <div class="card" th:each="sol, state : ${perfectSolutions}">
+                        <div class="card row-margin-top" th:each="sol, state : ${perfectSolutions}">
                             <div class="card-header" id="headingOne">
                                 <div class="row">
                                     <div class="col-11">
@@ -614,11 +614,9 @@
                                         </h5>
                                     </div>
                                     <div class="col-1 col-align-right">
-                                        <h5 class="col-align-right">
-                                            <a class="btn btn-danger "
-                                               th:href="@{'/teacher/problem/'+${problem.id}+'/perfSol-delete/'+${sol.id}}">
-                                                <i class="fa fa-trash-o fa-lg"></i></a>
-                                        </h5>
+                                        <a class="btn btn-danger "
+                                           th:href="@{'/teacher/problem/'+${problem.id}+'/perfSol-delete/'+${sol.id}}">
+                                            <i class="fa fa-trash-o fa-lg"></i></a>
                                     </div>
                                 </div>
                             </div>

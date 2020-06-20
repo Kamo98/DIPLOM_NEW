@@ -47,6 +47,12 @@ public class StudentController {
         model.addAttribute("studentProblems", studentProblems);
     }
 
+    @GetMapping("/student")
+    public String mainStudent(Model model) {
+        return "redirect:/student/course";
+    }
+
+
     @GetMapping("/student/course")
     public String getCourse(Model model) {
         Course course = studentService.getCourse();
