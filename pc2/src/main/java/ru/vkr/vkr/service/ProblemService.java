@@ -132,4 +132,7 @@ public class ProblemService {
         perfectSolutionRepository.deleteById(perfectSolId);
     }
 
+    public void deleteProblem(Problem problem) {
+        problemRepository.delete(problem);
+    }
 }

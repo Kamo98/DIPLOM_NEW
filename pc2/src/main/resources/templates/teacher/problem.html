@@ -246,11 +246,11 @@
                                 <i class="fa fa-arrow-right" aria-hidden="true"></i>&nbsp;Снять с публикации
                             </a>
                         </div>
-                        <!--<div class = "col col-align-right">-->
-                        <!--<a class="btn btn-danger">-->
-                        <!--<i class="fa fa-trash-o fa-lg"></i>&nbsp;Удалить задачу-->
-                        <!--</a>-->
-                        <!--</div>-->
+                        <div class = "col col-align-right">
+                            <a class="btn btn-danger" th:href="@{'/teacher/problem/' + ${problem.id} + '/delete'}">
+                                <i class="fa fa-trash-o fa-lg"></i>&nbsp;Удалить задачу
+                            </a>
+                        </div>
                     </div>
                 </div>
 

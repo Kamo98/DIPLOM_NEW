@@ -17,7 +17,7 @@ public class PerfectSolution {
     @Column(nullable = false)
     private String language;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     private Problem problem;
 
     public long getId() {

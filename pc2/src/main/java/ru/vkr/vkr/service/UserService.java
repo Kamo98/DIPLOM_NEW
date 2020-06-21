@@ -139,6 +139,10 @@ public class UserService implements UserDetailsService {
             user.setRole(roleRepository.findById(role.getId()).get());
             user.setLoginPC2(generateNewAccount(role, countUser++));
             saveUser(user);
+            //todo: добавляю суффикс к логину (id), но приходится обновлять запись
+            user.setUsername(login + "_" + user.getId());
+            saveUser(user);
+
             logger.info("UserService.addUsers: fio = " + fiosArr[i] + "  login = " + login + "  pass = " + password +
                     "loginPC2 = ");
 

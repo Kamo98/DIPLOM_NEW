@@ -321,11 +321,19 @@ public class ProblemFacade {
 
         String path = uploadPath + "tests\\problem-" + problemDb.getId();
         File dirFile = new File(path);
-        String[] entries = dirFile.list();
-        for (String s : entries) {
-            File currentFile = new File(dirFile.getPath(), s);
-            currentFile.delete();
+        if (dirFile.exists()) {
+            String[] entries = dirFile.list();
+            for (String s : entries) {
+                File currentFile = new File(dirFile.getPath(), s);
+                currentFile.delete();
+            }
         }
+    }
+
+    public void deleteDirectoryTests(ru.vkr.vkr.entity.Problem problemDb) {
+        String path = uploadPath + "tests\\problem-" + problemDb.getId();
+        File dirFile = new File(path);
+        dirFile.delete();
     }
 
     //Ищет задачу в PC2 по сущности из БД

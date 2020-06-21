@@ -358,4 +358,17 @@ public class ProblemController {
         redirectAttributes.addFlashAttribute("activeTabMenu", "linkViewPerfectSolution");
         return "redirect:/teacher/problem/" + problemId;
     }
+
+
+    //Удаление задачи
+    @GetMapping("/teacher/problem/{problemId}/delete")
+    public String deleteProblem(RedirectAttributes redirectAttributes, @PathVariable Long problemId) {
+        Problem problem = problemService.getProblemById(problemId);
+        problemFacade.deleteAllTestFiles(problem);
+        problemFacade.deleteDirectoryTests(problem);
+        problemService.deleteStatement(problem);
+        problemService.deleteProblem(problem);
+        return "redirect:/teacher/";
+    }
+
 }
