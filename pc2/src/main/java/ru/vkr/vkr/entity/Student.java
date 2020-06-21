@@ -1,12 +1,14 @@
 package ru.vkr.vkr.entity;
 
+import ru.vkr.vkr.entity.api.PersonRegisterData;
+
 import javax.persistence.*;
 import javax.validation.constraints.Null;
 import java.security.PublicKey;
 
 @Entity
 @Table(name = "t_student")
-public class Student {
+public class Student implements PersonRegisterData {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;

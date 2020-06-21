@@ -60,10 +60,12 @@ $(document).ready(function () {
     }));
 
     $("#downloadLoginPassword").click(function () {
+        var groupId = $('#groupId').val();
         $.ajax({
             type : 'get',
             url: '/download/b',
             dataType: 'binary',
+            data : {'groupId' : groupId},
             xhrFields: {
                 'responseType': 'blob'
             },

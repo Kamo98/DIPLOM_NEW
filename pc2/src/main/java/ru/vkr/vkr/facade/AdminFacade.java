@@ -4,11 +4,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ru.vkr.vkr.domain.ROLE;
 import ru.vkr.vkr.entity.Teacher;
+import ru.vkr.vkr.entity.api.PersonRegisterData;
 import ru.vkr.vkr.form.UserForm;
 import ru.vkr.vkr.repository.TeacherRepository;
 import ru.vkr.vkr.service.UserService;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class AdminFacade {
@@ -37,5 +39,9 @@ public class AdminFacade {
 
     public List<Teacher> getTeachers() {
         return teacherRepository.findAll();
+    }
+
+    public List<PersonRegisterData> getTeachersPersonData() {
+        return teacherRepository.findAll().stream().map(x -> (PersonRegisterData)x).collect(Collectors.toList());
     }
 }

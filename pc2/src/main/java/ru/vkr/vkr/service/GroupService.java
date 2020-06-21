@@ -6,11 +6,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.vkr.vkr.entity.Course;
 import ru.vkr.vkr.entity.Group;
+import ru.vkr.vkr.entity.Student;
+import ru.vkr.vkr.entity.api.PersonRegisterData;
 import ru.vkr.vkr.facade.AuthenticationFacade;
 import ru.vkr.vkr.repository.CourseRepository;
 import ru.vkr.vkr.repository.GroupRepository;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class GroupService {
@@ -51,5 +55,7 @@ public class GroupService {
         return groupRepository.findByTeacherOwner_id(authenticationFacade.getCurrentTeacher().getId());
     }
 
-
+    public List<PersonRegisterData> getStudentsByGroup(long groupId) {
+        return groupRepository.getOne(groupId).getStudents().stream().map(x -> (PersonRegisterData)x).collect(Collectors.toList());
+    }
 }

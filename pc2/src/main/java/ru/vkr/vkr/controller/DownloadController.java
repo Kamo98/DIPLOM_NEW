@@ -19,16 +19,20 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import ru.vkr.vkr.domain.BridgePc2;
+import ru.vkr.vkr.domain.ROLE;
 import ru.vkr.vkr.entity.Role;
 import ru.vkr.vkr.entity.Teacher;
 import ru.vkr.vkr.entity.User;
+import ru.vkr.vkr.entity.api.PersonRegisterData;
 import ru.vkr.vkr.facade.AdminFacade;
 import ru.vkr.vkr.facade.AuthenticationFacade;
+import ru.vkr.vkr.service.GroupService;
 import ru.vkr.vkr.service.StudentService;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -41,7 +45,7 @@ public class DownloadController {
     @Autowired
     private AuthenticationFacade authenticationFacade;
     @Autowired
-    private StudentService studentService;
+    private GroupService groupService;
 
     private static final String FONT = "static\\fonts\\DejaVuSans.ttf";
     private static final String FILE_PATH = "src\\main\\resources\\tmp\\report.pdf";
@@ -67,16 +71,14 @@ public class DownloadController {
     // скачивание pdf документа с логинами и паролями пользоваетелй
     @RequestMapping(value = "/b", method = RequestMethod.GET, produces = APPLICATION_PDF)
     public @ResponseBody
-    HttpEntity<byte[]> downloadB() throws Exception {
-        createLoginPasswordDocument();
+    HttpEntity<byte[]> downloadB(long groupId) throws Exception {
+        createLoginPasswordDocument(groupId);
         File file = getFile(FILE_PATH);
         byte[] document = FileCopyUtils.copyToByteArray(file);
-        addPermission();
         HttpHeaders header = new HttpHeaders();
         header.setContentType(new MediaType("application", "pdf"));
         header.set("Content-Disposition", "inline; filename=" + file.getName());
         header.setContentLength(document.length);
-
         return new HttpEntity(document, header);
     }
 
@@ -89,7 +91,7 @@ public class DownloadController {
     }
 
 
-    public void createLoginPasswordDocument() throws Exception {
+    public void createLoginPasswordDocument(long groupId) throws Exception {
         Document document = new Document();
         PdfWriter.getInstance(document, new FileOutputStream(FILE_PATH));
         document.open();
@@ -105,19 +107,24 @@ public class DownloadController {
         cell.setBackgroundColor(new BaseColor(140, 221, 8));
 
         table.addCell(cell);
-        List<Teacher> teacherArrayList = adminFacade.getTeachers();
 
+        List<PersonRegisterData> registerDataList = new ArrayList<>();
+        if (authenticationFacade.getCurrentUser().getOneRole().getId() == ROLE.ROLE_ADMIN.getId()) {
+            registerDataList = adminFacade.getTeachersPersonData();
+        } else {
+            registerDataList = groupService.getStudentsByGroup(groupId);
+            addPermission();
+        }
 
-
-        String[] fio = new String[teacherArrayList.size()];
-        String[] login = new String[teacherArrayList.size()];
-        String[] password = new String[teacherArrayList.size()];
+        String[] fio = new String[registerDataList.size()];
+        String[] login = new String[registerDataList.size()];
+        String[] password = new String[registerDataList.size()];
 
         int jj = 0;
-        for (Teacher teacher : teacherArrayList) {
-            fio[jj] = teacher.getSurname() + " " + teacher.getName() + " " + teacher.getMiddleName();
-            login[jj] = teacher.getUser().getUsername();
-            password[jj] = teacher.getUser().getPassword();
+        for (PersonRegisterData personRegisterData : registerDataList) {
+            fio[jj] = personRegisterData.getSurname() + " " + personRegisterData.getName() + " " + personRegisterData.getMiddleName();
+            login[jj] = personRegisterData.getUser().getUsername();
+            password[jj] = personRegisterData.getUser().getPassword();
             ++jj;
         }
         Font mainFont = FontFactory.getFont(FONT, BaseFont.IDENTITY_H, BaseFont.EMBEDDED, 10.0f);
@@ -126,7 +133,7 @@ public class DownloadController {
         table.addCell("login");
         table.addCell("password");
 
-        for (int i = 0; i < teacherArrayList.size(); i++) {
+        for (int i = 0; i < registerDataList.size(); i++) {
             table.addCell(new Phrase(fio[i], mainFont));
             table.addCell(login[i]);
             table.addCell(password[i]);
