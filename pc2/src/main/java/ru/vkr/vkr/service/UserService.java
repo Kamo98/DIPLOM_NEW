@@ -3,21 +3,14 @@ package ru.vkr.vkr.service;
 
 import edu.csus.ecs.pc2.api.IClient;
 import edu.csus.ecs.pc2.api.exceptions.NotLoggedInException;
-import edu.csus.ecs.pc2.api.implementation.Contest;
-import edu.csus.ecs.pc2.core.InternalController;
-import edu.csus.ecs.pc2.core.model.Account;
-import edu.csus.ecs.pc2.core.model.ClientType;
-import javafx.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import ru.vkr.vkr.domain.BridgePc2;
 import ru.vkr.vkr.domain.ROLE;
 import ru.vkr.vkr.domain.RandomString;
 import ru.vkr.vkr.domain.Translit;
@@ -54,7 +47,7 @@ public class UserService implements UserDetailsService {
     @Autowired
     BCryptPasswordEncoder bCryptPasswordEncoder;
     @Autowired
-    private ApplicationContext applicationContext;
+    private BridgePc2Service bridgePc2Service;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -178,7 +171,7 @@ public class UserService implements UserDetailsService {
     private String generateNewAccount(ROLE role, int countUser) {
         try {
             String auth = role.getRolePc2().toLowerCase() + countUser;
-            BridgePc2.getServerConnection().addAccount(role.getRolePc2(), auth, auth);
+            bridgePc2Service.getServerConnection().addAccount(role.getRolePc2(), auth, auth);
             return auth;
         } catch (Exception e) {
             e.printStackTrace();
@@ -190,9 +183,9 @@ public class UserService implements UserDetailsService {
     private int getCountUser(ROLE role) {
         try {
             if (role == ROLE.ROLE_STUDENT) {
-                return BridgePc2.getServerConnection().getContest().getTeams().length + 1;
+                return bridgePc2Service.getServerConnection().getContest().getTeams().length + 1;
             } else {
-                IClient iClients[] = BridgePc2.getServerConnection().getContest().getClients();
+                IClient iClients[] = bridgePc2Service.getServerConnection().getContest().getClients();
                 int count = 0;
                 for (IClient iClient : iClients) {
                     if (iClient.getType() == IClient.ClientType.ADMIN_CLIENT) {

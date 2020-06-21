@@ -13,8 +13,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-import ru.vkr.vkr.domain.BridgePc2;
 import ru.vkr.vkr.domain.FileManager;
 import ru.vkr.vkr.domain.problem.ProblemFactory;
 import ru.vkr.vkr.domain.run.RunSubmitDto;
@@ -34,13 +32,16 @@ public class SubmitRunService {
     private final String nameOfFolder = "submition";
     @Autowired
     private ApplicationContext applicationContext;
+    @Autowired
+    private BridgePc2Service bridgePc2Service;
+
 
     public void submitRun(Long problemId, SubmitRunForm submitRunForm) {
         IProblem iProblem;
         ILanguage iLanguage;
         try {
             iProblem = ((ProblemFactory)applicationContext.getBean("getProblemFactory")).getIProblem(problemId);
-            iLanguage = BridgePc2.getServerConnection().getContest().getLanguages()[submitRunForm.getLanguage()];
+            iLanguage = bridgePc2Service.getServerConnection().getContest().getLanguages()[submitRunForm.getLanguage()];
         } catch (NotLoggedInException e) {
             e.printStackTrace();
             return;
@@ -50,8 +51,8 @@ public class SubmitRunService {
 
         try {
             logger.info("submitRun for " + iProblem + " " + iLanguage + " file: " + fileName);
-            BridgePc2.getRunStatisticListener().setSourceCode(false);
-            BridgePc2.getServerConnection().
+            bridgePc2Service.getRunStatisticListener().setSourceCode(false);
+            bridgePc2Service.getServerConnection().
                     submitRun(iProblem, iLanguage, fileName, new String[0], 0, 0);
         } catch (Exception e) {
             // TODO need to make this cleaner
@@ -87,7 +88,7 @@ public class SubmitRunService {
         Contest contest = null;
         IRun iRuns[] = null;
         try {
-            contest = BridgePc2.getServerConnection().getContest();
+            contest = bridgePc2Service.getServerConnection().getContest();
             iRuns = contest.getRuns();
         } catch (NotLoggedInException e) {
             e.printStackTrace();
@@ -123,7 +124,7 @@ public class SubmitRunService {
         }
         try {
             Run run = (Run) method.invoke(contest, iRun);
-            Problem problem = BridgePc2.getInternalContest().getProblem(run.getProblemId());
+            Problem problem = bridgePc2Service.getInternalContest().getProblem(run.getProblemId());
             if (!problem.isStopOnFirstFailedTestCase()) {
                 RunTestCase runTestCases[] = run.getRunTestCases();
                 int numberTestCases = problem.getNumberTestCases();
@@ -148,8 +149,8 @@ public class SubmitRunService {
     public String showSourceCode(int numberRun) {
         IRun iRun = null;
         try {
-            iRun = BridgePc2.getServerConnection().getContest().getRun(numberRun);
-            BridgePc2.getRunStatisticListener().setSourceCode(true);
+            iRun = bridgePc2Service.getServerConnection().getContest().getRun(numberRun);
+            bridgePc2Service.getRunStatisticListener().setSourceCode(true);
             return new String(iRun.getSourceCodeFileContents()[0], StandardCharsets.UTF_8);
         } catch (NotLoggedInException e) {
             e.printStackTrace();

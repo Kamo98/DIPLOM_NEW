@@ -4,9 +4,11 @@ import edu.csus.ecs.pc2.api.exceptions.NotLoggedInException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import ru.vkr.vkr.domain.BridgePc2;
 import ru.vkr.vkr.entity.Chapter;
 import ru.vkr.vkr.entity.Course;
 import ru.vkr.vkr.entity.Problem;
@@ -36,6 +38,8 @@ public class StudentController {
     private ProblemService problemService;
     @Autowired
     private ProblemFacade problemFacade;
+    @Autowired
+    private BridgePc2Service bridgePc2Service;
 
     @ModelAttribute
     public void addAttributes(Model model) {
@@ -79,7 +83,7 @@ public class StudentController {
             model.addAttribute("statement", true);
         }
         model.addAttribute("problem", problem);
-        model.addAttribute("langs", BridgePc2.getServerConnection().getContest().getLanguages());
+        model.addAttribute("langs", bridgePc2Service.getServerConnection().getContest().getLanguages());
         model.addAttribute("submitRunForm", submitRunForm);
         return "student/problem";
     }
