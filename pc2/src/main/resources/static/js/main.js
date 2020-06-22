@@ -8,11 +8,11 @@ $('.tabs-menu a').click(function (e) {
 
 $(document).ready(function () {
 
-    $('#linkShowSubmitionsTeacher').click(function(){
+    $('#linkShowSubmitionsTeacher').click(function () {
         getSubmitions();
     });
 
-    $('#linkShowSubmitionsStudent').click(function(){
+    $('#linkShowSubmitionsStudent').click(function () {
         getSubmitions();
     });
 
@@ -59,13 +59,26 @@ $(document).ready(function () {
         }
     }));
 
+    $("#checkboxAccess").click(function () {
+        console.log("yuuu");
+        $.ajax({
+            type: 'post',
+            url: "/teacher/problem/access-perfect-solution",
+            data: {'chapterId': $("#chapterId").val(), 'problemId': $(this).val()},
+            dataType: "html",
+            success: function (data) {
+
+            }
+        })
+    });
+
     $("#downloadLoginPassword").click(function () {
         var groupId = $('#groupId').val();
         $.ajax({
-            type : 'get',
+            type: 'get',
             url: '/download/b',
             dataType: 'binary',
-            data : {'groupId' : groupId},
+            data: {'groupId': groupId},
             xhrFields: {
                 'responseType': 'blob'
             },
@@ -80,28 +93,27 @@ $(document).ready(function () {
     });
 
 
-
-    $('#sourceFile').click(function(e){
+    $('#sourceFile').click(function (e) {
         $('#sourceTM1').show();
         $('#sourceTM2').hide();
         $('#source-text2').val("");
     });
 
-    $('#sourceLink').click(function(e) {
+    $('#sourceLink').click(function (e) {
         $('#sourceTM1').hide();
         $('#sourceTM2').show();
     });
-   /* $("#loadTheoryFile").click(function () {
-        $.ajax({
-            type: 'post',
-            url: "/teacher/course/"+courseId+"/chapter/"+chapterId+"/add-theory",
-            data: {'theoryMaterial': theoryMaterial },
-            dataType: "html",
-            success: function () {
-                console.log("файл теории был успешно загружен");
-            }
-        });
-    };*/
+    /* $("#loadTheoryFile").click(function () {
+         $.ajax({
+             type: 'post',
+             url: "/teacher/course/"+courseId+"/chapter/"+chapterId+"/add-theory",
+             data: {'theoryMaterial': theoryMaterial },
+             dataType: "html",
+             success: function () {
+                 console.log("файл теории был успешно загружен");
+             }
+         });
+     };*/
     //При клике на чекбокс тега помечаются или наоборот снимаются галки со всех его потомков
     //todo: есть косяки при рекурсивном запуске события, но пока так
     $(".tag-checkbox").click(function (e) {
@@ -130,9 +142,9 @@ function loadFileByPath(nameOfFile) {
     var arrayPath = nameOfFile.split("\\");
     var filename = arrayPath[arrayPath.length - 1];
     $.ajax({
-        type : 'get',
+        type: 'get',
         url: '/download/nameOfFile',
-        data : {'nameOfFile' : nameOfFile},
+        data: {'nameOfFile': nameOfFile},
         dataType: 'binary',
         xhrFields: {
             'responseType': 'blob'
@@ -147,29 +159,29 @@ function loadFileByPath(nameOfFile) {
     })
 }
 
-function editFioTeacher (idTeacher, stringFIO) {
-     $.ajax({
-         type: 'post',
-         url: "/admin/editTeacher/",
-         data: {'fio': stringFIO, 'idTeacher': idTeacher},
-         dataType: "html",
-         success: function (data) {
-             console.log("фио было успешно изменено " + data);
-         }
-     });
- }
+function editFioTeacher(idTeacher, stringFIO) {
+    $.ajax({
+        type: 'post',
+        url: "/admin/editTeacher/",
+        data: {'fio': stringFIO, 'idTeacher': idTeacher},
+        dataType: "html",
+        success: function (data) {
+            console.log("фио было успешно изменено " + data);
+        }
+    });
+}
 
- function editFioStudent (idStudent, stringFIO) {
-     $.ajax({
-         type: 'post',
-         url: "/teacher/editStudent/",
-         data: {'fio': stringFIO, 'idStudent': idStudent},
-         dataType: "html",
-         success: function (data) {
-             console.log("фио было успешно изменено " + data);
-         }
-     });
- }
+function editFioStudent(idStudent, stringFIO) {
+    $.ajax({
+        type: 'post',
+        url: "/teacher/editStudent/",
+        data: {'fio': stringFIO, 'idStudent': idStudent},
+        dataType: "html",
+        success: function (data) {
+            console.log("фио было успешно изменено " + data);
+        }
+    });
+}
 
 function getSubmitions() {
     $.ajax({
@@ -241,29 +253,25 @@ $(".myButtonFio").click(function (e) {
         itemDivTeach.addClass("editable-div-item");
     }
 
-     e.preventDefault();
+    e.preventDefault();
 });
-
-
-
-
 
 
 //todo: такая себе валидация, надо будет сделать нормальную
 //Копипаст с документации bootstrap для валидации
 //https://getbootstrap.com/docs/4.0/components/forms/
 // Example starter JavaScript for disabling form submissions if there are invalid fields
-  window.addEventListener('load', function() {
+window.addEventListener('load', function () {
     // Fetch all the forms we want to apply custom Bootstrap validation styles to
     var forms = document.getElementsByClassName('needs-validation');
     // Loop over them and prevent submission
-    var validation = Array.prototype.filter.call(forms, function(form) {
-      form.addEventListener('submit', function(event) {
-        if (form.checkValidity() === false) {
-          event.preventDefault();
-          event.stopPropagation();
-        }
-        form.classList.add('was-validated');
-      }, false);
+    var validation = Array.prototype.filter.call(forms, function (form) {
+        form.addEventListener('submit', function (event) {
+            if (form.checkValidity() === false) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            form.classList.add('was-validated');
+        }, false);
     });
-  }, false);
+}, false);

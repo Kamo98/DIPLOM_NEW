@@ -35,7 +35,7 @@ public class GetUserWithCustomInterfaceController {
     @Autowired
     private StudentRepository studentRepository;
     @PersistenceContext
-    EntityManager entityManager;
+    private EntityManager entityManager;
 
     // получить имя текущего атворизованного пользователя
     @RequestMapping(value = "/username", method = RequestMethod.GET)
