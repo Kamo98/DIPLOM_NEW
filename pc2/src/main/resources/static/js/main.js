@@ -59,12 +59,16 @@ $(document).ready(function () {
         }
     }));
 
-    $("#checkboxAccess").click(function () {
-        console.log("yuuu");
+    $(".checkboxAccess").click(function () {
+        console.log("checkboxAccess");
         $.ajax({
             type: 'post',
             url: "/teacher/problem/access-perfect-solution",
-            data: {'chapterId': $("#chapterId").val(), 'problemId': $(this).val()},
+            data: {
+                'chapterId': $(this).next(".checkboxAccessChapter").val(),
+                'problemId': $(this).val(),
+                'isAvailable': $(this).is(':checked')
+            },
             dataType: "html",
             success: function (data) {
 

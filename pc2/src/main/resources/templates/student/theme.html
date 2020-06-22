@@ -87,7 +87,7 @@
                             <div th:unless="${#lists.isEmpty(chapter.chapterProblems)}" class="row row-table" th:each="problem : ${chapter.chapterProblems}"
                                 th:if="${problem.publ}">
                                 <div class="col">
-                                    <a th:href="@{'/student/problem/'+${problem.id}}">
+                                    <a th:href="@{'/student/chapter/' + ${chapter.id} + '/problem/'+${problem.id}}">
                                         [[ ${problem.name} ]]
                                     </a>
                                 </div>

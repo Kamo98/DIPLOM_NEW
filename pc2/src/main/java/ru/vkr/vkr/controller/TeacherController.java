@@ -1,5 +1,6 @@
 package ru.vkr.vkr.controller;
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -427,8 +428,10 @@ public class TeacherController {
 
     @PostMapping("/teacher/problem/access-perfect-solution")
     public String accessPerfectSolution(Model model, @RequestParam(value = "chapterId") Long chapterId,
-                                 @RequestParam(value = "problemId") Long problemId) {
-        teacherFacade.accessPerfectSolution(chapterId, problemId);
+                                        @RequestParam(value = "problemId") Long problemId,
+                                        @RequestParam(value = "isAvailable") Boolean isAvailable) {
+        //teacherFacade.accessPerfectSolution(chapterId, problemId);
+            chapterService.setPerfectSolutionAvailable(chapterId, problemId, isAvailable);
         return "";
     }
 

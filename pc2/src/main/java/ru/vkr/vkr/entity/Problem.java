@@ -121,6 +121,9 @@ public class Problem implements Comparable {
         return chapters_;
     }
 
+    public List<ChapterProblem> getChapterProblems () {
+        return chapters;
+    }
 
     public Long getId() {
         return id;

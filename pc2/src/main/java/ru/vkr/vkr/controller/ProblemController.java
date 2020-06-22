@@ -41,6 +41,8 @@ public class ProblemController {
     private SubmitRunService submitRunService;
     @Autowired
     private BridgePc2Service bridgePc2Service;
+    @Autowired
+    private ChapterService chapterService;
 
 
     //todo: в этом методе отчасти дублируется код из такого же в TeacherController, а это не хорошо
@@ -144,6 +146,7 @@ public class ProblemController {
 
         // Идеальные решения задачи
         model.addAttribute("perfectSolutions", problem.getPerfectSolutions());
+        model.addAttribute("mapSolutionAvailable", chapterService.getMapSolutionAvailable(problem));
 
         return "teacher/problem";
     }

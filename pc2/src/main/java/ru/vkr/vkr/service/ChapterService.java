@@ -1,5 +1,6 @@
 package ru.vkr.vkr.service;
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +15,9 @@ import ru.vkr.vkr.repository.TheoryRepository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class ChapterService {
@@ -111,10 +114,24 @@ public class ChapterService {
         chapterProblemRepository.delete(chapterProblem);
     }
 
-    public void setPerfectSolutionAvailable(Chapter chapter, Problem problem, boolean perfectSolutionAvailable) {
+    public void setPerfectSolutionAvailable(Long chapterId, Long problemId, boolean perfectSolutionAvailable) {
         ChapterProblem chapterProblem = entityManager.createQuery("select t from ChapterProblem t where t.chapter.id = :chapterId and t.problem.id = :problemId", ChapterProblem.class).
-                setParameter("chapterId", chapter.getId()).setParameter("problemId", problem.getId()).getSingleResult();
+                setParameter("chapterId", chapterId).setParameter("problemId", problemId).getSingleResult();
         chapterProblem.setPerfectSolutionAvailable(perfectSolutionAvailable);
         chapterProblemRepository.save(chapterProblem);
+    }
+
+    public boolean isPerfectSolutionAvailable(Long chapterId, Long problemId) {
+        ChapterProblem chapterProblem = entityManager.createQuery("select t from ChapterProblem t where t.chapter.id = :chapterId and t.problem.id = :problemId", ChapterProblem.class).
+                setParameter("chapterId", chapterId).setParameter("problemId", problemId).getSingleResult();
+        return chapterProblem.isPerfectSolutionAvailable();
+    }
+
+    public Map<Long, Boolean> getMapSolutionAvailable(Problem problem) {
+        Map<Long, Boolean> mapSolutionAvailable = new HashMap<>();
+        List<ChapterProblem> chapterProblems = problem.getChapterProblems();
+        for (ChapterProblem chapterProblem : chapterProblems)
+            mapSolutionAvailable.put(chapterProblem.getChapter().getId(), chapterProblem.isPerfectSolutionAvailable());
+        return mapSolutionAvailable;
     }
 }

@@ -86,8 +86,28 @@ public class StudentController {
         model.addAttribute("langs", bridgePc2Service.getServerConnection().getContest().getLanguages());
         model.addAttribute("submitRunForm", submitRunForm);
 
+        return "student/problem";
+    }
+
+
+    @GetMapping("/student/chapter/{chapterId}/problem/{problemId}")
+    public String getProblemFromTheme(Model model,
+                                      @PathVariable Long problemId,
+                                      @PathVariable Long chapterId) throws NotLoggedInException {
+        SubmitRunForm submitRunForm = new SubmitRunForm();
+        Problem problem = problemService.getProblemById(problemId);
+        if (problem.getPathToTextProblem() == null || problem.getPathToTextProblem().equals("")) {
+            model.addAttribute("statement", false);
+        } else {
+            model.addAttribute("statement", true);
+        }
+        model.addAttribute("problem", problem);
+        model.addAttribute("langs", bridgePc2Service.getServerConnection().getContest().getLanguages());
+        model.addAttribute("submitRunForm", submitRunForm);
+
         // Идеальные решения задачи при условии возможности его просмотра студентом
-        model.addAttribute("perfectSolutions", problem.getPerfectSolutions());
+        if (chapterService.isPerfectSolutionAvailable(chapterId, problemId))
+            model.addAttribute("perfectSolutions", problem.getPerfectSolutions());
         return "student/problem";
     }
 
