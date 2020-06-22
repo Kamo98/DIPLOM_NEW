@@ -3,6 +3,7 @@ package ru.vkr.vkr.entity;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.ArrayList;
 import java.util.Set;
 import java.util.List;
 
@@ -24,11 +25,8 @@ public class Chapter {
     private Course courseChapters;
 
     // Задачи темы
-    @ManyToMany
-    @JoinTable(name = "t_chapter_problems",
-            joinColumns = @JoinColumn(name = "chapter_id"),
-    inverseJoinColumns = @JoinColumn(name = "problem_id"))
-    private List<Problem> chapterProblems;
+    @OneToMany(mappedBy = "chapter")
+    private List<ChapterProblem> chapterProblems;
 
     // Теория темы
     @ManyToMany(cascade = CascadeType.REFRESH)
@@ -42,11 +40,18 @@ public class Chapter {
     }
 
     public List<Problem> getChapterProblems() {
-        return chapterProblems;
+        List<Problem> problems = new ArrayList<>();
+        for (ChapterProblem chapterProblem : chapterProblems)
+            problems.add(chapterProblem.getProblem());
+        return problems;
     }
 
-    public void setChapterProblems(List<Problem> chapterProblems) {
-        this.chapterProblems = chapterProblems;
+    public void addChapterProblem(ChapterProblem chapterProblem){
+        chapterProblems.add(chapterProblem);
+    }
+
+    public void deleteChapterProblem(ChapterProblem chapterProblem) {
+        chapterProblems.remove(chapterProblem);
     }
 
     public void setChapterTheories(List<Theory> chapterTheories) {

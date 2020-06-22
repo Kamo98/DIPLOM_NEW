@@ -31,6 +31,9 @@
                 <li>
                     <a class="nav-link" href="" id="linkViewRuns">Посылки</a>
                 </li>
+                <li th:if="${perfectSolutions}">
+                    <a class="nav-link" href="" id="linkViewPerfectSolution">Идеальное решение</a>
+                </li>
             </ul>
 
 
@@ -127,6 +130,41 @@
                 </div>
 
 
+                <div id="perfectSolution" th:if="${perfectSolutions}" style="display:none;">
+
+                    <div th:if="${#lists.isEmpty(perfectSolutions)}" class="alert alert-warning row-margin-top"
+                         role="alert">
+                        Задача пока не имеет идеального решения
+                    </div>
+
+                    <div id="accordion" th:unless="${#lists.isEmpty(perfectSolutions)}">
+
+                        <div class="card row-margin-top" th:each="sol, state : ${perfectSolutions}">
+                            <div class="card-header" id="headingOne">
+                                <div class="row">
+                                    <div class="col-11">
+                                        <h5 class="mb-0">
+                                            <button class="btn btn-link" data-toggle="collapse"
+                                                    th:data-target="'#collapseTwo'+${state.index}"
+                                                    aria-expanded="false" aria-controls="collapseOne"
+                                                    th:text="${sol.language}">
+                                            </button>
+                                        </h5>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div th:id="'collapseTwo'+${state.index}" class="collapse" aria-labelledby="headingOne"
+                                 data-parent="#accordion">
+                                <div class="card-body">
+                                    <pre><code th:text="${sol.source}"></code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
             </div>
         </div>
 
@@ -154,6 +192,11 @@
         $('#linkViewRuns').addClass('active');
         $('#ViewRuns').show();
         getSubmitions();
+    });
+
+    $('#linkViewPerfectSolution').click(function (e) {
+        $('#linkViewPerfectSolution').addClass('active');
+        $('#perfectSolution').show();
     });
 
     //Обновление таблицы посылок по таймеру

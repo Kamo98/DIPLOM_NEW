@@ -16,11 +16,11 @@ public class TagProblem {
     private boolean visible;
 
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "problem_id")
     private Problem problem;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "tag_id")
     private HashTag hashTag;
 

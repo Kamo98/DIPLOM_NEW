@@ -5,11 +5,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.vkr.vkr.domain.FileManager;
-import ru.vkr.vkr.entity.Chapter;
-import ru.vkr.vkr.entity.Course;
-import ru.vkr.vkr.entity.Problem;
-import ru.vkr.vkr.entity.Theory;
+import ru.vkr.vkr.entity.*;
 import ru.vkr.vkr.form.TheoryMaterialForm;
+import ru.vkr.vkr.repository.ChapterProblemRepository;
 import ru.vkr.vkr.repository.ChapterRepository;
 import ru.vkr.vkr.repository.CourseRepository;
 import ru.vkr.vkr.repository.TheoryRepository;
@@ -26,8 +24,10 @@ public class ChapterService {
     private CourseRepository courseRepository;
     @Autowired
     private TheoryRepository theoryRepository;
+    @Autowired
+    private ChapterProblemRepository chapterProblemRepository;
     @PersistenceContext
-    EntityManager entityManager;
+    private EntityManager entityManager;
 
     private final String nameOfFolder = "theory";
 
@@ -96,12 +96,25 @@ public class ChapterService {
 
 
     public void attachProblem(Chapter chapter, Problem problem) {
-        chapter.getChapterProblems().add(problem);
-        chapterRepository.save(chapter);
+        ChapterProblem chapterProblem = new ChapterProblem();
+        chapterProblem.setPerfectSolutionAvailable(false);
+        ChapterProblemKey chapterProblemKey = new ChapterProblemKey();
+        chapterProblemKey.setChapterId(chapter.getId());
+        chapterProblemKey.setProblemId(problem.getId());
+        chapterProblem.setId(chapterProblemKey);
+        chapterProblemRepository.save(chapterProblem);
     }
 
     public void dettachProblem(Chapter chapter, Problem problem) {
-        chapter.getChapterProblems().remove(problem);
-        chapterRepository.save(chapter);
+        ChapterProblem chapterProblem = entityManager.createQuery("select t from ChapterProblem t where t.chapter.id = :chapterId and t.problem.id = :problemId", ChapterProblem.class).
+                setParameter("chapterId", chapter.getId()).setParameter("problemId", problem.getId()).getSingleResult();
+        chapterProblemRepository.delete(chapterProblem);
+    }
+
+    public void setPerfectSolutionAvailable(Chapter chapter, Problem problem, boolean perfectSolutionAvailable) {
+        ChapterProblem chapterProblem = entityManager.createQuery("select t from ChapterProblem t where t.chapter.id = :chapterId and t.problem.id = :problemId", ChapterProblem.class).
+                setParameter("chapterId", chapter.getId()).setParameter("problemId", problem.getId()).getSingleResult();
+        chapterProblem.setPerfectSolutionAvailable(perfectSolutionAvailable);
+        chapterProblemRepository.save(chapterProblem);
     }
 }

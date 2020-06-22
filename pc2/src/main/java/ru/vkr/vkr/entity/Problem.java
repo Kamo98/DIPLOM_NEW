@@ -3,6 +3,7 @@ package ru.vkr.vkr.entity;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.List;
@@ -44,8 +45,9 @@ public class Problem implements Comparable {
     @Column(nullable = false)
     private boolean publ;
 
-    @ManyToMany(mappedBy = "chapterProblems", fetch = FetchType.LAZY)
-    private List<Chapter> chapters;
+
+    @OneToMany(mappedBy = "problem", fetch = FetchType.LAZY)
+    private List<ChapterProblem> chapters;
 
 //    @ManyToMany(fetch = FetchType.LAZY)
 //    @JoinTable(name="t_tag_problem",
@@ -113,12 +115,12 @@ public class Problem implements Comparable {
     }
 
     public List<Chapter> getChapters() {
-        return chapters;
+        List<Chapter> chapters_ = new ArrayList<>();
+        for (ChapterProblem chapterProblem : chapters)
+            chapters_.add(chapterProblem.getChapter());
+        return chapters_;
     }
 
-    public void setChapters(List<Chapter> chapters) {
-        this.chapters = chapters;
-    }
 
     public Long getId() {
         return id;

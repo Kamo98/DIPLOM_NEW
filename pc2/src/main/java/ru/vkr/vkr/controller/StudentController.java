@@ -81,6 +81,9 @@ public class StudentController {
         model.addAttribute("problem", problem);
         model.addAttribute("langs", BridgePc2.getServerConnection().getContest().getLanguages());
         model.addAttribute("submitRunForm", submitRunForm);
+
+        // Идеальные решения задачи при условии возможности его просмотра студентом
+        model.addAttribute("perfectSolutions", problem.getPerfectSolutions());
         return "student/problem";
     }
 
