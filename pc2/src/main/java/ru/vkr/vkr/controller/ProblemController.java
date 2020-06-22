@@ -5,7 +5,6 @@ import javafx.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,8 +12,10 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import ru.vkr.vkr.domain.BridgePc2;
-import ru.vkr.vkr.entity.*;
+import ru.vkr.vkr.entity.Complexity;
+import ru.vkr.vkr.entity.Course;
+import ru.vkr.vkr.entity.HashTag;
+import ru.vkr.vkr.entity.Problem;
 import ru.vkr.vkr.facade.ProblemFacade;
 import ru.vkr.vkr.form.*;
 import ru.vkr.vkr.service.*;
@@ -39,7 +40,7 @@ public class ProblemController {
     @Autowired
     private SubmitRunService submitRunService;
     @Autowired
-    private ApplicationContext applicationContext;
+    private BridgePc2Service bridgePc2Service;
 
 
     //todo: в этом методе отчасти дублируется код из такого же в TeacherController, а это не хорошо
@@ -60,7 +61,7 @@ public class ProblemController {
         model.addAttribute("teacherCourses", teacherCourses);
         model.addAttribute("teacherProblems", teacherProblems);
         model.addAttribute("isTeacher", true);
-        model.addAttribute("langs", BridgePc2.getServerConnection().getContest().getLanguages());
+        model.addAttribute("langs", bridgePc2Service.getServerConnection().getContest().getLanguages());
         model.addAttribute("submitRunForm", submitRunForm);
         model.addAttribute("perfectSolution", submitRunFormPerfectSolution);
     }

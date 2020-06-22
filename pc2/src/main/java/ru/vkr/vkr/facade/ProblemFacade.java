@@ -11,14 +11,12 @@ import edu.csus.ecs.pc2.core.InternalController;
 import edu.csus.ecs.pc2.core.Utilities;
 import edu.csus.ecs.pc2.core.model.*;
 import edu.csus.ecs.pc2.validator.clicsValidator.ClicsValidatorSettings;
-import edu.csus.ecs.pc2.validator.customValidator.CustomValidatorSettings;
 import javafx.util.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
-import ru.vkr.vkr.domain.BridgePc2;
 import ru.vkr.vkr.domain.FileManager;
 import ru.vkr.vkr.domain.problem.ProblemFactory;
 import ru.vkr.vkr.domain.run.MonitorData;
@@ -29,12 +27,11 @@ import ru.vkr.vkr.form.CheckerSettingsForm;
 import ru.vkr.vkr.form.LoadTestsForm;
 import ru.vkr.vkr.form.SubmitRunForm;
 import ru.vkr.vkr.form.TestSettingsForm;
+import ru.vkr.vkr.service.BridgePc2Service;
 import ru.vkr.vkr.service.ProblemService;
-import ru.vkr.vkr.service.SubmitRunService;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.util.*;
 
 @Component
@@ -47,6 +44,8 @@ public class ProblemFacade {
     private ApplicationContext applicationContext;
     @Autowired
     private ProblemService problemService;
+    @Autowired
+    private BridgePc2Service bridgePc2Service;
 
     //Стандартные имена тестовых файлов
     private final String extensionInStandart = ".in";
@@ -64,7 +63,7 @@ public class ProblemFacade {
 
     public void initProblem(ru.vkr.vkr.entity.Problem problemDb) {
         makeDirectory(problemDb.getId());
-        InternalController internalController = BridgePc2.getInternalController();
+        InternalController internalController = bridgePc2Service.getInternalController();
 
         //Основные параметры задачи
         Problem problem = new Problem(problemDb.getName());
@@ -86,7 +85,7 @@ public class ProblemFacade {
 
         //Добавить в списки автосудий задачу
         //todo: не совмем уверен что в список clientSettingsList будут попадать все автосудьи, которые есть в системе
-        ClientSettings clientSettingsList[] = BridgePc2.getInternalContest().getClientSettingsList();
+        ClientSettings clientSettingsList[] = bridgePc2Service.getInternalContest().getClientSettingsList();
         for (int i = 0; i < clientSettingsList.length; i++) {
             if (clientSettingsList[i].isAutoJudging()) {
                 Filter filter = clientSettingsList[i].getAutoJudgeFilter();
@@ -99,7 +98,7 @@ public class ProblemFacade {
     }
 
     public void updateMainParams(String newName, ru.vkr.vkr.entity.Problem problemDb) {
-        InternalController internalController = BridgePc2.getInternalController();
+        InternalController internalController = bridgePc2Service.getInternalController();
         //Ищем задачу
         Problem problem = findProblemInPC2(problemDb);
         if (problem != null) {
@@ -111,7 +110,7 @@ public class ProblemFacade {
 
 
     public void setParamOfTests(ru.vkr.vkr.entity.Problem problemDb, TestSettingsForm testSettingsForm) {
-        InternalController internalController = BridgePc2.getInternalController();
+        InternalController internalController = bridgePc2Service.getInternalController();
         //Ищем задачу
         Problem problem = findProblemInPC2(problemDb);
 
@@ -128,7 +127,7 @@ public class ProblemFacade {
 
     //Установка параметров чекера
     public void setParamsOfChecker(ru.vkr.vkr.entity.Problem problemDb, CheckerSettingsForm checkerSettingsForm) {
-        InternalController internalController = BridgePc2.getInternalController();
+        InternalController internalController = bridgePc2Service.getInternalController();
 
         //Ищем задачу
         Problem problem = findProblemInPC2(problemDb);
@@ -249,7 +248,7 @@ public class ProblemFacade {
 
     //Добавление тестов к задаче в PC2
     public void addTestsToProblem(ru.vkr.vkr.entity.Problem problemDb) {
-        InternalController internalController = BridgePc2.getInternalController();
+        InternalController internalController = bridgePc2Service.getInternalController();
         String baseDirectoryName = uploadPath + "tests\\problem-" + problemDb.getId();
         //Ищем задачу
         Problem problem = findProblemInPC2(problemDb);
@@ -268,7 +267,7 @@ public class ProblemFacade {
         Problem problem = findProblemInPC2(problemDb);
         if (problem == null)
             return filesList;
-        IInternalController internalController = BridgePc2.getInternalController();
+        IInternalController internalController = bridgePc2Service.getInternalController();
         ProblemDataFiles problemDataFiles = internalController.getProblemDataFiles(problem);
         int countTests = problemDataFiles.getJudgesDataFiles().length;
         for (int i = 0; i < countTests; i++)
@@ -279,7 +278,7 @@ public class ProblemFacade {
 
 
     public void deleteTestFile(ru.vkr.vkr.entity.Problem problemDb, Integer testNum) {
-        IInternalController internalController = BridgePc2.getInternalController();
+        IInternalController internalController = bridgePc2Service.getInternalController();
         Problem problem = findProblemInPC2(problemDb);
         ProblemDataFiles problemDataFiles = internalController.getProblemDataFiles(problem);
         //problemDataFiles.removeAll();
@@ -312,7 +311,7 @@ public class ProblemFacade {
     }
 
     public void deleteAllTestFiles(ru.vkr.vkr.entity.Problem problemDb) {
-        IInternalController internalController = BridgePc2.getInternalController();
+        IInternalController internalController = bridgePc2Service.getInternalController();
         Problem problem = findProblemInPC2(problemDb);
         ProblemDataFiles problemDataFiles = internalController.getProblemDataFiles(problem);
         problemDataFiles.removeAll();
@@ -443,7 +442,7 @@ public class ProblemFacade {
     private List<Pair<Student, IStanding>> getStandingsRecords(List<Student> students) {
         List<Pair<Student, IStanding>> iStandings = new ArrayList<>();
         try {
-            Contest contest = BridgePc2.getServerConnection().getContest();
+            Contest contest = bridgePc2Service.getServerConnection().getContest();
             ITeam iTeams[] = contest.getTeams();
             for (Student student : students) {
                 boolean kostil = false;
@@ -463,7 +462,7 @@ public class ProblemFacade {
     }
 
     public void getStatisticForProblems(Collection<ru.vkr.vkr.entity.Problem> problemsDb) {
-        HashMap<Long, RunStatistic.StatisticOfTask> statisticOfTask = BridgePc2.getRunStatistic().getStatisticOfTaskHashMap();
+        HashMap<Long, RunStatistic.StatisticOfTask> statisticOfTask = bridgePc2Service.getRunStatisticListener().getRunStatistic().getStatisticOfTaskHashMap();
 
         for (ru.vkr.vkr.entity.Problem pr : problemsDb) {
             if (statisticOfTask.containsKey(pr.getId())) {
@@ -487,7 +486,7 @@ public class ProblemFacade {
     //Проверка на наличие хотя бы одного теста
     public boolean check_tests(ru.vkr.vkr.entity.Problem problemDb) {
         Problem problem = findProblemInPC2(problemDb);
-        IInternalController internalController = BridgePc2.getInternalController();
+        IInternalController internalController = bridgePc2Service.getInternalController();
         ProblemDataFiles problemDataFiles = internalController.getProblemDataFiles(problem);
         return problemDataFiles.getJudgesDataFiles().length > 0;
     }
@@ -497,7 +496,7 @@ public class ProblemFacade {
         PerfectSolution perfectSolution = new PerfectSolution();
         ILanguage iLanguage = null;
         try {
-            iLanguage = BridgePc2.getServerConnection().getContest().getLanguages()[submitRunForm.getLanguage()];
+            iLanguage = bridgePc2Service.getServerConnection().getContest().getLanguages()[submitRunForm.getLanguage()];
             perfectSolution.setLanguage(iLanguage.getName());
             if (submitRunForm.isFlagSourceCode()) {
                 perfectSolution.setSource(submitRunForm.getSourceCode());

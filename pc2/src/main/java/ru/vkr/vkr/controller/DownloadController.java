@@ -18,16 +18,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import ru.vkr.vkr.domain.BridgePc2;
 import ru.vkr.vkr.domain.ROLE;
-import ru.vkr.vkr.entity.Role;
-import ru.vkr.vkr.entity.Teacher;
-import ru.vkr.vkr.entity.User;
 import ru.vkr.vkr.entity.api.PersonRegisterData;
 import ru.vkr.vkr.facade.AdminFacade;
 import ru.vkr.vkr.facade.AuthenticationFacade;
+import ru.vkr.vkr.service.BridgePc2Service;
 import ru.vkr.vkr.service.GroupService;
-import ru.vkr.vkr.service.StudentService;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -35,7 +31,6 @@ import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/download")
@@ -46,6 +41,8 @@ public class DownloadController {
     private AuthenticationFacade authenticationFacade;
     @Autowired
     private GroupService groupService;
+    @Autowired
+    private BridgePc2Service bridgePc2Service;
 
     private static final String FONT = "static\\fonts\\DejaVuSans.ttf";
     private static final String FILE_PATH = "src\\main\\resources\\tmp\\report.pdf";
@@ -144,13 +141,13 @@ public class DownloadController {
     }
 
     private void addPermission() {
-        List<Account>accounts = BridgePc2.getInternalContest().getAccounts(ClientType.Type.TEAM);
+        List<Account>accounts = bridgePc2Service.getInternalContest().getAccounts(ClientType.Type.TEAM);
         Account accountss[] = new Account[accounts.size()];
         int i = 0;
         for (Account account : accounts) {
             account.addPermission(Permission.Type.ALLOWED_TO_FETCH_RUN);
             accountss[i++] = account;
         }
-        BridgePc2.getInternalController().updateAccounts(accountss);
+        bridgePc2Service.getInternalController().updateAccounts(accountss);
     }
 }

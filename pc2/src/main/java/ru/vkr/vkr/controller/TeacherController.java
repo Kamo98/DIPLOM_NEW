@@ -425,6 +425,13 @@ public class TeacherController {
     }
 
 
+    @PostMapping("/teacher/problem/access-perfect-solution")
+    public String accessPerfectSolution(Model model, @RequestParam(value = "chapterId") Long chapterId,
+                                 @RequestParam(value = "problemId") Long problemId) {
+        teacherFacade.accessPerfectSolution(chapterId, problemId);
+        return "";
+    }
+
     //Удаление студента
     @GetMapping("/teacher/course/{courseId}/delete-student/{groupId}/{studentId}")
     public String deleteStudent(Model model,

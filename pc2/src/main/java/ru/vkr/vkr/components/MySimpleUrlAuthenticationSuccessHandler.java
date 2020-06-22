@@ -3,7 +3,6 @@ package ru.vkr.vkr.components;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.DefaultRedirectStrategy;
@@ -11,8 +10,8 @@ import org.springframework.security.web.RedirectStrategy;
 import org.springframework.security.web.WebAttributes;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
-import ru.vkr.vkr.domain.BridgePc2;
 import ru.vkr.vkr.entity.User;
+import ru.vkr.vkr.service.BridgePc2Service;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -29,7 +28,7 @@ public class MySimpleUrlAuthenticationSuccessHandler implements AuthenticationSu
     private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
 
     @Autowired
-    private ApplicationContext applicationContext;
+    private BridgePc2Service bridgePc2Service;
 
     public MySimpleUrlAuthenticationSuccessHandler() {
         super();
@@ -63,7 +62,7 @@ public class MySimpleUrlAuthenticationSuccessHandler implements AuthenticationSu
         roleTargetUrlMap.put("ROLE_STUDENT", "/student/course");
 
         User successUser = (User) authentication.getPrincipal();
-        BridgePc2.start(successUser.getLoginPC2());
+        bridgePc2Service.start(successUser.getLoginPC2());
 
         final Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
         for (final GrantedAuthority grantedAuthority : authorities) {
