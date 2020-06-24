@@ -165,10 +165,4 @@ public class StudentController {
         searchService.poolChaptersGet(model);
         return "poolchapters";
     }
-
-
-    @GetMapping("/student/submitions")
-    public String showSubmitions(Model model) {
-        return "/submitions";
-    }
 }

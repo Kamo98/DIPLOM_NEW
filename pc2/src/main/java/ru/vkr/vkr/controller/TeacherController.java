@@ -488,11 +488,6 @@ public class TeacherController {
         return "poolchapters";
     }
 
-    @GetMapping("/teacher/submitions")
-    public String showSubmitions(Model model) {
-        return "/submitions";
-    }
-
 
 
     //Для вставки в бд тегов
