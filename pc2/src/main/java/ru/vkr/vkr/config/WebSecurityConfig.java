@@ -8,11 +8,16 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.session.SessionRegistry;
+import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.session.HttpSessionEventPublisher;
 import ru.vkr.vkr.components.CustomLogoutSuccessHandler;
 import ru.vkr.vkr.components.MySimpleUrlAuthenticationSuccessHandler;
+import ru.vkr.vkr.service.BridgePc2Service;
 import ru.vkr.vkr.service.UserService;
 
 @Configuration
@@ -53,24 +58,47 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/student/**").hasRole("STUDENT")
                 //Доступ только для пользователей с ролью Студент
                 .antMatchers("/user/**").hasAnyRole("ADMIN", "TEACHER", "STUDENT")
-
                 .anyRequest().authenticated()
+
                 .and()
                 //Настройка для входа в систему
                 .formLogin()
                 .loginPage("/login")
                 .successHandler(mySimpleUrlAuthenticationSuccessHandler)
                 .permitAll()
+
                 .and()
                 .logout()
                 .logoutSuccessHandler(customLogoutSuccessHandler)
                 .permitAll()
+
                 .and()
-                .exceptionHandling().accessDeniedHandler(accessDeniedHandler);
+                .exceptionHandling().accessDeniedHandler(accessDeniedHandler)
+
+                .and()
+                .sessionManagement()
+                .sessionFixation().migrateSession()
+//                .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+                .invalidSessionUrl("/login.html")
+                .maximumSessions(2)
+                .maxSessionsPreventsLogin(false)
+                .expiredUrl("/login.html")
+                .sessionRegistry(sessionRegistry());
     }
 
     @Autowired
     protected void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userService).passwordEncoder(NoOpPasswordEncoder.getInstance());
+    }
+
+    @Bean
+    public HttpSessionEventPublisher httpSessionEventPublisher() {
+        return new MyHttpSessionEventPublisher();
+    }
+
+    // Стандартная Spring имплементация SessionRegistry
+    @Bean(name = "sessionRegistry")
+    public SessionRegistry sessionRegistry() {
+        return new SessionRegistryImpl();
     }
 }

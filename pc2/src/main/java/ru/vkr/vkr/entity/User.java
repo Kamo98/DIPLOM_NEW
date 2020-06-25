@@ -132,4 +132,17 @@ public class User implements UserDetails {
     public void setStudent(Student student) {
         this.student = student;
     }
+
+    @Override
+    public boolean equals(Object user) {
+        if (user == this) return true;
+        if (user == null) return false;
+        if (getClass() != user.getClass()) return false;
+        return (((User)user).getId() == getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Math.toIntExact(getId());
+    }
 }

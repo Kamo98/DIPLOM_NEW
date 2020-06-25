@@ -10,6 +10,7 @@ import edu.csus.ecs.pc2.api.implementation.Contest;
 import edu.csus.ecs.pc2.api.listener.IConnectionEventListener;
 import edu.csus.ecs.pc2.core.InternalController;
 import edu.csus.ecs.pc2.core.model.InternalContest;
+import javafx.util.Pair;
 import ru.vkr.vkr.domain.run.RunStatistic;
 import ru.vkr.vkr.domain.run.RunStatisticListener;
 
@@ -22,7 +23,7 @@ import java.util.Vector;
 
 
 public class Pc2 {
-    private static HashMap<String, ServerConnection> connections = new HashMap<>();
+    private static HashMap<String, Pair<ServerConnection, Long> > connections = new HashMap<>();
     private static HashMap<String, RunStatisticListener>  runStatisticListeners = new HashMap<>();
 
     private static ServerConnection createNewServerConnection() {
@@ -30,26 +31,31 @@ public class Pc2 {
     }
 
     public static void start(String auth) {
-        ServerConnection serverConnection = createNewServerConnection();
-        try {
-            IContest contest = serverConnection.login(auth, auth);
-            initContest(contest, auth);
-            for (IProblem problem : contest.getProblems()) {
-                System.out.println(problem.getShortName() + ")  " + problem.getName() + " " + problem.getValidatorFileName());
+        if (!connections.containsKey(auth)) {
+            ServerConnection serverConnection = createNewServerConnection();
+            try {
+                IContest contest = serverConnection.login(auth, auth);
+                initContest(contest, auth);
+                for (IProblem problem : contest.getProblems()) {
+                    System.out.println(problem.getShortName() + ")  " + problem.getName() + " " + problem.getValidatorFileName());
+                }
+                cleanConnectionEventListenerList(serverConnection.getContest());
+            } catch (LoginFailureException e) {
+                System.out.println("Could not login because " + e.getMessage());
+            } catch (NotLoggedInException e) {
+                e.printStackTrace();
             }
-            cleanConnectionEventListenerList(serverConnection.getContest());
-        } catch (LoginFailureException e) {
-            System.out.println("Could not login because " + e.getMessage());
-        } catch (NotLoggedInException e) {
-            e.printStackTrace();
+            //put the team's connection to the PC2 server into the (static, class-wide) connections map under the team's "id"
+            connections.put(auth, new Pair<>(serverConnection, 1L));
+        } else {
+            Long newCountConnection = connections.get(auth).getValue() + 1;
+            connections.put(auth, new Pair<>(connections.get(auth).getKey(), newCountConnection));
         }
-        //put the team's connection to the PC2 server into the (static, class-wide) connections map under the team's "id"
-        connections.put(auth, serverConnection);
     }
 
     public static InternalController getInternalController(String auth) {
         try {
-            ServerConnection serverConnection = connections.get(auth);
+            ServerConnection serverConnection = getServerConnection(auth);
             Class classController = serverConnection.getClass();
             Field fieldController = classController.getDeclaredField("controller");
             fieldController.setAccessible(true);
@@ -63,7 +69,7 @@ public class Pc2 {
 
     public static InternalContest getInternalContest(String auth) {
         try {
-            ServerConnection serverConnection = connections.get(auth);
+            ServerConnection serverConnection = getServerConnection(auth);
             Class classContest = serverConnection.getClass();
             Field fieldContest = classContest.getDeclaredField("internalContest");
             fieldContest.setAccessible(true);
@@ -112,7 +118,7 @@ public class Pc2 {
     }
 
     public static ServerConnection getServerConnection(String auth) {
-        return connections.get(auth);
+        return connections.get(auth).getKey();
     }
 
     public static RunStatisticListener getRunStatisticListener(String auth) {
@@ -120,14 +126,18 @@ public class Pc2 {
     }
 
     public static void logoff(String auth) {
-        ServerConnection serverConnection = connections.get(auth);
-        try {
-            Thread.sleep(1000);
-            serverConnection.logoff();
-        } catch (NotLoggedInException | InterruptedException e) {
-            e.printStackTrace();
+        Long newCountConnection = connections.get(auth).getValue() - 1;
+        connections.put(auth, new Pair<>(connections.get(auth).getKey(), newCountConnection));
+        if (newCountConnection <= 0L) {
+            ServerConnection serverConnection = getServerConnection(auth);
+            try {
+                Thread.sleep(1000);
+                serverConnection.logoff();
+            } catch (NotLoggedInException | InterruptedException e) {
+                e.printStackTrace();
+            }
+            //remove the team's PC2 server connection from the global hashmap
+            connections.remove(auth, new Pair<>(serverConnection, newCountConnection));
         }
-        //remove the team's PC2 server connection from the global hashmap
-        connections.remove(auth, serverConnection);
     }
 }
