@@ -17,7 +17,6 @@ import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
 import ru.vkr.vkr.components.CustomLogoutSuccessHandler;
 import ru.vkr.vkr.components.MySimpleUrlAuthenticationSuccessHandler;
-import ru.vkr.vkr.service.BridgePc2Service;
 import ru.vkr.vkr.service.UserService;
 
 @Configuration
@@ -76,9 +75,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .exceptionHandling().accessDeniedHandler(accessDeniedHandler)
 
                 .and()
+                .rememberMe().alwaysRemember(true)
+
+                .and()
                 .sessionManagement()
                 .sessionFixation().migrateSession()
-//                .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+                .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                 .invalidSessionUrl("/login.html")
                 .maximumSessions(2)
                 .maxSessionsPreventsLogin(false)
