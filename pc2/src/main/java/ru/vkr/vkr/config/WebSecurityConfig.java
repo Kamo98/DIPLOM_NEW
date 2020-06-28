@@ -8,15 +8,19 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.annotation.web.configurers.RememberMeConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.authentication.rememberme.AbstractRememberMeServices;
+import org.springframework.security.web.authentication.rememberme.PersistentTokenBasedRememberMeServices;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
 import ru.vkr.vkr.components.CustomLogoutSuccessHandler;
 import ru.vkr.vkr.components.MySimpleUrlAuthenticationSuccessHandler;
+import ru.vkr.vkr.entity.User;
 import ru.vkr.vkr.service.UserService;
 
 @Configuration
@@ -69,20 +73,23 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .logout()
                 .logoutSuccessHandler(customLogoutSuccessHandler)
+                .deleteCookies("remember-me")
                 .permitAll()
 
                 .and()
                 .exceptionHandling().accessDeniedHandler(accessDeniedHandler)
 
                 .and()
-                .rememberMe().alwaysRemember(true)
+                .rememberMe()
+                .alwaysRemember(true)
+                .tokenValiditySeconds(16200)
 
                 .and()
                 .sessionManagement()
                 .sessionFixation().migrateSession()
                 .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                 .invalidSessionUrl("/login.html")
-                .maximumSessions(2)
+                .maximumSessions(5)
                 .maxSessionsPreventsLogin(false)
                 .expiredUrl("/login.html")
                 .sessionRegistry(sessionRegistry());

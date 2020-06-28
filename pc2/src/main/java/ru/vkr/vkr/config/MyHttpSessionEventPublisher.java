@@ -33,6 +33,13 @@ public class MyHttpSessionEventPublisher extends HttpSessionEventPublisher {
             System.out.println("destroy session******************************" + user.getUsername() + "\n");
         }
         super.sessionDestroyed(event);
+
+
+
+//        List<SessionInformation> sessionInformations = sessionRegistry.getAllSessions(user, false);
+//        if (sessionInformations != null) {
+//            sessionInformations.remove(sessionInfo);
+//        }
     }
 
     private SessionRegistry getBean(HttpSessionEvent event, String name){
