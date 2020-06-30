@@ -15,7 +15,9 @@ public class BridgePc2Service {
     private AuthenticationFacade authenticationFacade;
 
     private String getCurName() {
-        return authenticationFacade.getCurrentUser().getLoginPC2();
+        return authenticationFacade.getCurrentUser() != null ?
+                authenticationFacade.getCurrentUser().getLoginPC2()
+                : null;
     }
 
     public void start(String auth) {

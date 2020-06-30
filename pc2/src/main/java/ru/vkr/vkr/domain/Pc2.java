@@ -61,7 +61,7 @@ public class Pc2 {
             fieldController.setAccessible(true);
             Object objectController = fieldController.get(serverConnection);
             return (InternalController) objectController;
-        } catch (IllegalAccessException | NoSuchFieldException e) {
+        } catch (IllegalAccessException | NoSuchFieldException | NullPointerException e) {
             e.printStackTrace();
         }
         return null;
@@ -75,7 +75,7 @@ public class Pc2 {
             fieldContest.setAccessible(true);
             Object objectController = fieldContest.get(serverConnection);
             return (InternalContest) objectController;
-        } catch (IllegalAccessException | NoSuchFieldException e) {
+        } catch (IllegalAccessException | NoSuchFieldException | NullPointerException e) {
             e.printStackTrace();
         }
         return null;
@@ -118,7 +118,9 @@ public class Pc2 {
     }
 
     public static ServerConnection getServerConnection(String auth) {
-        return connections.get(auth).getKey();
+        return connections.containsKey(auth) ?
+                connections.get(auth).getKey()
+                : null;
     }
 
     public static RunStatisticListener getRunStatisticListener(String auth) {
@@ -126,18 +128,20 @@ public class Pc2 {
     }
 
     public static void logoff(String auth) {
-        Long newCountConnection = connections.get(auth).getValue() - 1;
-        connections.put(auth, new Pair<>(connections.get(auth).getKey(), newCountConnection));
-        if (newCountConnection <= 0L) {
-            ServerConnection serverConnection = getServerConnection(auth);
-            try {
-                Thread.sleep(1000);
-                serverConnection.logoff();
-            } catch (NotLoggedInException | InterruptedException e) {
-                e.printStackTrace();
+        if (connections.containsKey(auth)) {
+            Long newCountConnection = connections.get(auth).getValue() - 1;
+            connections.put(auth, new Pair<>(connections.get(auth).getKey(), newCountConnection));
+            if (newCountConnection <= 0L) {
+                ServerConnection serverConnection = getServerConnection(auth);
+                try {
+                    Thread.sleep(1000);
+                    serverConnection.logoff();
+                } catch (NotLoggedInException | InterruptedException e) {
+                    e.printStackTrace();
+                }
+                //remove the team's PC2 server connection from the global hashmap
+                connections.remove(auth, new Pair<>(serverConnection, newCountConnection));
             }
-            //remove the team's PC2 server connection from the global hashmap
-            connections.remove(auth, new Pair<>(serverConnection, newCountConnection));
         }
     }
 }

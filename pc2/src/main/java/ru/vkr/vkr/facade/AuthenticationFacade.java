@@ -27,7 +27,7 @@ public class AuthenticationFacade implements IAuthenticationFacade {
 
     public User getCurrentUser() {
         Authentication authentication = getAuthentication();
-        return (User) userService.loadUserByUsername(authentication.getName());
+        return authentication != null ? (User) userService.loadUserByUsername(authentication.getName()) : null;
     }
 
 

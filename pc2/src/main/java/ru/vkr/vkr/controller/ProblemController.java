@@ -5,6 +5,7 @@ import javafx.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.resource.HttpResource;
 import ru.vkr.vkr.entity.Complexity;
 import ru.vkr.vkr.entity.Course;
 import ru.vkr.vkr.entity.HashTag;
@@ -20,6 +22,9 @@ import ru.vkr.vkr.facade.ProblemFacade;
 import ru.vkr.vkr.form.*;
 import ru.vkr.vkr.service.*;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.*;
 
@@ -47,7 +52,7 @@ public class ProblemController {
 
     //todo: в этом методе отчасти дублируется код из такого же в TeacherController, а это не хорошо
     @ModelAttribute
-    public void addAttributes(Model model) throws NotLoggedInException {
+    public void addAttributes(Model model, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws NotLoggedInException {
         Collection<Course> teacherCourses = courseService.getCoursesByCurrentTeacher();
         List<Problem> teacherProblems_ = problemService.getProblemsByCurrentTeacher();
         Collection<Problem> teacherProblems = new ArrayList<>();
@@ -57,6 +62,14 @@ public class ProblemController {
         TheoryMaterialForm theoryMaterialForm = new TheoryMaterialForm();
         SubmitRunForm submitRunForm = new SubmitRunForm();
         SubmitRunForm submitRunFormPerfectSolution = new SubmitRunForm();
+
+        if (!bridgePc2Service.getServerConnection().isLoggedIn()) {
+            try {
+                httpServletRequest.logout();
+            } catch (ServletException e) {
+                e.printStackTrace();
+            }
+        }
 
         model.addAttribute("runs", submitRunService.getRunSummit());
         model.addAttribute("theoryMaterialForm", theoryMaterialForm);

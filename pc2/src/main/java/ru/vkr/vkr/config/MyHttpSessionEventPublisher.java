@@ -11,6 +11,8 @@ import ru.vkr.vkr.service.BridgePc2Service;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionEvent;
 
+import static ru.vkr.vkr.config.MvcConfig.getBeanBridgePc2Service;
+
 public class MyHttpSessionEventPublisher extends HttpSessionEventPublisher {
 
     // ... Прочие методы
@@ -28,18 +30,11 @@ public class MyHttpSessionEventPublisher extends HttpSessionEventPublisher {
         User user = null;
         if (sessionInfo != null) user = (User) sessionInfo.getPrincipal();
         if (null != user) {
-            BridgePc2Service bridgePc2Service = getBeanBridgePc2Service(event, "bridgePc2Service");
+            BridgePc2Service bridgePc2Service = getBeanBridgePc2Service(event.getSession());
             bridgePc2Service.logout(user.getLoginPC2());
             System.out.println("destroy session******************************" + user.getUsername() + "\n");
         }
         super.sessionDestroyed(event);
-
-
-
-//        List<SessionInformation> sessionInformations = sessionRegistry.getAllSessions(user, false);
-//        if (sessionInformations != null) {
-//            sessionInformations.remove(sessionInfo);
-//        }
     }
 
     private SessionRegistry getBean(HttpSessionEvent event, String name){
@@ -48,13 +43,5 @@ public class MyHttpSessionEventPublisher extends HttpSessionEventPublisher {
                 WebApplicationContextUtils.
                         getWebApplicationContext(session.getServletContext());
         return (SessionRegistry) (ctx != null ? ctx.getBean(name) : null);
-    }
-
-    private BridgePc2Service getBeanBridgePc2Service (HttpSessionEvent event, String name){
-        HttpSession session = event.getSession();
-        ApplicationContext ctx =
-                WebApplicationContextUtils.
-                        getWebApplicationContext(session.getServletContext());
-        return (ctx != null ? ctx.getBean(BridgePc2Service.class) : null);
     }
 }
