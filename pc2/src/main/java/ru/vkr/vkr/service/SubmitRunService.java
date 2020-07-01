@@ -37,27 +37,12 @@ public class SubmitRunService {
 
 
     public void submitRun(Long problemId, SubmitRunForm submitRunForm) {
-        IProblem iProblem;
-        ILanguage iLanguage;
-        try {
-            iProblem = ((ProblemFactory)applicationContext.getBean("getProblemFactory")).getIProblem(problemId);
-            iLanguage = bridgePc2Service.getServerConnection().getContest().getLanguages()[submitRunForm.getLanguage()];
-        } catch (NotLoggedInException e) {
-            e.printStackTrace();
-            return;
-        }
-
+        IProblem iProblem = ((ProblemFactory) applicationContext.getBean("getProblemFactory")).getIProblem(problemId);
+        ILanguage iLanguage = bridgePc2Service.getContestLanguages()[submitRunForm.getLanguage()];
         String fileName = getFileNameSubmitRun(submitRunForm, iLanguage);
-
-        try {
-            logger.info("submitRun for " + iProblem + " " + iLanguage + " file: " + fileName);
-            bridgePc2Service.getRunStatisticListener().setSourceCode(false);
-            bridgePc2Service.getServerConnection().
-                    submitRun(iProblem, iLanguage, fileName, new String[0], 0, 0);
-        } catch (Exception e) {
-            // TODO need to make this cleaner
-            logger.error("Exception " + e.getMessage());
-        }
+        logger.info("submitRun for " + iProblem + " " + iLanguage + " file: " + fileName);
+        bridgePc2Service.getRunStatisticListener().setSourceCode(false);
+        bridgePc2Service.submitRun(iProblem, iLanguage, fileName, new String[0], 0, 0);
     }
 
     private String getFileNameSubmitRun(SubmitRunForm submitRunForm, ILanguage iLanguage) {
@@ -85,15 +70,8 @@ public class SubmitRunService {
 
     public List<RunSubmitDto> getRunSummit() {
         List<RunSubmitDto> runSubmitDtos = new ArrayList<>();
-        Contest contest = null;
-        IRun iRuns[] = null;
-        try {
-            contest = bridgePc2Service.getServerConnection().getContest();
-            iRuns = contest.getRuns();
-        } catch (NotLoggedInException e) {
-            e.printStackTrace();
-        }
-
+        Contest contest = bridgePc2Service.getContest();
+        IRun iRuns[] = contest.getRuns();
         Method getInternalRunMethod = null;
         try {
             getInternalRunMethod = contest.getClass().getDeclaredMethod("getInternalRun", IRun.class);
@@ -118,7 +96,7 @@ public class SubmitRunService {
         return runSubmitDtos;
     }
 
-    private String getResultRun(Method method, Contest contest, IRun iRun)  {
+    private String getResultRun(Method method, Contest contest, IRun iRun) {
         if (iRun.isSolved()) {
             return "Yes";
         }
@@ -143,18 +121,12 @@ public class SubmitRunService {
         } catch (IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
         }
-       return "No";
+        return "No";
     }
 
     public String showSourceCode(int numberRun) {
-        IRun iRun = null;
-        try {
-            iRun = bridgePc2Service.getServerConnection().getContest().getRun(numberRun);
-            bridgePc2Service.getRunStatisticListener().setSourceCode(true);
-            return new String(iRun.getSourceCodeFileContents()[0], StandardCharsets.UTF_8);
-        } catch (NotLoggedInException e) {
-            e.printStackTrace();
-        }
-        return "";
+        IRun iRun = bridgePc2Service.getContest().getRun(numberRun);
+        bridgePc2Service.getRunStatisticListener().setSourceCode(true);
+        return new String(iRun.getSourceCodeFileContents()[0], StandardCharsets.UTF_8);
     }
 }

@@ -1,6 +1,5 @@
 package ru.vkr.vkr.controller;
 
-import edu.csus.ecs.pc2.api.exceptions.NotLoggedInException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -9,6 +8,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import ru.vkr.vkr.domain.exception.Pc2Exception;
 import ru.vkr.vkr.entity.Chapter;
 import ru.vkr.vkr.entity.Course;
 import ru.vkr.vkr.entity.Problem;
@@ -74,7 +74,7 @@ public class StudentController {
 
 
     @GetMapping("/student/problem/{problemId}")
-    public String getProblem(Model model, @PathVariable Long problemId) throws NotLoggedInException {
+    public String getProblem(Model model, @PathVariable Long problemId) throws Pc2Exception {
         SubmitRunForm submitRunForm = new SubmitRunForm();
         Problem problem = problemService.getProblemById(problemId);
         if (problem.getPathToTextProblem() == null || problem.getPathToTextProblem().equals("")) {
@@ -83,9 +83,8 @@ public class StudentController {
             model.addAttribute("statement", true);
         }
         model.addAttribute("problem", problem);
-        model.addAttribute("langs", bridgePc2Service.getServerConnection().getContest().getLanguages());
+        model.addAttribute("langs", bridgePc2Service.getContestLanguages());
         model.addAttribute("submitRunForm", submitRunForm);
-
         return "student/problem";
     }
 
@@ -93,7 +92,7 @@ public class StudentController {
     @GetMapping("/student/chapter/{chapterId}/problem/{problemId}")
     public String getProblemFromTheme(Model model,
                                       @PathVariable Long problemId,
-                                      @PathVariable Long chapterId) throws NotLoggedInException {
+                                      @PathVariable Long chapterId) {
         SubmitRunForm submitRunForm = new SubmitRunForm();
         Problem problem = problemService.getProblemById(problemId);
         if (problem.getPathToTextProblem() == null || problem.getPathToTextProblem().equals("")) {
@@ -102,7 +101,7 @@ public class StudentController {
             model.addAttribute("statement", true);
         }
         model.addAttribute("problem", problem);
-        model.addAttribute("langs", bridgePc2Service.getServerConnection().getContest().getLanguages());
+        model.addAttribute("langs", bridgePc2Service.getContestLanguages());
         model.addAttribute("submitRunForm", submitRunForm);
 
         // Идеальные решения задачи при условии возможности его просмотра студентом

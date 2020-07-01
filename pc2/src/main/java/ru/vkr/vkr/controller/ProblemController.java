@@ -52,7 +52,7 @@ public class ProblemController {
 
     //todo: в этом методе отчасти дублируется код из такого же в TeacherController, а это не хорошо
     @ModelAttribute
-    public void addAttributes(Model model, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws NotLoggedInException {
+    public void addAttributes(Model model) {
         Collection<Course> teacherCourses = courseService.getCoursesByCurrentTeacher();
         List<Problem> teacherProblems_ = problemService.getProblemsByCurrentTeacher();
         Collection<Problem> teacherProblems = new ArrayList<>();
@@ -63,20 +63,12 @@ public class ProblemController {
         SubmitRunForm submitRunForm = new SubmitRunForm();
         SubmitRunForm submitRunFormPerfectSolution = new SubmitRunForm();
 
-        if (!bridgePc2Service.getServerConnection().isLoggedIn()) {
-            try {
-                httpServletRequest.logout();
-            } catch (ServletException e) {
-                e.printStackTrace();
-            }
-        }
-
         model.addAttribute("runs", submitRunService.getRunSummit());
         model.addAttribute("theoryMaterialForm", theoryMaterialForm);
         model.addAttribute("teacherCourses", teacherCourses);
         model.addAttribute("teacherProblems", teacherProblems);
         model.addAttribute("isTeacher", true);
-        model.addAttribute("langs", bridgePc2Service.getServerConnection().getContest().getLanguages());
+        model.addAttribute("langs", bridgePc2Service.getContestLanguages());
         model.addAttribute("submitRunForm", submitRunForm);
         model.addAttribute("perfectSolution", submitRunFormPerfectSolution);
     }

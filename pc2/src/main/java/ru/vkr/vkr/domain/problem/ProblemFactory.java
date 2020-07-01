@@ -43,17 +43,13 @@ public class ProblemFactory {
         if (iProblemMap.containsKey(problemId)) {
             return iProblemMap.get(problemId);
         } else {
-            try {
-                String name = "problem-" + problemId;
-                IProblem[] iProblems = bridgePc2Service.getServerConnection().getContest().getProblems();
-                for (IProblem iProblem : iProblems) {
-                    // iProblemMap.put(Long.parseLong(iProblem.getShortName().split("-")[1]), iProblem);
-                    if (iProblem.getShortName().equals(name)) {
-                        return iProblem;
-                    }
+            String name = "problem-" + problemId;
+            IProblem[] iProblems = bridgePc2Service.getContest().getProblems();
+            for (IProblem iProblem : iProblems) {
+                // iProblemMap.put(Long.parseLong(iProblem.getShortName().split("-")[1]), iProblem);
+                if (iProblem.getShortName().equals(name)) {
+                    return iProblem;
                 }
-            } catch (NotLoggedInException e) {
-                e.printStackTrace();
             }
         }
         return null;

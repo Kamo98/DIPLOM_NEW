@@ -1,0 +1,20 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="base :: common_header(~{::title})">
+    <title>PC2 error</title>
+</head>
+<body>
+
+<div class="container">
+    <div class="starter-template centered">
+        <h1>500 - Внутренняя ошибка сервера PC2</h1>
+        <div th:inline="text">Hello, произошла ошибка сервера PC2, для исправления ситуации попробуйте снова авторизоваться в системе.
+        </div>
+    </div>
+</div>
+<!-- /.container -->
+
+<footer th:replace="base :: footer"></footer>
+
+</body>
+</html>

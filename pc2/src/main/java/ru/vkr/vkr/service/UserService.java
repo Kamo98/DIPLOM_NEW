@@ -173,34 +173,24 @@ public class UserService implements UserDetailsService {
      * @return логин и пароль сгенерированного пользователя
      */
     private String generateNewAccount(ROLE role, int countUser) {
-        try {
-            String auth = role.getRolePc2().toLowerCase() + countUser;
-            bridgePc2Service.getServerConnection().addAccount(role.getRolePc2(), auth, auth);
-            return auth;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return "error";
+        String auth = role.getRolePc2().toLowerCase() + countUser;
+        bridgePc2Service.addAccount(role.getRolePc2(), auth, auth);
+        return auth;
     }
 
     // передача accountNumber of new account
     private int getCountUser(ROLE role) {
-        try {
-            if (role == ROLE.ROLE_STUDENT) {
-                return bridgePc2Service.getServerConnection().getContest().getTeams().length + 1;
-            } else {
-                IClient iClients[] = bridgePc2Service.getServerConnection().getContest().getClients();
-                int count = 0;
-                for (IClient iClient : iClients) {
-                    if (iClient.getType() == IClient.ClientType.ADMIN_CLIENT) {
-                        count++;
-                    }
+        if (role == ROLE.ROLE_STUDENT) {
+            return bridgePc2Service.getContestTeams().length + 1;
+        } else {
+            IClient iClients[] = bridgePc2Service.getContestClients();
+            int count = 0;
+            for (IClient iClient : iClients) {
+                if (iClient.getType() == IClient.ClientType.ADMIN_CLIENT) {
+                    count++;
                 }
-                return count + 1;
             }
-        } catch (NotLoggedInException e) {
-            e.printStackTrace();
+            return count + 1;
         }
-        return -1;
     }
 }

@@ -25,10 +25,10 @@ public class CustomInterceptor extends HandlerInterceptorAdapter {
         if (!(auth == null || (auth instanceof AnonymousAuthenticationToken))) {
             BridgePc2Service bridgePc2Service = getBeanBridgePc2Service(request.getSession());
             if (bridgePc2Service != null &&
-                    bridgePc2Service.getServerConnection() != null &&
-                    (!bridgePc2Service.getServerConnection().isLoggedIn())) {
+                    (bridgePc2Service.getServerConnection() == null
+                            || !bridgePc2Service.getServerConnection().isLoggedIn())) {
                 request.logout();
-                response.sendRedirect(request.getContextPath() + "/login");
+                response.sendRedirect(request.getContextPath() + "/error/pc2error");
                 return false;
             }
         }

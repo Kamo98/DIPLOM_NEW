@@ -23,28 +23,22 @@ import java.util.Vector;
 
 
 public class Pc2 {
-    private static HashMap<String, Pair<ServerConnection, Long> > connections = new HashMap<>();
-    private static HashMap<String, RunStatisticListener>  runStatisticListeners = new HashMap<>();
+    private static HashMap<String, Pair<ServerConnection, Long>> connections = new HashMap<>();
+    private static HashMap<String, RunStatisticListener> runStatisticListeners = new HashMap<>();
 
     private static ServerConnection createNewServerConnection() {
         return new ServerConnection();
     }
 
-    public static void start(String auth) {
+    public static void start(String auth) throws LoginFailureException, NotLoggedInException, NoSuchFieldException, IllegalAccessException {
         if (!connections.containsKey(auth)) {
             ServerConnection serverConnection = createNewServerConnection();
-            try {
-                IContest contest = serverConnection.login(auth, auth);
-                initContest(contest, auth);
-                for (IProblem problem : contest.getProblems()) {
-                    System.out.println(problem.getShortName() + ")  " + problem.getName() + " " + problem.getValidatorFileName());
-                }
-                cleanConnectionEventListenerList(serverConnection.getContest());
-            } catch (LoginFailureException e) {
-                System.out.println("Could not login because " + e.getMessage());
-            } catch (NotLoggedInException e) {
-                e.printStackTrace();
+            IContest contest = serverConnection.login(auth, auth);
+            initContest(contest, auth);
+            for (IProblem problem : contest.getProblems()) {
+                System.out.println(problem.getShortName() + ")  " + problem.getName() + " " + problem.getValidatorFileName());
             }
+            cleanConnectionEventListenerList(serverConnection.getContest());
             //put the team's connection to the PC2 server into the (static, class-wide) connections map under the team's "id"
             connections.put(auth, new Pair<>(serverConnection, 1L));
         } else {
@@ -53,32 +47,22 @@ public class Pc2 {
         }
     }
 
-    public static InternalController getInternalController(String auth) {
-        try {
-            ServerConnection serverConnection = getServerConnection(auth);
-            Class classController = serverConnection.getClass();
-            Field fieldController = classController.getDeclaredField("controller");
-            fieldController.setAccessible(true);
-            Object objectController = fieldController.get(serverConnection);
-            return (InternalController) objectController;
-        } catch (IllegalAccessException | NoSuchFieldException | NullPointerException e) {
-            e.printStackTrace();
-        }
-        return null;
+    public static InternalController getInternalController(String auth) throws NoSuchFieldException, IllegalAccessException {
+        ServerConnection serverConnection = getServerConnection(auth);
+        Class classController = serverConnection.getClass();
+        Field fieldController = classController.getDeclaredField("controller");
+        fieldController.setAccessible(true);
+        Object objectController = fieldController.get(serverConnection);
+        return (InternalController) objectController;
     }
 
-    public static InternalContest getInternalContest(String auth) {
-        try {
-            ServerConnection serverConnection = getServerConnection(auth);
-            Class classContest = serverConnection.getClass();
-            Field fieldContest = classContest.getDeclaredField("internalContest");
-            fieldContest.setAccessible(true);
-            Object objectController = fieldContest.get(serverConnection);
-            return (InternalContest) objectController;
-        } catch (IllegalAccessException | NoSuchFieldException | NullPointerException e) {
-            e.printStackTrace();
-        }
-        return null;
+    public static InternalContest getInternalContest(String auth) throws NoSuchFieldException, IllegalAccessException {
+        ServerConnection serverConnection = getServerConnection(auth);
+        Class classContest = serverConnection.getClass();
+        Field fieldContest = classContest.getDeclaredField("internalContest");
+        fieldContest.setAccessible(true);
+        Object objectController = fieldContest.get(serverConnection);
+        return (InternalContest) objectController;
     }
 
     private static void initContest(IContest contest, String auth) {
@@ -97,24 +81,19 @@ public class Pc2 {
     }
 
     //Очищает список слушателей ConnectionEventListener, чтобы не обнулялся contest в ServerConnection
-    private static void cleanConnectionEventListenerList (Contest contest) {
-        try {
-            Class classController = contest.getClass();
-            Field fieldController = classController.getDeclaredField("connectionEventListenerList");
-            fieldController.setAccessible(true);
-            Object objectController = fieldController.get(contest);
-            ConnectionEventListenerList listenerList = (ConnectionEventListenerList) objectController;
+    private static void cleanConnectionEventListenerList(Contest contest) throws NoSuchFieldException, IllegalAccessException {
+        Class classController = contest.getClass();
+        Field fieldController = classController.getDeclaredField("connectionEventListenerList");
+        fieldController.setAccessible(true);
+        Object objectController = fieldController.get(contest);
+        ConnectionEventListenerList listenerList = (ConnectionEventListenerList) objectController;
 
-            Class classController2 = listenerList.getClass();
-            Field fieldController2 = classController2.getDeclaredField("listenerList");
-            fieldController2.setAccessible(true);
-            Object objectController2 = fieldController2.get(listenerList);
-            Vector<IConnectionEventListener> listenerVector = (Vector<IConnectionEventListener>) objectController2;
-            listenerVector.removeAllElements();
-
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            e.printStackTrace();
-        }
+        Class classController2 = listenerList.getClass();
+        Field fieldController2 = classController2.getDeclaredField("listenerList");
+        fieldController2.setAccessible(true);
+        Object objectController2 = fieldController2.get(listenerList);
+        Vector<IConnectionEventListener> listenerVector = (Vector<IConnectionEventListener>) objectController2;
+        listenerVector.removeAllElements();
     }
 
     public static ServerConnection getServerConnection(String auth) {
@@ -127,21 +106,40 @@ public class Pc2 {
         return runStatisticListeners.get(auth);
     }
 
-    public static void logoff(String auth) {
+    public static void logoff(String auth) throws NotLoggedInException {
         if (connections.containsKey(auth)) {
             Long newCountConnection = connections.get(auth).getValue() - 1;
             connections.put(auth, new Pair<>(connections.get(auth).getKey(), newCountConnection));
+            ServerConnection serverConnection = getServerConnection(auth);
             if (newCountConnection <= 0L) {
-                ServerConnection serverConnection = getServerConnection(auth);
                 try {
                     Thread.sleep(1000);
                     serverConnection.logoff();
                 } catch (NotLoggedInException | InterruptedException e) {
                     e.printStackTrace();
+                    secondLogoff(auth);
+                } finally {
+                    //remove the team's PC2 server connection from the global hashmap
+                    connections.remove(auth, new Pair<>(serverConnection, newCountConnection));
                 }
-                //remove the team's PC2 server connection from the global hashmap
-                connections.remove(auth, new Pair<>(serverConnection, newCountConnection));
             }
         }
+    }
+
+    private static boolean secondLogoff(String auth) throws NotLoggedInException {
+        try {
+            InternalController controller = getInternalController(auth);
+            InternalContest internalContest = getInternalContest(auth);
+            controller.logoffUser(internalContest.getClientId());
+            return true;
+        } catch (Exception e) {
+            throw new NotLoggedInException(e);
+        }
+    }
+
+
+    public Contest getContest(String auth) throws NotLoggedInException {
+        return getServerConnection(auth) == null ? null :
+                getServerConnection(auth).getContest();
     }
 }

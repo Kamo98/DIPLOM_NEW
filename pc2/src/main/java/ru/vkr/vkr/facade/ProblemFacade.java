@@ -178,7 +178,7 @@ public class ProblemFacade {
 
 
     //Загрузка тестов от преподавателя на сервер
-    public boolean loadTestFiles(LoadTestsForm loadTestsForm, ru.vkr.vkr.entity.Problem problemDb)  {
+    public boolean loadTestFiles(LoadTestsForm loadTestsForm, ru.vkr.vkr.entity.Problem problemDb) {
         String extensionIn = loadTestsForm.getExtensionIn();
         String extensionAns = loadTestsForm.getExtensionAns();
         String uloadDirPath = "tests\\problem-" + problemDb.getId();
@@ -441,22 +441,18 @@ public class ProblemFacade {
 
     private List<Pair<Student, IStanding>> getStandingsRecords(List<Student> students) {
         List<Pair<Student, IStanding>> iStandings = new ArrayList<>();
-        try {
-            Contest contest = bridgePc2Service.getServerConnection().getContest();
-            ITeam iTeams[] = contest.getTeams();
-            for (Student student : students) {
-                boolean kostil = false;
-                for (ITeam iTeam : iTeams) {
-                    if (iTeam.getLoginName().equals(student.getUser().getLoginPC2())) {
-                        kostil = true;
-                        iStandings.add(new Pair<>(student, contest.getStanding(iTeam)));
-                        break;
-                    }
+        Contest contest = bridgePc2Service.getContest();
+        ITeam iTeams[] = bridgePc2Service.getContestTeams();
+        for (Student student : students) {
+            boolean kostil = false;
+            for (ITeam iTeam : iTeams) {
+                if (iTeam.getLoginName().equals(student.getUser().getLoginPC2())) {
+                    kostil = true;
+                    iStandings.add(new Pair<>(student, contest.getStanding(iTeam)));
+                    break;
                 }
-                if (!kostil) iStandings.add(new Pair<>(student, null));
             }
-        } catch (NotLoggedInException e) {
-            e.printStackTrace();
+            if (!kostil) iStandings.add(new Pair<>(student, null));
         }
         return iStandings;
     }
@@ -494,23 +490,25 @@ public class ProblemFacade {
     public boolean addPerfectSolution(Long problemId, SubmitRunForm submitRunForm) {
         ru.vkr.vkr.entity.Problem problem = problemService.getProblemById(problemId);
         PerfectSolution perfectSolution = new PerfectSolution();
-        ILanguage iLanguage = null;
-        try {
-            iLanguage = bridgePc2Service.getServerConnection().getContest().getLanguages()[submitRunForm.getLanguage()];
-            perfectSolution.setLanguage(iLanguage.getName());
-            if (submitRunForm.isFlagSourceCode()) {
-                perfectSolution.setSource(submitRunForm.getSourceCode());
-            } else {
-                perfectSolution.setSource(new String(submitRunForm.getMultipartFile().getBytes()));
-            }
-            perfectSolution.setProblem(problem);
-        } catch (NotLoggedInException | IOException e) {
-            e.printStackTrace();
-        }
+        ILanguage iLanguage = bridgePc2Service.getContestLanguages()[submitRunForm.getLanguage()];
+        perfectSolution.setLanguage(iLanguage.getName());
+        setSource(submitRunForm, perfectSolution);
+        perfectSolution.setProblem(problem);
         problem.getPerfectSolutions().add(perfectSolution);
         problemService.save(problem);
         return true;
     }
 
+    private static void setSource(SubmitRunForm submitRunForm, PerfectSolution perfectSolution) {
+        if (submitRunForm.isFlagSourceCode()) {
+            perfectSolution.setSource(submitRunForm.getSourceCode());
+        } else {
+            try {
+                perfectSolution.setSource(new String(submitRunForm.getMultipartFile().getBytes()));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
 }
