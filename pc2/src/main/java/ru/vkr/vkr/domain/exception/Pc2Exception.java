@@ -4,6 +4,7 @@ import java.io.IOException;
 
 public class Pc2Exception extends IOException {
     public Pc2Exception() {
+        super();
     }
 
     public Pc2Exception(String s) {

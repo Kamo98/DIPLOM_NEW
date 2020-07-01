@@ -28,7 +28,9 @@ public class MyHttpSessionEventPublisher extends HttpSessionEventPublisher {
         SessionInformation sessionInfo = (sessionRegistry != null ? sessionRegistry
                 .getSessionInformation(event.getSession().getId()) : null);
         User user = null;
-        if (sessionInfo != null) user = (User) sessionInfo.getPrincipal();
+        if (sessionInfo != null) {
+            user = (User) sessionInfo.getPrincipal();
+        }
         if (null != user) {
             BridgePc2Service bridgePc2Service = getBeanBridgePc2Service(event.getSession());
             bridgePc2Service.logout(user.getLoginPC2());

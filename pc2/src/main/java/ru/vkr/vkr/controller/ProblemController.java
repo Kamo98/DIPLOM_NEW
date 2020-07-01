@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.resource.HttpResource;
+import ru.vkr.vkr.domain.exception.Pc2Exception;
 import ru.vkr.vkr.entity.Complexity;
 import ru.vkr.vkr.entity.Course;
 import ru.vkr.vkr.entity.HashTag;
@@ -52,7 +53,7 @@ public class ProblemController {
 
     //todo: в этом методе отчасти дублируется код из такого же в TeacherController, а это не хорошо
     @ModelAttribute
-    public void addAttributes(Model model) {
+    public void addAttributes(Model model) throws Pc2Exception {
         Collection<Course> teacherCourses = courseService.getCoursesByCurrentTeacher();
         List<Problem> teacherProblems_ = problemService.getProblemsByCurrentTeacher();
         Collection<Problem> teacherProblems = new ArrayList<>();
@@ -83,7 +84,7 @@ public class ProblemController {
     }
 
     @PostMapping("/teacher/problem-create")
-    public String problemCreatePost(Model model, Problem problem) {
+    public String problemCreatePost(Model model, Problem problem) throws Pc2Exception {
         problemService.setAuthorForNewCourse(problem);
         problem.setPubl(false);
         problemService.save(problem);
@@ -94,7 +95,7 @@ public class ProblemController {
 
 
     @GetMapping("/teacher/problem/{problemId}")
-    public String getProblem(Model model, @PathVariable Long problemId) {
+    public String getProblem(Model model, @PathVariable Long problemId) throws Pc2Exception {
         Problem problem = problemService.getProblemById(problemId);
         model.addAttribute("problem", problem);
 
@@ -159,7 +160,7 @@ public class ProblemController {
 
     //Изменение основных параметров здадачи
     @PostMapping("/teacher/problem/{problemId}")
-    public String postProblem(@PathVariable Long problemId, Problem newProblem) {
+    public String postProblem(@PathVariable Long problemId, Problem newProblem) throws Pc2Exception {
         //todo: нужна валидация данных
         Problem problem = problemService.getProblemById(problemId);
         problem.setMemoryLimit(newProblem.getMemoryLimit());
@@ -221,7 +222,7 @@ public class ProblemController {
 
     //Изменение параметров тестов
     @PostMapping("/teacher/problem/{problemId}/tests-settings")
-    public String testsSettings(RedirectAttributes redirectAttributes, TestSettingsForm testSettingsForm, @PathVariable Long problemId) {
+    public String testsSettings(RedirectAttributes redirectAttributes, TestSettingsForm testSettingsForm, @PathVariable Long problemId) throws Pc2Exception {
         Problem problem = problemService.getProblemById(problemId);
         problemFacade.setParamOfTests(problem, testSettingsForm);
 
@@ -241,7 +242,7 @@ public class ProblemController {
 
     //Удаление теста
     @GetMapping("/teacher/problem/{problemId}/test-delete/{testNum}")
-    public String deleteProblemTest(RedirectAttributes redirectAttributes, @PathVariable Long problemId, @PathVariable Integer testNum) {
+    public String deleteProblemTest(RedirectAttributes redirectAttributes, @PathVariable Long problemId, @PathVariable Integer testNum) throws Pc2Exception {
         Problem problem = problemService.getProblemById(problemId);
         problemFacade.deleteTestFile(problem, testNum - 1);
 
@@ -251,7 +252,7 @@ public class ProblemController {
 
     //Удаление всех тестов
     @GetMapping("/teacher/problem/{problemId}/test-deleteAll")
-    public String deleteProblemAllTests(RedirectAttributes redirectAttributes, @PathVariable Long problemId) {
+    public String deleteProblemAllTests(RedirectAttributes redirectAttributes, @PathVariable Long problemId) throws Pc2Exception {
         Problem problem = problemService.getProblemById(problemId);
         problemFacade.deleteAllTestFiles(problem);
 
@@ -261,7 +262,7 @@ public class ProblemController {
 
     //Установка параметров чекера
     @PostMapping("/teacher/problem/{problemId}/checker-settings")
-    public String checkerSettings(RedirectAttributes redirectAttributes, CheckerSettingsForm checkerSettingsForm, @PathVariable Long problemId) {
+    public String checkerSettings(RedirectAttributes redirectAttributes, CheckerSettingsForm checkerSettingsForm, @PathVariable Long problemId) throws Pc2Exception {
         Problem problem = problemService.getProblemById(problemId);
 
         problemFacade.setParamsOfChecker(problem, checkerSettingsForm);
@@ -302,7 +303,7 @@ public class ProblemController {
     @PostMapping("/teacher/submit/{problemId}")
     public String sendFileSubmit(RedirectAttributes redirectAttributes, Model model,
                                  @ModelAttribute("submitRunForm") SubmitRunForm submitRunForm,
-                                 @PathVariable Long problemId) {
+                                 @PathVariable Long problemId) throws Pc2Exception {
         submitRunService.submitRun(problemId, submitRunForm);
         redirectAttributes.addFlashAttribute("activeTabMenu", "linkViewRunsProblem");
         return "redirect:/teacher/problem/" + problemId;
@@ -352,7 +353,7 @@ public class ProblemController {
     @PostMapping("/teacher/problem/{problemId}/add-perfect-sol")
     public String addPerfectSolutionProblem(RedirectAttributes redirectAttributes,
                                             @ModelAttribute("perfectSolution") SubmitRunForm submitRunForm,
-                                            @PathVariable Long problemId) {
+                                            @PathVariable Long problemId) throws Pc2Exception {
         problemFacade.addPerfectSolution(problemId, submitRunForm);
         redirectAttributes.addFlashAttribute("activeTabMenu", "linkViewPerfectSolution");
         return "redirect:/teacher/problem/" + problemId;
@@ -371,7 +372,7 @@ public class ProblemController {
 
     //Удаление задачи
     @GetMapping("/teacher/problem/{problemId}/delete")
-    public String deleteProblem(RedirectAttributes redirectAttributes, @PathVariable Long problemId) {
+    public String deleteProblem(RedirectAttributes redirectAttributes, @PathVariable Long problemId) throws Pc2Exception {
         Problem problem = problemService.getProblemById(problemId);
         problemFacade.deleteAllTestFiles(problem);
         problemFacade.deleteDirectoryTests(problem);

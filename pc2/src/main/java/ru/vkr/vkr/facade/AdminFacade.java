@@ -3,6 +3,7 @@ package ru.vkr.vkr.facade;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ru.vkr.vkr.domain.ROLE;
+import ru.vkr.vkr.domain.exception.Pc2Exception;
 import ru.vkr.vkr.entity.Teacher;
 import ru.vkr.vkr.entity.api.PersonRegisterData;
 import ru.vkr.vkr.form.UserForm;
@@ -19,7 +20,7 @@ public class AdminFacade {
     @Autowired
     private TeacherRepository teacherRepository;
 
-    public List<Long> addUsers(UserForm userForm, ROLE role) {
+    public List<Long> addUsers(UserForm userForm, ROLE role) throws Pc2Exception {
         return userService.addUsers(userForm, ROLE.ROLE_TEACHER);
     }
 

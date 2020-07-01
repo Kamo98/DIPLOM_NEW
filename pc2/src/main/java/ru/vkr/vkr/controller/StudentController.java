@@ -92,7 +92,7 @@ public class StudentController {
     @GetMapping("/student/chapter/{chapterId}/problem/{problemId}")
     public String getProblemFromTheme(Model model,
                                       @PathVariable Long problemId,
-                                      @PathVariable Long chapterId) {
+                                      @PathVariable Long chapterId) throws Pc2Exception {
         SubmitRunForm submitRunForm = new SubmitRunForm();
         Problem problem = problemService.getProblemById(problemId);
         if (problem.getPathToTextProblem() == null || problem.getPathToTextProblem().equals("")) {
@@ -113,7 +113,7 @@ public class StudentController {
     @PostMapping("/student/submit/{problemId}")
     public String sendFileSubmit(RedirectAttributes redirectAttributes, Model model,
                                  @ModelAttribute("submitRunForm") SubmitRunForm submitRunForm,
-                                 @PathVariable Long problemId) {
+                                 @PathVariable Long problemId) throws Pc2Exception {
         submitRunService.submitRun(problemId, submitRunForm);
         redirectAttributes.addFlashAttribute("activeTabMenu", "linkViewRuns");
         return "redirect:/student/problem/" + problemId;
@@ -127,7 +127,7 @@ public class StudentController {
 
     @GetMapping("/student/source/{numberRun}")
     public String showSource(Model model,
-                             @PathVariable int numberRun)  {
+                             @PathVariable int numberRun) throws Pc2Exception {
         String sourceCode = submitRunService.showSourceCode(numberRun);
         model.addAttribute("source", sourceCode);
         return "source";

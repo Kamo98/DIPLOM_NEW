@@ -5,6 +5,7 @@ import edu.csus.ecs.pc2.api.exceptions.NotLoggedInException;
 import edu.csus.ecs.pc2.core.model.Problem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import ru.vkr.vkr.domain.exception.Pc2Exception;
 import ru.vkr.vkr.service.BridgePc2Service;
 
 import java.util.HashMap;
@@ -23,7 +24,7 @@ public class ProblemFactory {
         iProblemMap = new HashMap<>();
     }
 
-    public Problem getProblem(Long problemId) {
+    public Problem getProblem(Long problemId) throws Pc2Exception {
         if (problemMap.containsKey(problemId)) {
             return problemMap.get(problemId);
         } else {
@@ -39,7 +40,7 @@ public class ProblemFactory {
         return null;
     }
 
-    public IProblem getIProblem(Long problemId) {
+    public IProblem getIProblem(Long problemId) throws Pc2Exception {
         if (iProblemMap.containsKey(problemId)) {
             return iProblemMap.get(problemId);
         } else {

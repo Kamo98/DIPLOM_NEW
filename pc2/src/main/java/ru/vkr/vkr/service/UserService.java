@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import ru.vkr.vkr.domain.ROLE;
 import ru.vkr.vkr.domain.RandomString;
 import ru.vkr.vkr.domain.Translit;
+import ru.vkr.vkr.domain.exception.Pc2Exception;
 import ru.vkr.vkr.entity.Student;
 import ru.vkr.vkr.entity.Teacher;
 import ru.vkr.vkr.entity.User;
@@ -65,10 +66,6 @@ public class UserService implements UserDetailsService {
         return userFromDb.orElse(new User());
     }
 
-    public List<User> allUsers() {
-        return userRepository.findAll();
-    }
-
     public boolean saveUser(User user) {
         User userFromDB = userRepository.findByUsername(user.getUsername());
         if (userFromDB != null) {
@@ -93,7 +90,7 @@ public class UserService implements UserDetailsService {
     }
 
     //todo: когда будет интерфейс, нужно будет возвращать его, а не идентификаторы teacher или student
-    public List<Long> addUsers(UserForm userForm, ROLE role) {
+    public List<Long> addUsers(UserForm userForm, ROLE role) throws Pc2Exception {
         int countUser = getCountUser(role);
         if (countUser == -1) return null;
 
@@ -172,14 +169,14 @@ public class UserService implements UserDetailsService {
      *
      * @return логин и пароль сгенерированного пользователя
      */
-    private String generateNewAccount(ROLE role, int countUser) {
+    private String generateNewAccount(ROLE role, int countUser) throws Pc2Exception {
         String auth = role.getRolePc2().toLowerCase() + countUser;
         bridgePc2Service.addAccount(role.getRolePc2(), auth, auth);
         return auth;
     }
 
     // передача accountNumber of new account
-    private int getCountUser(ROLE role) {
+    private int getCountUser(ROLE role) throws Pc2Exception {
         if (role == ROLE.ROLE_STUDENT) {
             return bridgePc2Service.getContestTeams().length + 1;
         } else {

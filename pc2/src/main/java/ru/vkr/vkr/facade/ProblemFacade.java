@@ -18,6 +18,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 import ru.vkr.vkr.domain.FileManager;
+import ru.vkr.vkr.domain.exception.Pc2Exception;
 import ru.vkr.vkr.domain.problem.ProblemFactory;
 import ru.vkr.vkr.domain.run.MonitorData;
 import ru.vkr.vkr.domain.run.RunStatistic;
@@ -61,7 +62,7 @@ public class ProblemFacade {
     }
 
 
-    public void initProblem(ru.vkr.vkr.entity.Problem problemDb) {
+    public void initProblem(ru.vkr.vkr.entity.Problem problemDb) throws Pc2Exception {
         makeDirectory(problemDb.getId());
         InternalController internalController = bridgePc2Service.getInternalController();
 
@@ -97,7 +98,7 @@ public class ProblemFacade {
         internalController.addNewProblem(problem, problemDataFiles);
     }
 
-    public void updateMainParams(String newName, ru.vkr.vkr.entity.Problem problemDb) {
+    public void updateMainParams(String newName, ru.vkr.vkr.entity.Problem problemDb) throws Pc2Exception {
         InternalController internalController = bridgePc2Service.getInternalController();
         //Ищем задачу
         Problem problem = findProblemInPC2(problemDb);
@@ -109,7 +110,7 @@ public class ProblemFacade {
     }
 
 
-    public void setParamOfTests(ru.vkr.vkr.entity.Problem problemDb, TestSettingsForm testSettingsForm) {
+    public void setParamOfTests(ru.vkr.vkr.entity.Problem problemDb, TestSettingsForm testSettingsForm) throws Pc2Exception {
         InternalController internalController = bridgePc2Service.getInternalController();
         //Ищем задачу
         Problem problem = findProblemInPC2(problemDb);
@@ -118,7 +119,7 @@ public class ProblemFacade {
         internalController.updateProblem(problem);
     }
 
-    public void setTestsParamsToForm(TestSettingsForm testSettingsForm, ru.vkr.vkr.entity.Problem problemDb) {
+    public void setTestsParamsToForm(TestSettingsForm testSettingsForm, ru.vkr.vkr.entity.Problem problemDb) throws Pc2Exception {
         //Ищем задачу
         Problem problem = findProblemInPC2(problemDb);
         if (problem != null)
@@ -126,7 +127,7 @@ public class ProblemFacade {
     }
 
     //Установка параметров чекера
-    public void setParamsOfChecker(ru.vkr.vkr.entity.Problem problemDb, CheckerSettingsForm checkerSettingsForm) {
+    public void setParamsOfChecker(ru.vkr.vkr.entity.Problem problemDb, CheckerSettingsForm checkerSettingsForm) throws Pc2Exception {
         InternalController internalController = bridgePc2Service.getInternalController();
 
         //Ищем задачу
@@ -149,7 +150,7 @@ public class ProblemFacade {
     }
 
 
-    public void setCheckerParamsToForm(CheckerSettingsForm checkerSettingsForm, ru.vkr.vkr.entity.Problem problemDb) {
+    public void setCheckerParamsToForm(CheckerSettingsForm checkerSettingsForm, ru.vkr.vkr.entity.Problem problemDb) throws Pc2Exception {
         //Ищем задачу
         Problem problem = findProblemInPC2(problemDb);
 
@@ -247,7 +248,7 @@ public class ProblemFacade {
     }
 
     //Добавление тестов к задаче в PC2
-    public void addTestsToProblem(ru.vkr.vkr.entity.Problem problemDb) {
+    public void addTestsToProblem(ru.vkr.vkr.entity.Problem problemDb) throws Pc2Exception {
         InternalController internalController = bridgePc2Service.getInternalController();
         String baseDirectoryName = uploadPath + "tests\\problem-" + problemDb.getId();
         //Ищем задачу
@@ -262,7 +263,7 @@ public class ProblemFacade {
         internalController.updateProblem(problem, problemDataFiles);
     }
 
-    public List<Pair<String, String>> getAllTestsById(ru.vkr.vkr.entity.Problem problemDb) {
+    public List<Pair<String, String>> getAllTestsById(ru.vkr.vkr.entity.Problem problemDb) throws Pc2Exception {
         List<Pair<String, String>> filesList = new ArrayList<>();
         Problem problem = findProblemInPC2(problemDb);
         if (problem == null)
@@ -277,7 +278,7 @@ public class ProblemFacade {
     }
 
 
-    public void deleteTestFile(ru.vkr.vkr.entity.Problem problemDb, Integer testNum) {
+    public void deleteTestFile(ru.vkr.vkr.entity.Problem problemDb, Integer testNum) throws Pc2Exception {
         IInternalController internalController = bridgePc2Service.getInternalController();
         Problem problem = findProblemInPC2(problemDb);
         ProblemDataFiles problemDataFiles = internalController.getProblemDataFiles(problem);
@@ -310,7 +311,7 @@ public class ProblemFacade {
         }
     }
 
-    public void deleteAllTestFiles(ru.vkr.vkr.entity.Problem problemDb) {
+    public void deleteAllTestFiles(ru.vkr.vkr.entity.Problem problemDb) throws Pc2Exception {
         IInternalController internalController = bridgePc2Service.getInternalController();
         Problem problem = findProblemInPC2(problemDb);
         ProblemDataFiles problemDataFiles = internalController.getProblemDataFiles(problem);
@@ -336,7 +337,7 @@ public class ProblemFacade {
     }
 
     //Ищет задачу в PC2 по сущности из БД
-    public Problem findProblemInPC2(ru.vkr.vkr.entity.Problem problemDb) {
+    public Problem findProblemInPC2(ru.vkr.vkr.entity.Problem problemDb) throws Pc2Exception {
         return ((ProblemFactory) applicationContext.getBean("getProblemFactory")).getProblem(problemDb.getId());
     }
 
@@ -397,7 +398,7 @@ public class ProblemFacade {
     }
 
 
-    public MonitorData getMonitor(List<Student> students, List<ru.vkr.vkr.entity.Problem> problems) {
+    public MonitorData getMonitor(List<Student> students, List<ru.vkr.vkr.entity.Problem> problems) throws Pc2Exception {
         List<Long> timeSolved = new ArrayList<>();
         List<Pair<Integer, Student>> standingOfStudent = new ArrayList<>();
         List<List<IProblemDetails>> problemDetailsOfStudent = new ArrayList<>();
@@ -439,7 +440,7 @@ public class ProblemFacade {
         return null;
     }
 
-    private List<Pair<Student, IStanding>> getStandingsRecords(List<Student> students) {
+    private List<Pair<Student, IStanding>> getStandingsRecords(List<Student> students) throws Pc2Exception {
         List<Pair<Student, IStanding>> iStandings = new ArrayList<>();
         Contest contest = bridgePc2Service.getContest();
         ITeam iTeams[] = bridgePc2Service.getContestTeams();
@@ -480,14 +481,14 @@ public class ProblemFacade {
 
 
     //Проверка на наличие хотя бы одного теста
-    public boolean check_tests(ru.vkr.vkr.entity.Problem problemDb) {
+    public boolean check_tests(ru.vkr.vkr.entity.Problem problemDb) throws Pc2Exception {
         Problem problem = findProblemInPC2(problemDb);
         IInternalController internalController = bridgePc2Service.getInternalController();
         ProblemDataFiles problemDataFiles = internalController.getProblemDataFiles(problem);
         return problemDataFiles.getJudgesDataFiles().length > 0;
     }
 
-    public boolean addPerfectSolution(Long problemId, SubmitRunForm submitRunForm) {
+    public boolean addPerfectSolution(Long problemId, SubmitRunForm submitRunForm) throws Pc2Exception {
         ru.vkr.vkr.entity.Problem problem = problemService.getProblemById(problemId);
         PerfectSolution perfectSolution = new PerfectSolution();
         ILanguage iLanguage = bridgePc2Service.getContestLanguages()[submitRunForm.getLanguage()];

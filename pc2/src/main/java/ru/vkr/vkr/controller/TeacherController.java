@@ -8,6 +8,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ru.vkr.vkr.domain.ROLE;
+import ru.vkr.vkr.domain.exception.Pc2Exception;
 import ru.vkr.vkr.entity.*;
 import ru.vkr.vkr.facade.ProblemFacade;
 import ru.vkr.vkr.facade.TeacherFacade;
@@ -197,7 +198,7 @@ public class TeacherController {
     //Загрузка монитора
     //@ResponseBody
     @PostMapping("/teacher/theme/monitor")
-    public String getMonitor(Model model, @RequestParam(value = "idChapter") Long idChapter) {
+    public String getMonitor(Model model, @RequestParam(value = "idChapter") Long idChapter) throws Pc2Exception {
         Chapter chapter = chapterService.getChapterById(idChapter);
         List<Group> groups = chapter.getCourseChapters().getSubscribers();
         List<Student> students = new ArrayList<>();
@@ -385,7 +386,7 @@ public class TeacherController {
     public String addStudent(Model model,
                              UserForm userForm,
                              @PathVariable Long courseId,
-                             @PathVariable Long groupId) {
+                             @PathVariable Long groupId) throws Pc2Exception {
         Group group = groupService.getGroupById(groupId);
         List<Long> usersId = userService.addUsers(userForm, ROLE.ROLE_STUDENT);
         if (usersId == null) {

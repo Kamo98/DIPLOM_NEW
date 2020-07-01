@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.vkr.vkr.domain.HandlerPc2;
 import ru.vkr.vkr.domain.Pc2;
+import ru.vkr.vkr.domain.exception.Pc2Exception;
 import ru.vkr.vkr.domain.run.RunStatisticListener;
 import ru.vkr.vkr.facade.AuthenticationFacade;
 
@@ -26,7 +27,7 @@ public class BridgePc2Service {
                 : null;
     }
 
-    public boolean start(String auth) {
+    public boolean start(String auth) throws Pc2Exception {
         try {
             Pc2.start(auth);
             return true;
@@ -45,7 +46,7 @@ public class BridgePc2Service {
         }
     }
 
-    public InternalController getInternalController() {
+    public InternalController getInternalController() throws Pc2Exception {
         try {
             return Pc2.getInternalController(getCurName());
         } catch (NoSuchFieldException | IllegalAccessException e) {
@@ -55,7 +56,7 @@ public class BridgePc2Service {
         return null;
     }
 
-    public InternalContest getInternalContest() {
+    public InternalContest getInternalContest() throws Pc2Exception {
         try {
             return Pc2.getInternalContest(getCurName());
         } catch (NoSuchFieldException | IllegalAccessException e) {
@@ -65,7 +66,7 @@ public class BridgePc2Service {
         return null;
     }
 
-    public Contest getContest() {
+    public Contest getContest() throws Pc2Exception {
         try {
             if (getServerConnection().getContest() == null) {
                 throw new NotLoggedInException();
@@ -78,26 +79,26 @@ public class BridgePc2Service {
         return null;
     }
 
-    public ITeam[] getContestTeams() {
+    public ITeam[] getContestTeams() throws Pc2Exception {
         return getContest() != null ?
                 getContest().getTeams() :
                 null;
     }
 
-    public IClient[] getContestClients() {
+    public IClient[] getContestClients() throws Pc2Exception {
         return getContest() != null ?
                 getContest().getClients():
                 null;
     }
 
-    public ILanguage[] getContestLanguages() {
+    public ILanguage[] getContestLanguages() throws Pc2Exception {
         return getContest() != null ?
                 getContest().getLanguages():
                 null;
     }
 
     public void submitRun(IProblem iProblem, ILanguage iLanguage, String fileName,
-                          String[] additionalFileNames, long overrideSubmissionTimeMS, long overrideRunId) {
+                          String[] additionalFileNames, long overrideSubmissionTimeMS, long overrideRunId) throws Pc2Exception {
         try {
             getServerConnection().submitRun(iProblem, iLanguage, fileName,
                     additionalFileNames, overrideSubmissionTimeMS, overrideRunId);
@@ -107,7 +108,7 @@ public class BridgePc2Service {
         }
     }
 
-    public void addAccount(String role, String login, String password) {
+    public void addAccount(String role, String login, String password) throws Pc2Exception {
         try {
             getServerConnection().addAccount(role, login, password);
         } catch (Exception e) {

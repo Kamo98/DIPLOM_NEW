@@ -10,6 +10,7 @@ import org.springframework.security.web.RedirectStrategy;
 import org.springframework.security.web.WebAttributes;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
+import ru.vkr.vkr.domain.exception.Pc2Exception;
 import ru.vkr.vkr.entity.User;
 import ru.vkr.vkr.service.BridgePc2Service;
 
@@ -62,7 +63,11 @@ public class MySimpleUrlAuthenticationSuccessHandler implements AuthenticationSu
         roleTargetUrlMap.put("ROLE_STUDENT", "/student/course");
 
         User successUser = (User) authentication.getPrincipal();
-        bridgePc2Service.start(successUser.getLoginPC2());
+        try {
+            bridgePc2Service.start(successUser.getLoginPC2());
+        } catch (Pc2Exception e) {
+            e.printStackTrace();
+        }
 
         final Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
         for (final GrantedAuthority grantedAuthority : authorities) {

@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import ru.vkr.vkr.domain.ROLE;
+import ru.vkr.vkr.domain.exception.Pc2Exception;
 import ru.vkr.vkr.entity.api.PersonRegisterData;
 import ru.vkr.vkr.facade.AdminFacade;
 import ru.vkr.vkr.facade.AuthenticationFacade;
@@ -140,7 +141,7 @@ public class DownloadController {
         document.close();
     }
 
-    private void addPermission() {
+    private void addPermission() throws Pc2Exception {
         List<Account>accounts = bridgePc2Service.getInternalContest().getAccounts(ClientType.Type.TEAM);
         Account accountss[] = new Account[accounts.size()];
         int i = 0;

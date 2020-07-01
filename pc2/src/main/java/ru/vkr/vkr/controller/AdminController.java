@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ru.vkr.vkr.domain.ROLE;
+import ru.vkr.vkr.domain.exception.Pc2Exception;
 import ru.vkr.vkr.entity.Teacher;
 import ru.vkr.vkr.facade.AdminFacade;
 import ru.vkr.vkr.form.UserForm;
@@ -38,7 +39,7 @@ public class AdminController {
 
     // добавление списка преподавателей
     @PostMapping("/admin/addTeachers")
-    public String addTeacher(Model model, @ModelAttribute("userForm") UserForm userForm) {
+    public String addTeacher(Model model, @ModelAttribute("userForm") UserForm userForm) throws Pc2Exception {
         logger.info("/admin/addTeachers");
         if (adminFacade.addUsers(userForm, ROLE.ROLE_TEACHER) == null) {
             model.addAttribute(userForm);

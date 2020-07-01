@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import ru.vkr.vkr.domain.FileManager;
+import ru.vkr.vkr.domain.exception.Pc2Exception;
 import ru.vkr.vkr.domain.problem.ProblemFactory;
 import ru.vkr.vkr.domain.run.RunSubmitDto;
 import ru.vkr.vkr.domain.run.RunSubmitDtoComparator;
@@ -36,7 +37,7 @@ public class SubmitRunService {
     private BridgePc2Service bridgePc2Service;
 
 
-    public void submitRun(Long problemId, SubmitRunForm submitRunForm) {
+    public void submitRun(Long problemId, SubmitRunForm submitRunForm) throws Pc2Exception {
         IProblem iProblem = ((ProblemFactory) applicationContext.getBean("getProblemFactory")).getIProblem(problemId);
         ILanguage iLanguage = bridgePc2Service.getContestLanguages()[submitRunForm.getLanguage()];
         String fileName = getFileNameSubmitRun(submitRunForm, iLanguage);
@@ -68,7 +69,7 @@ public class SubmitRunService {
         return fileName;
     }
 
-    public List<RunSubmitDto> getRunSummit() {
+    public List<RunSubmitDto> getRunSummit() throws Pc2Exception {
         List<RunSubmitDto> runSubmitDtos = new ArrayList<>();
         Contest contest = bridgePc2Service.getContest();
         IRun iRuns[] = contest.getRuns();
@@ -96,7 +97,7 @@ public class SubmitRunService {
         return runSubmitDtos;
     }
 
-    private String getResultRun(Method method, Contest contest, IRun iRun) {
+    private String getResultRun(Method method, Contest contest, IRun iRun) throws Pc2Exception {
         if (iRun.isSolved()) {
             return "Yes";
         }
@@ -124,7 +125,7 @@ public class SubmitRunService {
         return "No";
     }
 
-    public String showSourceCode(int numberRun) {
+    public String showSourceCode(int numberRun) throws Pc2Exception {
         IRun iRun = bridgePc2Service.getContest().getRun(numberRun);
         bridgePc2Service.getRunStatisticListener().setSourceCode(true);
         return new String(iRun.getSourceCodeFileContents()[0], StandardCharsets.UTF_8);
