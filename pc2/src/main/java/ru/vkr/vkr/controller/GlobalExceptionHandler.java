@@ -25,7 +25,7 @@ public class GlobalExceptionHandler {
     private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     @ExceptionHandler(Pc2Exception.class)
-    public ModelAndView handleBadFileNameException(Exception ex) {
+    public ModelAndView handlePc2Exception(Exception ex) {
         try {
             request.logout();
             SecurityContextHolder.clearContext();
@@ -35,5 +35,12 @@ public class GlobalExceptionHandler {
             ModelAndView modelAndView = new ModelAndView("/error/pc2error");
             return modelAndView;
         }
+    }
+
+
+    @ExceptionHandler(Exception.class)
+    public ModelAndView handleException(Exception ex) {
+        ModelAndView modelAndView = new ModelAndView("/error/exceptionpage");
+        return modelAndView;
     }
 }

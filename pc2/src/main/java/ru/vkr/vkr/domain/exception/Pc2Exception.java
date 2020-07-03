@@ -2,7 +2,7 @@ package ru.vkr.vkr.domain.exception;
 
 import java.io.IOException;
 
-public class Pc2Exception extends IOException {
+public class Pc2Exception extends RuntimeException {
     public Pc2Exception() {
         super();
     }
